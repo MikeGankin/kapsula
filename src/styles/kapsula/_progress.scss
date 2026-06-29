@@ -1,0 +1,83 @@
+.kapsula-progress {
+  position: absolute;
+  left: 32px;
+  bottom: 32px;
+  z-index: 10;
+}
+
+.kapsula-progress__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.kapsula-progress__item {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.kapsula-progress__button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.kapsula-progress__marker {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  flex: 0 0 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.kapsula-progress__item.is-active {
+  color: #ffffff;
+}
+
+.kapsula-progress__item.is-active .kapsula-progress__marker {
+  background: currentColor;
+}
+
+.kapsula-progress__item.is-active .kapsula-progress__marker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.kapsula[data-screen="form"] .kapsula-progress__item {
+  color: rgba(17, 17, 17, 0.44);
+}
+
+.kapsula[data-screen="form"] .kapsula-progress__item.is-active {
+  color: #111111;
+}
+
+@media (max-width: 900px) {
+  .kapsula-progress {
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+  }
+
+  .kapsula-progress__item {
+    gap: 12px;
+    font-size: 16px;
+  }
+}

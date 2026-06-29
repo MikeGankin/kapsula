@@ -3,7 +3,14 @@ import path from "node:path";
 import {build} from "vite";
 import vue from "@vitejs/plugin-vue";
 
-import {cleanDir, ensureDir, existsFile, normalizeHtml, r, readBlocks} from "./_utils.mjs";
+import {
+  cleanDir,
+  ensureDir,
+  existsFile,
+  processMarkupWithPosthtml,
+  r,
+  readBlocks,
+} from "./_utils.mjs";
 
 const ORDER_FILE = r("src/order.json");
 
@@ -120,7 +127,7 @@ async function buildBlock(key) {
   const cssPathCss = path.join(STYLES_DIR, `${key}.css`);
   const jsPath = path.join(SCRIPTS_DIR, `${key}.js`);
 
-  const html = normalizeHtml(fs.readFileSync(htmlPath, "utf8"));
+  const html = await processMarkupWithPosthtml(htmlPath);
 
   // приоритет: scss -> css
   const cssPath = existsFile(cssPathScss)

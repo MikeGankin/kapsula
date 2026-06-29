@@ -1,0 +1,50 @@
+#quick-search-tab-area,
+#breadcrumb-widget,
+div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"] {
+  display: none;
+}
+
+div[class*="HeaderWidget_headerClientSideDesktop___"] {
+  background: var(--kapsula-night);
+}
+
+.basic-menu-item {
+  color: #ffffff;
+
+  .menu-item-label span {
+    color: #ffffff;
+  }
+}
+
+div[class*="HeaderTopBar_iconContainer__"] > * {
+  color: #ffffff !important;
+}
+
+div[class*="HeaderTopBar_iconContainer__"] > * button,
+div[class*="HeaderTopBar_iconContainer__"] > * a {
+  color: #ffffff !important;
+}
+
+div[class*="DepartureContact_departureContactPhone__"] {
+  color: #ffffff !important;
+}
+
+div[class*="HeaderTopBar_iconContainer__"] svg path,
+div[class*="HeaderTopBar_iconContainer__"] svg circle,
+div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
+  stroke: #ffffff !important;
+}
+
+div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
+  display: none;
+}
+
+.kapsula-header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.kapsula-header-logo__link,
+.kapsula-header-logo__image {
+  display: block;
+}

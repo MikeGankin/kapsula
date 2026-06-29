@@ -1,4 +1,6 @@
 {
-  "assetsPrefix": "landing-pages/hotels-of-week",
-  "blocks": []
+  "assetsPrefix": "landing-pages/kapsula",
+  "blocks": [
+    "kapsula"
+  ]
 }

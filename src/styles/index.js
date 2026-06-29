@@ -1,1 +1,1 @@
-
+import './kapsula.scss';

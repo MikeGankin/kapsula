@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Trajan Pro 3";
+  src: url("https://font.static.useinsider.com/coraltravel/TrajanPro3Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --kapsula-gold: #b9914b;
+  --kapsula-gold-strong: #a57d39;
+  --kapsula-night: #262321;
+  --kapsula-cream: #f7efe2;
+  --kapsula-heading-font: "Trajan Pro 3", "Times New Roman", serif;
+}

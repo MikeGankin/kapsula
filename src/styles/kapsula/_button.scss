@@ -1,0 +1,22 @@
+.kapsula-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--kapsula-gold);
+  padding: 12px 20px;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 180ms ease;
+
+  &:hover {
+    background: var(--kapsula-gold-strong);
+  }
+}
+
+.kapsula-button--hero {
+  min-width: 112px;
+}

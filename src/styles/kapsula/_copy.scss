@@ -1,0 +1,36 @@
+.kapsula-copy {
+  display: grid;
+  justify-items: center;
+  gap: 30px;
+  text-align: center;
+}
+
+.kapsula-copy__title {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--kapsula-heading-font);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.2);
+}
+
+.kapsula-copy__subtitle {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--kapsula-heading-font);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .kapsula-copy__title {
+    font-size: 40px;
+  }
+
+  .kapsula-copy__subtitle {
+    font-size: clamp(16px, 5vw, 24px);
+  }
+}

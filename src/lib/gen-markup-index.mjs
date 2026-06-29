@@ -1,7 +1,15 @@
 import path from "node:path";
 import chokidar from "chokidar";
 
-import {absEq, ensureDir, existsFile, r, readBlocks, writeIfChanged} from "./_utils.mjs";
+import {
+  absEq,
+  ensureDir,
+  existsFile,
+  processMarkupWithPosthtml,
+  r,
+  readBlocks,
+  writeIfChanged,
+} from "./_utils.mjs";
 
 const WATCH = process.argv.includes("--watch");
 
@@ -10,42 +18,52 @@ const ORDER_FILE = r("src/order.json");
 const MARKUP_DIR = r("src/markup");
 const OUT_FILE = path.join(MARKUP_DIR, "index.js");
 
-function generate() {
+async function generate() {
   ensureDir(MARKUP_DIR);
 
   const blocks = readBlocks(ORDER_FILE);
-  const present = [];
+  const entries = [];
 
   for (const key of blocks) {
     const htmlFile = path.join(MARKUP_DIR, `${key}.html`);
-    if (existsFile(htmlFile)) present.push(key);
+    if (!existsFile(htmlFile)) continue;
+
+    const html = await processMarkupWithPosthtml(htmlFile);
+    entries.push({key, html});
   }
 
-  if (present.length === 0) {
+  if (entries.length === 0) {
     writeIfChanged(OUT_FILE, "export default [];\n", "[gen-markup] updated (empty)");
     return;
   }
 
-  const imports = present
-    .map((key, i) => `import h${i} from './${key}.html?raw';`)
-    .join("\n");
-
-  const entries = present
-    .map((key, i) => `{ key: ${JSON.stringify(key)}, html: h${i} }`)
+  const serializedEntries = entries
+    .map(({key, html}) => `{ key: ${JSON.stringify(key)}, html: ${JSON.stringify(html)} }`)
     .join(", ");
 
-  writeIfChanged(OUT_FILE, `${imports}\n\nexport default [${entries}];\n`, "[gen-markup] updated");
+  writeIfChanged(
+    OUT_FILE,
+    `export default [${serializedEntries}];\n`,
+    "[gen-markup] updated"
+  );
 }
 
 // once
-generate();
+generate().catch((error) => {
+  console.error("[gen-markup] failed:", error);
+  process.exit(1);
+});
 
 // watch
 if (WATCH) {
   let t = null;
   const schedule = () => {
     clearTimeout(t);
-    t = setTimeout(generate, 80);
+    t = setTimeout(() => {
+      generate().catch((error) => {
+        console.error("[gen-markup] failed:", error);
+      });
+    }, 80);
   };
 
   chokidar

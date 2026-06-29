@@ -1,0 +1,38 @@
+.kapsula-screen--styles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 56px 24px 88px;
+}
+
+.kapsula-styles {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 30px;
+}
+
+.kapsula-styles__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .kapsula-screen--styles {
+    padding: 40px 20px 84px;
+  }
+
+  .kapsula-styles {
+    gap: 24px;
+  }
+
+  .kapsula-styles__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import posthtml from "posthtml";
+import posthtmlInclude from "posthtml-include";
 
 /** project root = process.cwd() */
 export const ROOT = process.cwd();
@@ -60,4 +62,23 @@ export function normalizeHtml(html) {
 
 export function absEq(a, b) {
   return path.resolve(a) === path.resolve(b);
+}
+
+export async function processMarkupWithPosthtml(filePath) {
+  const absPath = path.resolve(filePath);
+
+  if (!existsFile(absPath)) {
+    throw new Error(`Markup file not found: ${absPath}`);
+  }
+
+  const html = fs.readFileSync(absPath, "utf8");
+
+  const result = await posthtml([
+    posthtmlInclude({
+      root: path.dirname(absPath),
+      encoding: "utf8",
+    }),
+  ]).process(html);
+
+  return normalizeHtml(result.html);
 }

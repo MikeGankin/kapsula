@@ -119,6 +119,24 @@ public/
 
 Если файла нет — блок пропускается.
 
+### Вложенные части через `<include>`
+
+Для больших секций можно держать один корневой блок и собирать его из частей.
+
+Пример для блока `kapsula`:
+
+```html
+<section class="kapsula">
+  <include src="./kapsula/hero.html"></include>
+  <include src="./kapsula/content.html"></include>
+</section>
+```
+
+- `src` считается относительно текущего HTML-файла
+- поддерживаются вложенные include-файлы
+- include разворачивается через `posthtml` + `posthtml-include`
+- один и тот же posthtml-пайплайн используется и в dev-генерации, и в CMS build
+
 ---
 
 ## Стили (styles)
