@@ -56,6 +56,7 @@ export function restoreScreen({
 
   setActiveProgressStep(hero, restoredScreen.stepName);
   hero.dataset.screen = screenKey;
+  saveCurrentScreen(screenKey);
 
   return true;
 }
