@@ -26,6 +26,37 @@ export function restoreScreen({
   screenRegistry,
   stepsProgress,
 }) {
+  if (screenKey === "hero") {
+    heroScreen.setAttribute("aria-hidden", "false");
+    gsap.set(heroScreen, {
+      autoAlpha: 1,
+      visibility: "visible",
+      pointerEvents: "auto",
+    });
+
+    Object.values(screenRegistry).forEach((screen) => {
+      setScreenState(screen.node, {visible: false, interactive: false});
+      gsap.set(screen.node, {
+        opacity: 0,
+      });
+      gsap.set(screen.elements, {
+        autoAlpha: 0,
+        y: initial.y,
+      });
+    });
+
+    gsap.set(stepsProgress, {
+      autoAlpha: 0,
+      y: initial.y,
+    });
+
+    setActiveProgressStep(hero, "steps");
+    hero.dataset.screen = "hero";
+    saveCurrentScreen("hero");
+
+    return true;
+  }
+
   const restoredScreen = screenRegistry[screenKey];
 
   if (!restoredScreen) return false;

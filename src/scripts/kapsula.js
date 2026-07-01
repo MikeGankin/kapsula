@@ -17,8 +17,8 @@ import {
   transitionBetweenScreens,
 } from "./kapsula/screenTransition.js";
 
-const CTA_HOST_SELECTOR = 'div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"]';
-const LOGO_HOST_SELECTOR = 'div[class*="HeaderTopBar_headerTopBar"] div';
+const LOGO_HOST_SELECTOR = 'div[class*="HeaderMenuBar_container"] > div';
+const HEADER_ICONS_SELECTOR = 'div[class*="HeaderTopBar_iconContainer__"]';
 const INJECTED_LOGO_CLASS = "HeaderLogo_container__MHYx4";
 const INJECTED_LOGO_LINK_CLASS = "HeaderLogo_headerLogo__caiMB";
 const CTA_BUTTON_SELECTOR = ".kapsula-button--header";
@@ -233,15 +233,15 @@ export default async function kapsula() {
   await hostReactAppReady();
 
   const domWatcher = reactDomObserver();
+  const menuHost = await domWatcher.waitElement(LOGO_HOST_SELECTOR);
 
-  if (!document.querySelector(CTA_BUTTON_SELECTOR)) {
-    const ctaButton = createCallToActionButton('Cвязаться с менеджером');
-    const buttonHost = await domWatcher.waitElement(CTA_HOST_SELECTOR);
-    buttonHost.insertAdjacentElement('afterend', ctaButton);
+  const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
+
+  if (headerIcons && headerIcons.parentElement !== menuHost) {
+    menuHost.append(headerIcons);
   }
 
   if (!document.querySelector(SECONDARY_LOGO_SELECTOR)) {
-    const logoHost = await domWatcher.waitElement(LOGO_HOST_SELECTOR);
     const secondaryLogo = createHeaderLogo({
       containerClassName: INJECTED_LOGO_CLASS,
       linkClassName: INJECTED_LOGO_LINK_CLASS,
@@ -254,7 +254,12 @@ export default async function kapsula() {
       },
     });
 
-    logoHost.prepend(secondaryLogo);
+    menuHost.prepend(secondaryLogo);
+  }
+
+  if (!document.querySelector(CTA_BUTTON_SELECTOR)) {
+    const ctaButton = createCallToActionButton('Cвязаться с менеджером');
+    menuHost.append(ctaButton);
   }
 
   animateHero();

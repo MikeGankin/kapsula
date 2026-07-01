@@ -42,6 +42,8 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 0;
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(10px);
   padding: var(--padding-padding_LG, 24px);
 }
 

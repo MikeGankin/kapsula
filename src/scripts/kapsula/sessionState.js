@@ -6,7 +6,7 @@ const URL_SEARCH_KEYS = {
   screen: "kapsulaStep",
   capsule: "kapsulaCapsule",
 };
-const RESTORABLE_SCREENS = new Set(["steps", "styles", "form"]);
+const RESTORABLE_SCREENS = new Set(["hero", "steps", "styles", "form"]);
 
 function readSessionValue(key) {
   try {
