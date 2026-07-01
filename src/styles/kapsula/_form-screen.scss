@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   background: #ffffff;
-  padding: 56px 24px;
+  padding: 56px 0;
 }
 
 .kapsula-form-screen {
@@ -18,7 +18,7 @@
 
 .kapsula-form-screen__layout {
   display: grid;
-  grid-template-columns: 1fr 560px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
   gap: 24px;
   align-items: stretch;
   min-height: 0;
@@ -46,7 +46,7 @@
 .kapsula-form-screen__subtitle {
   margin: 0;
   color: #111111;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.3;
 }
 

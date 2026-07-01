@@ -17,8 +17,9 @@
 
 .kapsula-option-card__marker {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
   border: 1px solid rgba(17, 17, 17, 0.24);
   border-radius: 4px;
   display: block;
@@ -30,13 +31,13 @@
 }
 
 .kapsula-option-card__title {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.2;
 }
 
 .kapsula-option-card__text {
   color: rgba(17, 17, 17, 0.62);
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.35;
 }
 
@@ -46,8 +47,6 @@
 }
 
 .kapsula-option-card.is-selected .kapsula-option-card__marker {
-  width: 20px;
-  height: 20px;
   border: 0;
   background: var(--kapsula-gold);
 }

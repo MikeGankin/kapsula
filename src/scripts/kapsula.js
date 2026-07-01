@@ -46,14 +46,9 @@ function animateHero() {
 
   hero.dataset.animated = "1";
 
-  gsap.set([title, subtitle, startButton], {
+  gsap.set([eyebrow, title, subtitle, startButton], {
     autoAlpha: 0,
     y: initial.contentY,
-  });
-
-  gsap.set(eyebrow, {
-    autoAlpha: 1,
-    y: 0,
   });
 
   gsap.set(backdrop, {
@@ -66,6 +61,11 @@ function animateHero() {
 
   timeline
     .to(backdrop, timelineConfig.backdrop)
+    .to(eyebrow, {
+      autoAlpha: timelineConfig.eyebrow.autoAlpha,
+      y: timelineConfig.eyebrow.y,
+      duration: timelineConfig.eyebrow.duration,
+    }, timelineConfig.eyebrow.at)
     .to(title, {
       autoAlpha: timelineConfig.title.autoAlpha,
       y: timelineConfig.title.y,

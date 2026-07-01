@@ -2,3 +2,15 @@
   max-width: unset !important;
   padding: 0 !important;
 }
+
+#footer-row {
+  display: none;
+}
+
+.row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
+  display: none;
+}
+
+.basic-menu-item:hover {
+  color: #ffffff;
+}

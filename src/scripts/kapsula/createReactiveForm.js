@@ -26,6 +26,8 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   const values$ = new BehaviorSubject({});
   const expandedState$ = new BehaviorSubject({});
   let previousExpandedState = {};
+  let previousValues = {};
+  let previousCapsuleId = null;
 
   const schema$ = selectedCapsule$.pipe(
     map((capsuleId) => getCapsule(capsuleMap, capsuleId)),
@@ -37,6 +39,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   );
 
   combineLatest([schema$, values$, expandedState$]).subscribe(([capsule, values, expandedState]) => {
+    const capsuleId = selectedCapsule$.value;
     titleNode.textContent = capsule.title;
     subtitleNode.textContent = capsule.subtitle;
     imageNode.src = capsule.imageSrc;
@@ -55,9 +58,18 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
       return;
     }
 
-    renderForm(formNode, capsule, nextValues, nextExpandedState);
-    animateFormSections(formNode, nextExpandedState, previousExpandedState);
+    const forceFullRender = previousCapsuleId !== capsuleId;
+
+    if (forceFullRender) {
+      previousExpandedState = nextExpandedState;
+      previousValues = nextValues;
+    }
+
+    renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
+    animateFormSections(formNode, nextExpandedState, previousExpandedState, nextValues, previousValues);
     previousExpandedState = nextExpandedState;
+    previousValues = nextValues;
+    previousCapsuleId = capsuleId;
   });
 
   validity$.subscribe((isValid) => {

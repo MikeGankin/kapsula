@@ -15,6 +15,10 @@
   &:hover {
     background: var(--kapsula-gold-strong);
   }
+
+  &:active {
+    background: var(--kapsula-gold-active);
+  }
 }
 
 .kapsula-button--hero {

@@ -12,7 +12,7 @@
           "title": "Страны",
           "type": "cards",
           "required": true,
-          "multiple": false,
+          "multiple": true,
           "expanded": true,
           "options": [
             {
@@ -210,7 +210,7 @@
           "title": "Страны",
           "type": "cards",
           "required": true,
-          "multiple": false,
+          "multiple": true,
           "expanded": true,
           "options": [
             {

@@ -9,10 +9,10 @@ div[class*="HeaderWidget_headerClientSideDesktop___"] {
 }
 
 .basic-menu-item {
-  color: #ffffff;
+  color: #FFFFFF;
 
   .menu-item-label span {
-    color: #ffffff;
+    color: inherit;
   }
 }
 
@@ -47,4 +47,8 @@ div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
 .kapsula-header-logo__link,
 .kapsula-header-logo__image {
   display: block;
+}
+
+.submenu .custom-link {
+  color: #000;
 }

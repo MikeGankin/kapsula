@@ -4,7 +4,6 @@
   overflow: hidden;
   color: #ffffff;
   isolation: isolate;
-  margin-top: -4px;
 }
 
 .kapsula__backdrop,
@@ -42,10 +41,10 @@
   width: 100%;
   min-height: 100%;
   display: grid;
-  justify-items: center;
+  justify-items: start;
   align-content: center;
   gap: 30px;
-  text-align: center;
+  text-align: left;
 }
 
 .kapsula__eyebrow {
