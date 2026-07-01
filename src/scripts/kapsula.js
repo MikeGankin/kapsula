@@ -4,6 +4,18 @@ import {KAPSULA_ANIMATION} from "./kapsula/animationConfig.js";
 import {createCallToActionButton} from "./kapsula/createCallToActionButton.js";
 import {createHeaderLogo} from "./kapsula/createHeaderLogo.js";
 import {createReactiveForm} from "./kapsula/createReactiveForm.js";
+import {
+  readCurrentScreen,
+  readSelectedCapsule,
+  saveSelectedCapsule,
+} from "./kapsula/sessionState.js";
+import {getScreenNodes} from "./kapsula/screenNodes.js";
+import {buildScreenRegistry} from "./kapsula/screenRegistry.js";
+import {
+  restoreScreen,
+  setActiveProgressStep,
+  transitionBetweenScreens,
+} from "./kapsula/screenTransition.js";
 
 const CTA_HOST_SELECTOR = 'div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"]';
 const LOGO_HOST_SELECTOR = 'div[class*="HeaderTopBar_headerTopBar"] div';
@@ -16,22 +28,6 @@ const STEP_TO_SCREEN = {
   styles: "styles",
   capsule: "form",
 };
-
-function setActiveProgressStep(hero, stepName) {
-  const progressItems = hero.querySelectorAll(KAPSULA_ANIMATION.screenTransition.selectors.progressItem);
-
-  progressItems.forEach((item) => {
-    item.classList.toggle("is-active", item.dataset.kapsulaProgressItem === stepName);
-  });
-}
-
-function setScreenState(screenNode, {visible, interactive}) {
-  if (!screenNode) return;
-
-  screenNode.style.visibility = visible ? "visible" : "hidden";
-  screenNode.style.pointerEvents = interactive ? "auto" : "none";
-  screenNode.setAttribute("aria-hidden", visible ? "false" : "true");
-}
 
 function animateHero() {
   const {selectors, initial, timeline: timelineConfig} = KAPSULA_ANIMATION.heroReveal;
@@ -91,50 +87,38 @@ function setupScreenTransition() {
   const hero = document.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.hero);
   if (!hero || hero.dataset.transitionBound === "1") return;
 
-  const {selectors, initial, timeline: timelineConfig} = KAPSULA_ANIMATION.screenTransition;
-  const heroScreen = hero.querySelector(selectors.heroScreen);
-  const stepsScreen = hero.querySelector(selectors.stepsScreen);
-  const stylesScreen = hero.querySelector(selectors.stylesScreen);
-  const formScreen = hero.querySelector(selectors.formScreen);
-  const stepsTitle = hero.querySelector(selectors.stepsTitle);
-  const stepsCards = hero.querySelectorAll(selectors.stepsCards);
-  const stepsNote = hero.querySelector(selectors.stepsNote);
-  const stepsButton = hero.querySelector(selectors.stepsButton);
-  const stepsProgress = hero.querySelector(selectors.stepsProgress);
-  const stylesTitle = hero.querySelector(selectors.stylesTitle);
-  const styleCards = hero.querySelectorAll(selectors.styleCards);
-  const styleCardButtons = hero.querySelectorAll(selectors.styleCardButtons);
-  const formTitle = hero.querySelector(selectors.formTitle);
-  const formSubtitle = hero.querySelector(selectors.formSubtitle);
-  const formAside = hero.querySelector(selectors.formAside);
-  const formBody = hero.querySelector(selectors.formBody);
-  const progressButtons = hero.querySelectorAll(selectors.progressButton);
-  const startButton = hero.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.startButton);
-  const formExperience = formScreen ? createReactiveForm(formScreen) : null;
+  const {initial, timeline: timelineConfig} = KAPSULA_ANIMATION.screenTransition;
+  const screenNodes = getScreenNodes(hero);
 
-  if (
-    !heroScreen ||
-    !stepsScreen ||
-    !stylesScreen ||
-    !formScreen ||
-    !stepsTitle ||
-    !stepsCards.length ||
-    !stepsNote ||
-    !stepsButton ||
-    !stepsProgress ||
-    !stylesTitle ||
-    !styleCards.length ||
-    !styleCardButtons.length ||
-    !formTitle ||
-    !formSubtitle ||
-    !formAside ||
-    !formBody ||
-    !progressButtons.length ||
-    !startButton ||
-    !formExperience
-  ) {
-    return;
-  }
+  if (!screenNodes) return;
+
+  const {
+    heroScreen,
+    stepsScreen,
+    stylesScreen,
+    formScreen,
+    stepsTitle,
+    stepsCards,
+    stepsNote,
+    stepsButton,
+    stepsProgress,
+    stylesTitle,
+    styleCards,
+    styleCardButtons,
+    formTitle,
+    formSubtitle,
+    formAside,
+    formBody,
+    progressButtons,
+    startButton,
+  } = screenNodes;
+  const formExperience = formScreen
+    ? createReactiveForm(formScreen, {
+      initialCapsuleId: readSelectedCapsule(),
+    })
+    : null;
+
+  if (!formExperience) return;
 
   hero.dataset.transitionBound = "1";
 
@@ -174,113 +158,21 @@ function setupScreenTransition() {
   setActiveProgressStep(hero, "steps");
   hero.dataset.screen = "hero";
 
-  const screenRegistry = {
-    steps: {
-      stepName: "steps",
-      node: stepsScreen,
-      elements: [stepsTitle, ...stepsCards, stepsNote, stepsButton],
-      reveal: timelineConfig.stepsScreen,
-      animations: [
-        {node: stepsTitle, config: timelineConfig.stepsTitle},
-        {node: stepsCards, config: timelineConfig.stepsCards},
-        {node: stepsNote, config: timelineConfig.stepsNote},
-        {node: stepsButton, config: timelineConfig.stepsButton},
-      ],
-    },
-    styles: {
-      stepName: "styles",
-      node: stylesScreen,
-      elements: [stylesTitle, ...styleCards],
-      reveal: timelineConfig.stylesScreen,
-      animations: [
-        {node: stylesTitle, config: timelineConfig.stylesTitle},
-        {node: styleCards, config: timelineConfig.styleCards},
-      ],
-    },
-    form: {
-      stepName: "capsule",
-      node: formScreen,
-      elements: [formTitle, formSubtitle, formAside, formBody],
-      reveal: timelineConfig.formScreen,
-      animations: [
-        {node: formTitle, config: timelineConfig.formTitle},
-        {node: formSubtitle, config: timelineConfig.formSubtitle},
-        {node: formAside, config: timelineConfig.formAside},
-        {node: formBody, config: timelineConfig.formBody},
-      ],
-    },
-  };
-
-  function transitionBetweenScreens(fromKey, toKey) {
-    if (fromKey === toKey) return;
-
-    const fromScreen = fromKey === "hero" ? heroScreen : screenRegistry[fromKey];
-    const toScreen = screenRegistry[toKey];
-
-    if (!toScreen) return;
-
-    if (fromKey === "hero") {
-      heroScreen.setAttribute("aria-hidden", "true");
-    } else {
-      setScreenState(fromScreen.node, {visible: false, interactive: false});
-    }
-
-    setScreenState(toScreen.node, {visible: true, interactive: true});
-    setActiveProgressStep(hero, toScreen.stepName);
-    hero.dataset.screen = toKey;
-
-    const timeline = gsap.timeline({
-      defaults: timelineConfig.defaults,
-    });
-
-    timeline
-      .set(toScreen.node, {
-        visibility: "visible",
-      });
-
-    if (fromKey === "hero") {
-      timeline
-        .to(heroScreen, timelineConfig.heroScreen)
-        .set(heroScreen, {
-          visibility: "hidden",
-          pointerEvents: "none",
-        });
-    } else {
-      timeline
-        .to(fromScreen.node, timelineConfig.heroScreen)
-        .set(fromScreen.node, {
-          visibility: "hidden",
-          pointerEvents: "none",
-        });
-    }
-
-    gsap.set(toScreen.elements, {
-      autoAlpha: 0,
-      y: initial.y,
-    });
-
-    timeline.to(toScreen.node, {
-      opacity: toScreen.reveal.opacity,
-      duration: toScreen.reveal.duration,
-      pointerEvents: "auto",
-    }, toScreen.reveal.at);
-
-    toScreen.animations.forEach(({node, config}) => {
-      timeline.to(node, {
-        autoAlpha: config.autoAlpha,
-        y: config.y,
-        duration: config.duration,
-        ...(config.stagger ? {stagger: config.stagger} : {}),
-      }, config.at);
-    });
-
-    return timeline;
-  }
+  const screenRegistry = buildScreenRegistry(screenNodes, timelineConfig);
+  const transitionToScreen = (fromKey, toKey) => transitionBetweenScreens({
+    fromKey,
+    hero,
+    heroScreen,
+    initial,
+    screenRegistry,
+    timelineConfig,
+    toKey,
+  });
 
   startButton.addEventListener("click", () => {
     if (hero.dataset.screen === "steps") return;
 
-    const timeline = transitionBetweenScreens("hero", "steps");
+    const timeline = transitionToScreen("hero", "steps");
 
     if (timeline) {
       timeline.to(stepsProgress, {
@@ -294,7 +186,7 @@ function setupScreenTransition() {
   stepsButton.addEventListener("click", () => {
     if (hero.dataset.screen === "styles") return;
 
-    transitionBetweenScreens("steps", "styles");
+    transitionToScreen("steps", "styles");
   });
 
   styleCardButtons.forEach((button) => {
@@ -303,11 +195,13 @@ function setupScreenTransition() {
 
       const capsuleId = button.dataset.kapsulaCapsule;
 
-      if (capsuleId) {
-        formExperience.setCapsule(capsuleId);
+      if (capsuleId && formExperience.setCapsule(capsuleId)) {
+        saveSelectedCapsule(capsuleId);
+      } else {
+        return;
       }
 
-      transitionBetweenScreens("styles", "form");
+      transitionToScreen("styles", "form");
     });
   });
 
@@ -321,8 +215,17 @@ function setupScreenTransition() {
         return;
       }
 
-      transitionBetweenScreens(currentScreen, targetScreen);
+      transitionToScreen(currentScreen, targetScreen);
     });
+  });
+
+  restoreScreen({
+    hero,
+    heroScreen,
+    initial,
+    screenKey: readCurrentScreen(),
+    screenRegistry,
+    stepsProgress,
   });
 }
 

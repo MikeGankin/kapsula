@@ -1,0 +1,64 @@
+.kapsula-option-card {
+  min-height: 98px;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 18px;
+  border: 1px solid rgba(17, 17, 17, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+  color: #111111;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  flex: 1;
+}
+
+.kapsula-option-card__marker {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(17, 17, 17, 0.24);
+  border-radius: 4px;
+  display: block;
+}
+
+.kapsula-option-card__content {
+  display: grid;
+  gap: 8px;
+}
+
+.kapsula-option-card__title {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.kapsula-option-card__text {
+  color: rgba(17, 17, 17, 0.62);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.kapsula-option-card.is-selected {
+  border-color: var(--kapsula-gold);
+  border-width: 1px;
+}
+
+.kapsula-option-card.is-selected .kapsula-option-card__marker {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  background: var(--kapsula-gold);
+}
+
+.kapsula-option-card.is-selected .kapsula-option-card__marker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2.97855 8.31344C3.17382 8.11818 3.4904 8.11818 3.68566 8.31344L5.99877 10.6266L12.3119 4.31344C12.5071 4.11818 12.8237 4.11818 13.019 4.31344C13.2143 4.5087 13.2143 4.82528 13.019 5.02055L6.35233 11.6872C6.15706 11.8825 5.84048 11.8825 5.64522 11.6872L2.97855 9.02055C2.78329 8.82528 2.78329 8.5087 2.97855 8.31344Z' fill='white'/%3E%3C/svg%3E");
+  transform: translate(-50%, -50%);
+}

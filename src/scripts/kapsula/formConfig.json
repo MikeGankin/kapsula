@@ -1,360 +1,632 @@
 {
-  "defaultCountry": "ru",
-  "defaultCapsule": "asian",
-  "countries": [
-    {
-      "id": "ru",
-      "label": "Россия",
-      "capsules": {
-        "asian": {
-          "title": "Азиатский стиль",
-          "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
-          "imageSrc": "/kapsula-hero.webp",
-          "imageAlt": "Азиатский стиль",
-          "submitLabel": "Забронировать капсулу",
-          "sections": [
+  "capsules": {
+    "asian": {
+      "title": "Азиатский стиль",
+      "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
+      "imageSrc": "/kapsula-hero.webp",
+      "imageAlt": "Азиатский стиль",
+      "submitLabel": "Забронировать капсулу",
+      "sections": [
+        {
+          "id": "countries",
+          "title": "Страны",
+          "type": "cards",
+          "required": true,
+          "multiple": false,
+          "expanded": true,
+          "options": [
             {
-              "id": "countries",
-              "index": "1.",
-              "title": "Страны",
-              "type": "cards",
-              "required": true,
-              "multiple": false,
-              "expanded": true,
-              "options": [
-                { "value": "thailand", "label": "Таиланд" },
-                { "value": "indonesia", "label": "Индонезия" },
-                { "value": "china", "label": "Китай" }
-              ]
+              "value": "Таиланд",
+              "label": "Таиланд"
             },
             {
-              "id": "hotel-style",
-              "index": "2.",
-              "title": "Стиль отеля",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "villa", "label": "Уединенная вилла" },
-                { "value": "boutique", "label": "Бутик-отель" },
-                { "value": "resort", "label": "Премиальный resort" }
-              ]
+              "value": "Индонезия",
+              "label": "Индонезия"
             },
             {
-              "id": "room-type",
-              "index": "3.",
-              "title": "Тип номера",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "suite", "label": "Suite" },
-                { "value": "pool-villa", "label": "Pool villa" },
-                { "value": "family", "label": "Family room" }
-              ]
-            },
-            {
-              "id": "flight-class",
-              "index": "4.",
-              "title": "Класс перелета",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "economy", "label": "Economy" },
-                { "value": "business", "label": "Business" },
-                { "value": "first", "label": "First" }
-              ]
-            },
-            {
-              "id": "transfer",
-              "index": "5.",
-              "title": "Трансфер",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "private", "label": "Индивидуальный" },
-                { "value": "premium", "label": "Премиум" },
-                { "value": "yacht", "label": "Катер / яхта" }
-              ]
-            },
-            {
-              "id": "gastronomy",
-              "index": "6.",
-              "title": "Гастрономия",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "asian-fine", "label": "Asian fine dining" },
-                { "value": "local", "label": "Локальная кухня" },
-                { "value": "healthy", "label": "Healthy menu" }
-              ]
-            },
-            {
-              "id": "impressions",
-              "index": "7.",
-              "title": "Впечатления",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "spa", "label": "SPA" },
-                { "value": "temples", "label": "Храмы и культура" },
-                { "value": "nature", "label": "Природа и тишина" }
-              ]
-            },
-            {
-              "id": "special",
-              "index": "8.",
-              "title": "Особые пожелания",
-              "type": "textarea",
-              "required": false,
-              "expanded": false,
-              "placeholder": "Например: легкие ткани, спокойная палитра, много воздуха и натуральные фактуры"
+              "value": "Китай",
+              "label": "Китай"
             }
           ]
         },
-        "oriental": {
-          "title": "Восточный стиль",
-          "subtitle": "Струящийся шелк, орнаменты и яркие краски",
-          "imageSrc": "/kapsula-hero.webp",
-          "imageAlt": "Восточный стиль",
-          "submitLabel": "Забронировать капсулу",
-          "sections": [
+        {
+          "id": "hotel-style",
+          "title": "Стиль отеля",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
             {
-              "id": "countries",
-              "index": "1.",
-              "title": "Страны",
-              "type": "cards",
-              "required": true,
-              "multiple": false,
-              "expanded": true,
-              "options": [
-                { "value": "uae", "label": "ОАЭ" },
-                { "value": "oman", "label": "Оман" },
-                { "value": "morocco", "label": "Марокко" }
-              ]
+              "value": "Минимализм",
+              "label": "Минимализм",
+              "description": "Лаконичные цвета и формы, ничего лишнего"
             },
             {
-              "id": "hotel-style",
-              "index": "2.",
-              "title": "Стиль отеля",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "palace", "label": "Palace hotel" },
-                { "value": "riad", "label": "Riad" },
-                { "value": "desert", "label": "Desert retreat" }
-              ]
+              "value": "Бохо",
+              "label": "Бохо",
+              "description": "Этнические мотивы, налет винтажности и живые растения"
             },
             {
-              "id": "room-type",
-              "index": "3.",
-              "title": "Тип номера",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "suite", "label": "Suite" },
-                { "value": "villa", "label": "Villa" },
-                { "value": "club", "label": "Club room" }
-              ]
-            },
-            {
-              "id": "flight-class",
-              "index": "4.",
-              "title": "Класс перелета",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "economy", "label": "Economy" },
-                { "value": "business", "label": "Business" },
-                { "value": "first", "label": "First" }
-              ]
-            },
-            {
-              "id": "transfer",
-              "index": "5.",
-              "title": "Трансфер",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "sedan", "label": "Премиум-седан" },
-                { "value": "suv", "label": "SUV" },
-                { "value": "vip", "label": "VIP meet & greet" }
-              ]
-            },
-            {
-              "id": "gastronomy",
-              "index": "6.",
-              "title": "Гастрономия",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "chef-table", "label": "Chef’s table" },
-                { "value": "rooftop", "label": "Rooftop dining" },
-                { "value": "tea", "label": "Чайные церемонии" }
-              ]
-            },
-            {
-              "id": "impressions",
-              "index": "7.",
-              "title": "Впечатления",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "shopping", "label": "Shopping" },
-                { "value": "spa", "label": "SPA" },
-                { "value": "culture", "label": "Культура и музеи" }
-              ]
-            },
-            {
-              "id": "special",
-              "index": "8.",
-              "title": "Особые пожелания",
-              "type": "textarea",
-              "required": false,
-              "expanded": false,
-              "placeholder": "Например: выразительная палитра, вечерние выходы, шелковые фактуры и акцентные аксессуары"
+              "value": "Хай-тек",
+              "label": "Хай-тек",
+              "description": "Монохромная цветовая гамма, стекло и металл"
             }
           ]
         },
-        "island": {
-          "title": "Островной стиль",
-          "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
-          "imageSrc": "/kapsula-hero.webp",
-          "imageAlt": "Островной стиль",
-          "submitLabel": "Забронировать капсулу",
-          "sections": [
+        {
+          "id": "room-type",
+          "title": "Тип номера",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
             {
-              "id": "countries",
-              "index": "1.",
-              "title": "Страны",
-              "type": "cards",
-              "required": true,
-              "multiple": false,
-              "expanded": true,
-              "options": [
-                { "value": "maldives", "label": "Мальдивы" },
-                { "value": "seychelles", "label": "Сейшелы" },
-                { "value": "mauritius", "label": "Маврикий" }
-              ]
+              "value": "Сьют",
+              "label": "Сьют",
+              "description": "Номер повышенной комфортности"
             },
             {
-              "id": "hotel-style",
-              "index": "2.",
-              "title": "Стиль отеля",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "water-villa", "label": "Water villa" },
-                { "value": "beachfront", "label": "Beachfront" },
-                { "value": "private-island", "label": "Private island" }
-              ]
+              "value": "Семейный номер",
+              "label": "Семейный номер",
+              "description": "Просторный вариант для семей с детьми"
             },
             {
-              "id": "room-type",
-              "index": "3.",
-              "title": "Тип номера",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "villa", "label": "Villa" },
-                { "value": "suite", "label": "Suite" },
-                { "value": "family", "label": "Family villa" }
-              ]
-            },
-            {
-              "id": "flight-class",
-              "index": "4.",
-              "title": "Класс перелета",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "economy", "label": "Economy" },
-                { "value": "business", "label": "Business" },
-                { "value": "first", "label": "First" }
-              ]
-            },
-            {
-              "id": "transfer",
-              "index": "5.",
-              "title": "Трансфер",
-              "type": "cards",
-              "required": false,
-              "multiple": false,
-              "expanded": false,
-              "options": [
-                { "value": "speedboat", "label": "Speedboat" },
-                { "value": "seaplane", "label": "Seaplane" },
-                { "value": "yacht", "label": "Yacht" }
-              ]
-            },
-            {
-              "id": "gastronomy",
-              "index": "6.",
-              "title": "Гастрономия",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "seafood", "label": "Seafood" },
-                { "value": "sunset", "label": "Sunset dinners" },
-                { "value": "healthy", "label": "Healthy menu" }
-              ]
-            },
-            {
-              "id": "impressions",
-              "index": "7.",
-              "title": "Впечатления",
-              "type": "cards",
-              "required": false,
-              "multiple": true,
-              "expanded": false,
-              "options": [
-                { "value": "diving", "label": "Diving" },
-                { "value": "spa", "label": "SPA" },
-                { "value": "cruise", "label": "Sunset cruise" }
-              ]
-            },
-            {
-              "id": "special",
-              "index": "8.",
-              "title": "Особые пожелания",
-              "type": "textarea",
-              "required": false,
-              "expanded": false,
-              "placeholder": "Например: белые ткани, босиком по песку, спокойные оттенки, закаты и ужины у воды"
+              "value": "Вилла",
+              "label": "Вилла",
+              "description": "Пространство для уединённого отдыха"
             }
           ]
+        },
+        {
+          "id": "flight-class",
+          "title": "Класс перелета",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Эконом",
+              "label": "Эконом"
+            },
+            {
+              "value": "Комфорт",
+              "label": "Комфорт"
+            },
+            {
+              "value": "Бизнес",
+              "label": "Бизнес"
+            },
+            {
+              "value": "Без перелета",
+              "label": "Без перелета"
+            }
+          ]
+        },
+        {
+          "id": "transfer",
+          "title": "Трансфер",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Индивидуальный бизнес-трансфер",
+              "label": "Индивидуальный бизнес-трансфер"
+            },
+            {
+              "value": "Индивидуальный ВИП-трансфер",
+              "label": "Индивидуальный ВИП-трансфер"
+            }
+          ]
+        },
+        {
+          "id": "gastronomy",
+          "title": "Гастрономия",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Завтраки",
+              "label": "Завтраки"
+            },
+            {
+              "value": "Полный пансион",
+              "label": "Полный пансион"
+            },
+            {
+              "value": "«Все включено» и рестораны а-ля карт",
+              "label": "«Все включено» и рестораны а-ля карт"
+            },
+            {
+              "value": "Завтраки и ужины",
+              "label": "Завтраки и ужины"
+            },
+            {
+              "value": "«Все включено»",
+              "label": "«Все включено»"
+            },
+            {
+              "value": "Только рестораны а-ля карт",
+              "label": "Только рестораны а-ля карт"
+            }
+          ]
+        },
+        {
+          "id": "impressions",
+          "title": "Впечатления",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Насладиться морем или океаном",
+              "label": "Насладиться морем или океаном",
+              "description": "Дайвинг, снорклинг, прогулки на яхте"
+            },
+            {
+              "value": "Расслабиться",
+              "label": "Расслабиться",
+              "description": "Массаж, уходовые процедуры, йога на рассвете"
+            },
+            {
+              "value": "Погрузиться в культуру",
+              "label": "Погрузиться в культуру",
+              "description": "Экскурсии к историческим местам и живописным локациям."
+            },
+            {
+              "value": "Почувствовать ритм города",
+              "label": "Почувствовать ритм города",
+              "description": "Вечеринки, шопинг, рынки и базары"
+            }
+          ]
+        },
+        {
+          "id": "special",
+          "title": "Особые пожелания",
+          "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
+          "type": "textarea",
+          "required": false,
+          "expanded": false,
+          "placeholder": "Напишите ваши пожелания"
         }
-      }
+      ]
+    },
+    "oriental": {
+      "title": "Восточный стиль",
+      "subtitle": "Струящийся шелк, орнаменты и яркие краски",
+      "imageSrc": "/kapsula-hero.webp",
+      "imageAlt": "Восточный стиль",
+      "submitLabel": "Забронировать капсулу",
+      "sections": [
+        {
+          "id": "countries",
+          "title": "Страны",
+          "type": "cards",
+          "required": true,
+          "multiple": false,
+          "expanded": true,
+          "options": [
+            {
+              "value": "Турция",
+              "label": "Турция"
+            },
+            {
+              "value": "Египет",
+              "label": "Египет"
+            }
+          ]
+        },
+        {
+          "id": "hotel-style",
+          "title": "Стиль отеля",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Минимализм",
+              "label": "Минимализм",
+              "description": "Лаконичные цвета и формы, ничего лишнего"
+            },
+            {
+              "value": "Бохо",
+              "label": "Бохо",
+              "description": "Этнические мотивы, налет винтажности и живые растения"
+            },
+            {
+              "value": "Хай-тек",
+              "label": "Хай-тек",
+              "description": "Монохромная цветовая гамма, стекло и металл"
+            }
+          ]
+        },
+        {
+          "id": "room-type",
+          "title": "Тип номера",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Сьют",
+              "label": "Сьют",
+              "description": "Номер повышенной комфортности"
+            },
+            {
+              "value": "Семейный номер",
+              "label": "Семейный номер",
+              "description": "Просторный вариант для семей с детьми"
+            },
+            {
+              "value": "Вилла",
+              "label": "Вилла",
+              "description": "Пространство для уединённого отдыха"
+            }
+          ]
+        },
+        {
+          "id": "flight-class",
+          "title": "Класс перелета",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Эконом",
+              "label": "Эконом"
+            },
+            {
+              "value": "Комфорт",
+              "label": "Комфорт"
+            },
+            {
+              "value": "Бизнес",
+              "label": "Бизнес"
+            },
+            {
+              "value": "Без перелета",
+              "label": "Без перелета"
+            }
+          ]
+        },
+        {
+          "id": "transfer",
+          "title": "Трансфер",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Индивидуальный бизнес-трансфер",
+              "label": "Индивидуальный бизнес-трансфер"
+            },
+            {
+              "value": "Индивидуальный ВИП-трансфер",
+              "label": "Индивидуальный ВИП-трансфер"
+            },
+            {
+              "value": "Гидросамолет",
+              "label": "Гидросамолет"
+            },
+            {
+              "value": "Вертолет",
+              "label": "Вертолет"
+            }
+          ]
+        },
+        {
+          "id": "gastronomy",
+          "title": "Гастрономия",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Завтраки",
+              "label": "Завтраки"
+            },
+            {
+              "value": "Полный пансион",
+              "label": "Полный пансион"
+            },
+            {
+              "value": "«Все включено» и рестораны а-ля карт",
+              "label": "«Все включено» и рестораны а-ля карт"
+            },
+            {
+              "value": "Завтраки и ужины",
+              "label": "Завтраки и ужины"
+            },
+            {
+              "value": "«Все включено»",
+              "label": "«Все включено»"
+            },
+            {
+              "value": "Только рестораны а-ля карт",
+              "label": "Только рестораны а-ля карт"
+            }
+          ]
+        },
+        {
+          "id": "impressions",
+          "title": "Впечатления",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Насладиться морем или океаном",
+              "label": "Насладиться морем или океаном",
+              "description": "Дайвинг, снорклинг, прогулки на яхте"
+            },
+            {
+              "value": "Расслабиться",
+              "label": "Расслабиться",
+              "description": "Массаж, уходовые процедуры, йога на рассвете"
+            },
+            {
+              "value": "Погрузиться в культуру",
+              "label": "Погрузиться в культуру",
+              "description": "Экскурсии к историческим местам и живописным локациям."
+            },
+            {
+              "value": "Почувствовать ритм города",
+              "label": "Почувствовать ритм города",
+              "description": "Вечеринки, шопинг, рынки и базары"
+            }
+          ]
+        },
+        {
+          "id": "special",
+          "title": "Особые пожелания",
+          "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
+          "type": "textarea",
+          "required": false,
+          "expanded": false,
+          "placeholder": "Напишите ваши пожелания"
+        }
+      ]
+    },
+    "island": {
+      "title": "Островной стиль",
+      "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
+      "imageSrc": "/kapsula-hero.webp",
+      "imageAlt": "Островной стиль",
+      "submitLabel": "Забронировать капсулу",
+      "sections": [
+        {
+          "id": "countries",
+          "title": "Страны",
+          "type": "cards",
+          "required": true,
+          "multiple": true,
+          "expanded": true,
+          "options": [
+            {
+              "value": "Мальдивы",
+              "label": "Мальдивы"
+            },
+            {
+              "value": "Сейшелы",
+              "label": "Сейшелы"
+            },
+            {
+              "value": "Маврикий",
+              "label": "Маврикий"
+            }
+          ]
+        },
+        {
+          "id": "hotel-style",
+          "title": "Стиль отеля",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Минимализм",
+              "label": "Минимализм",
+              "description": "Лаконичные цвета и формы, ничего лишнего"
+            },
+            {
+              "value": "Бохо",
+              "label": "Бохо",
+              "description": "Этнические мотивы, налет винтажности и живые растения"
+            },
+            {
+              "value": "Хай-тек",
+              "label": "Хай-тек",
+              "description": "Монохромная цветовая гамма, стекло и металл"
+            }
+          ]
+        },
+        {
+          "id": "room-type",
+          "title": "Тип номера",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Сьют",
+              "label": "Сьют",
+              "description": "Номер повышенной комфортности"
+            },
+            {
+              "value": "Семейный номер",
+              "label": "Семейный номер",
+              "description": "Просторный вариант для семей с детьми"
+            },
+            {
+              "value": "Вилла",
+              "label": "Вилла",
+              "description": "Пространство для уединённого отдыха"
+            }
+          ]
+        },
+        {
+          "id": "flight-class",
+          "title": "Класс перелета",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Эконом",
+              "label": "Эконом"
+            },
+            {
+              "value": "Комфорт",
+              "label": "Комфорт"
+            },
+            {
+              "value": "Бизнес",
+              "label": "Бизнес"
+            },
+            {
+              "value": "Без перелета",
+              "label": "Без перелета"
+            }
+          ]
+        },
+        {
+          "id": "transfer",
+          "title": "Трансфер",
+          "type": "cards",
+          "required": false,
+          "multiple": false,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Индивидуальный бизнес-трансфер",
+              "label": "Индивидуальный бизнес-трансфер"
+            },
+            {
+              "value": "Индивидуальный ВИП-трансфер",
+              "label": "Индивидуальный ВИП-трансфер"
+            },
+            {
+              "value": "Внутренний перелет",
+              "label": "Внутренний перелет"
+            },
+            {
+              "value": "Гидросамолет",
+              "label": "Гидросамолет",
+              "visibleWhen": {
+                "countries": {
+                  "includes": [
+                    "Мальдивы"
+                  ]
+                }
+              }
+            },
+            {
+              "value": "Вертолет",
+              "label": "Вертолет",
+              "hiddenWhen": {
+                "countries": {
+                  "includes": [
+                    "Мальдивы"
+                  ]
+                }
+              }
+            },
+            {
+              "value": "Скоростной катер",
+              "label": "Скоростной катер"
+            }
+          ]
+        },
+        {
+          "id": "gastronomy",
+          "title": "Гастрономия",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Завтраки",
+              "label": "Завтраки"
+            },
+            {
+              "value": "Полный пансион",
+              "label": "Полный пансион"
+            },
+            {
+              "value": "«Все включено» и рестораны а-ля карт",
+              "label": "«Все включено» и рестораны а-ля карт"
+            },
+            {
+              "value": "Завтраки и ужины",
+              "label": "Завтраки и ужины"
+            },
+            {
+              "value": "«Все включено»",
+              "label": "«Все включено»"
+            },
+            {
+              "value": "Только рестораны а-ля карт",
+              "label": "Только рестораны а-ля карт"
+            }
+          ]
+        },
+        {
+          "id": "impressions",
+          "title": "Впечатления",
+          "type": "cards",
+          "required": false,
+          "multiple": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Насладиться морем или океаном",
+              "label": "Насладиться морем или океаном",
+              "description": "Дайвинг, снорклинг, прогулки на яхте"
+            },
+            {
+              "value": "Расслабиться",
+              "label": "Расслабиться",
+              "description": "Массаж, уходовые процедуры, йога на рассвете"
+            },
+            {
+              "value": "Погрузиться в культуру",
+              "label": "Погрузиться в культуру",
+              "description": "Экскурсии к историческим местам и живописным локациям."
+            },
+            {
+              "value": "Почувствовать ритм города",
+              "label": "Почувствовать ритм города",
+              "description": "Вечеринки, шопинг, рынки и базары"
+            }
+          ]
+        },
+        {
+          "id": "special",
+          "title": "Особые пожелания",
+          "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
+          "type": "textarea",
+          "required": false,
+          "expanded": false,
+          "placeholder": "Напишите ваши пожелания"
+        }
+      ]
     }
-  ]
+  }
 }

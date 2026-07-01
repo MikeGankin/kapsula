@@ -1,15 +1,43 @@
 .kapsula-form {
   width: 100%;
   display: grid;
-  gap: 32px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 24px;
   min-height: 0;
-  overflow-y: auto;
-  padding-right: 12px;
 }
 
 .kapsula-form__sections {
+  align-self: start;
   display: grid;
   gap: 12px;
+  max-height: 100%;
+  overflow-y: scroll;
+  padding-right: 20px;
+  scrollbar-color: rgba(185, 145, 75, 0.72) rgba(17, 17, 17, 0.08);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  min-height: 0;
+}
+
+.kapsula-form__sections::-webkit-scrollbar {
+  width: 8px;
+}
+
+.kapsula-form__sections::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.kapsula-form__sections::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(185, 145, 75, 0.72);
+  background-clip: padding-box;
+}
+
+.kapsula-form__sections::-webkit-scrollbar-thumb:hover {
+  background: var(--kapsula-gold);
+  background-clip: padding-box;
 }
 
 .kapsula-form-section {
@@ -34,6 +62,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 14px;
+  transform-origin: left center;
 }
 
 .kapsula-form-section__index {
@@ -49,13 +78,35 @@
   line-height: 1.2;
 }
 
+.kapsula-form-section__meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+  min-width: 240px;
+  margin-left: auto;
+}
+
+.kapsula-form-section__summary {
+  max-width: 360px;
+  overflow: hidden;
+  color: rgba(17, 17, 17, 0.46);
+  font-size: 18px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kapsula-form-section__summary:empty {
+  display: none;
+}
+
 .kapsula-form-section__chevron {
   width: 10px;
   height: 10px;
   border-right: 1.5px solid currentColor;
   border-bottom: 1.5px solid currentColor;
   transform: rotate(45deg);
-  transition: transform 180ms ease;
 }
 
 .kapsula-form-section.is-expanded .kapsula-form-section__trigger {
@@ -66,72 +117,24 @@
   color: var(--kapsula-gold);
 }
 
-.kapsula-form-section.is-expanded .kapsula-form-section__chevron {
-  transform: rotate(-135deg);
+.kapsula-form-section__panel {
+  overflow: hidden;
 }
 
 .kapsula-form-section__content {
   padding-top: 16px;
 }
 
+.kapsula-form-section__subtitle {
+  max-width: 760px;
+  margin: 0 0 16px;
+  color: rgba(17, 17, 17, 0.62);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
 .kapsula-form-options {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.kapsula-form-option {
-  min-height: 98px;
-  display: grid;
-  align-content: space-between;
-  justify-items: start;
-  gap: 18px;
-  border: 1px solid rgba(17, 17, 17, 0.28);
-  border-radius: 8px;
-  background: #ffffff;
-  padding: 16px;
-  color: #111111;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.kapsula-form-option__marker {
-  position: relative;
-  width: 18px;
-  height: 18px;
-  border: 1px solid rgba(17, 17, 17, 0.24);
-  border-radius: 4px;
-  display: block;
-}
-
-.kapsula-form-option__label {
-  font-size: 18px;
-  line-height: 1.2;
-}
-
-.kapsula-form-option.is-selected {
-  border-color: var(--kapsula-gold);
-  border-width: 1px;
-}
-
-.kapsula-form-option.is-selected .kapsula-form-option__marker {
-  width: 20px;
-  height: 20px;
-  border: 0;
-  background: var(--kapsula-gold);
-}
-
-.kapsula-form-option.is-selected .kapsula-form-option__marker::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  background: center / contain no-repeat
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2.97855 8.31344C3.17382 8.11818 3.4904 8.11818 3.68566 8.31344L5.99877 10.6266L12.3119 4.31344C12.5071 4.11818 12.8237 4.11818 13.019 4.31344C13.2143 4.5087 13.2143 4.82528 13.019 5.02055L6.35233 11.6872C6.15706 11.8825 5.84048 11.8825 5.64522 11.6872L2.97855 9.02055C2.78329 8.82528 2.78329 8.5087 2.97855 8.31344Z' fill='white'/%3E%3C/svg%3E");
-  transform: translate(-50%, -50%);
+  --kapsula-card-grid-gap: 24px;
 }
 
 .kapsula-form-textarea {
@@ -158,22 +161,10 @@
 
 .kapsula-form__actions {
   display: flex;
+  align-items: center;
   justify-content: flex-start;
 }
 
-@media (max-width: 900px) {
-  .kapsula-form {
-    gap: 24px;
-    overflow: visible;
-    padding-right: 0;
-  }
-
-  .kapsula-form-options {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .kapsula-form__actions .kapsula-button {
-    width: 100%;
-  }
+.kapsula-form__submit {
+  align-self: flex-start;
 }

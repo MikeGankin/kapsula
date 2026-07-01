@@ -1,0 +1,6 @@
+.kapsula-card-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--kapsula-card-grid-gap, 24px);
+}

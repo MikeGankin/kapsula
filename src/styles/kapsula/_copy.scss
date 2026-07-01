@@ -24,13 +24,3 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-
-@media (max-width: 900px) {
-  .kapsula-copy__title {
-    font-size: 40px;
-  }
-
-  .kapsula-copy__subtitle {
-    font-size: clamp(16px, 5vw, 24px);
-  }
-}
