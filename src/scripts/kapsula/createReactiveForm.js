@@ -10,11 +10,34 @@ import {validateSchema} from "./formValidation.js";
 import {normalizeFormValues, toggleOptionValue} from "./formValues.js";
 import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
+import {animateFormImageOverlay} from "./animateFormImageOverlay.js";
+
+function getSelectedOverlayImages(capsule, values) {
+  const selectedImages = [];
+
+  for (const section of capsule.sections) {
+    const currentValue = values[section.id];
+    const selectedValues = Array.isArray(currentValue)
+      ? currentValue
+      : [currentValue].filter(Boolean);
+
+    selectedValues.forEach((selectedValue) => {
+      const selectedOption = section.options?.find((option) => option.value === selectedValue);
+
+      if (selectedOption?.overlayImageSrc) {
+        selectedImages.push(selectedOption.overlayImageSrc);
+      }
+    });
+  }
+
+  return selectedImages;
+}
 
 export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   const titleNode = rootNode.querySelector("[data-kapsula-form-title]");
   const subtitleNode = rootNode.querySelector("[data-kapsula-form-subtitle]");
   const imageNode = rootNode.querySelector("[data-kapsula-form-image]");
+  const overlayImageNode = rootNode.querySelector("[data-kapsula-form-overlay-images]");
   const formNode = rootNode.querySelector("[data-kapsula-form]");
 
   if (!titleNode || !subtitleNode || !imageNode || !formNode) {
@@ -66,6 +89,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     }
 
     renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
+    animateFormImageOverlay(overlayImageNode, getSelectedOverlayImages(capsule, nextValues));
     animateFormSections(formNode, nextExpandedState, previousExpandedState, nextValues, previousValues);
     previousExpandedState = nextExpandedState;
     previousValues = nextValues;

@@ -3,7 +3,7 @@
     "asian": {
       "title": "Азиатский стиль",
       "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
-      "imageSrc": "/kapsula-hero.webp",
+      "imageSrc": "/asia-base.webp",
       "imageAlt": "Азиатский стиль",
       "submitLabel": "Забронировать капсулу",
       "sections": [
@@ -17,15 +17,18 @@
           "options": [
             {
               "value": "Таиланд",
-              "label": "Таиланд"
+              "label": "Таиланд",
+              "overlayImageSrc": "/asia-desktop/thailand.webp"
             },
             {
               "value": "Индонезия",
-              "label": "Индонезия"
+              "label": "Индонезия",
+              "overlayImageSrc": "/asia-desktop/bali.webp"
             },
             {
               "value": "Китай",
-              "label": "Китай"
+              "label": "Китай",
+              "overlayImageSrc": "/asia-desktop/china.webp"
             }
           ]
         },
