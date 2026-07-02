@@ -12,6 +12,20 @@ import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay} from "./animateFormImageOverlay.js";
 
+function getAvailableOverlayImages(capsule) {
+  const overlayImages = [];
+
+  capsule.sections.forEach((section) => {
+    section.options?.forEach((option) => {
+      if (option.overlayImageSrc && !overlayImages.includes(option.overlayImageSrc)) {
+        overlayImages.push(option.overlayImageSrc);
+      }
+    });
+  });
+
+  return overlayImages;
+}
+
 function getSelectedOverlayImages(capsule, values) {
   const selectedImages = [];
 
@@ -89,7 +103,10 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     }
 
     renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
-    animateFormImageOverlay(overlayImageNode, getSelectedOverlayImages(capsule, nextValues));
+    animateFormImageOverlay(overlayImageNode, {
+      availableSources: getAvailableOverlayImages(capsule),
+      selectedSources: getSelectedOverlayImages(capsule, nextValues),
+    });
     animateFormSections(formNode, nextExpandedState, previousExpandedState, nextValues, previousValues);
     previousExpandedState = nextExpandedState;
     previousValues = nextValues;

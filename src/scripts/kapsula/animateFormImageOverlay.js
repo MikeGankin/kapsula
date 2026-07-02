@@ -1,10 +1,60 @@
 import {gsap} from "gsap";
 
 const HIDDEN_CLIP = "inset(0 100% 0 0)";
-const VISIBLE_CLIP = "inset(0 0% 0 0)";
-const REVEAL_DURATION = 0.95;
-const RESIZE_DURATION = 0.75;
-const HIDE_DURATION = 0.48;
+const DURATION = 1;
+const EASE = "power2.inOut";
+const PARALLAX_VALUES = [8, 11, 14];
+
+function getParallaxOffset(imageSrc) {
+  const charSum = Array.from(imageSrc).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  return PARALLAX_VALUES[charSum % PARALLAX_VALUES.length];
+}
+
+function formatPercent(value) {
+  return Number(value.toFixed(4));
+}
+
+function getVisibleRange(index, total) {
+  if (total === 1) {
+    return {start: 0, end: 100};
+  }
+
+  if (total === 2) {
+    return index === 0
+      ? {start: 70, end: 100}
+      : {start: 0, end: 70};
+  }
+
+  const ranges = [
+    {start: 75, end: 100},
+    {start: 50, end: 75},
+    {start: 0, end: 50},
+  ];
+
+  return ranges[index] ?? {start: 0, end: 0};
+}
+
+function getSliceClip(index, total) {
+  const {start, end} = getVisibleRange(index, total);
+  const left = formatPercent(start);
+  const right = formatPercent(100 - end);
+
+  return `inset(0 ${right}% 0 ${left}%)`;
+}
+
+function getCollapsedSliceClip(index, total) {
+  const {start} = getVisibleRange(index, total);
+  const left = formatPercent(start);
+
+  return `inset(0 ${100 - left}% 0 ${left}%)`;
+}
+
+function getCollapsedCurrentClip(segmentNode) {
+  const left = Number(segmentNode.dataset.clipStart ?? 0);
+
+  return `inset(0 ${100 - left}% 0 ${left}%)`;
+}
 
 function createSegment(imageSrc) {
   const segmentNode = document.createElement("div");
@@ -12,6 +62,8 @@ function createSegment(imageSrc) {
 
   segmentNode.className = "kapsula-form-screen__overlay-segment";
   segmentNode.dataset.overlayImageSrc = imageSrc;
+  segmentNode.dataset.isVisible = "0";
+  segmentNode.dataset.clipStart = "0";
   imageNode.className = "kapsula-form-screen__overlay-image";
   imageNode.src = imageSrc;
   imageNode.alt = "";
@@ -21,113 +73,106 @@ function createSegment(imageSrc) {
   return segmentNode;
 }
 
-function revealSegment(segmentNode, imageSrc) {
-  if (segmentNode.dataset.overlayImageSrc !== imageSrc) return;
+function getOrCreateSegment(overlayNode, segmentMap, imageSrc) {
+  const existingSegment = segmentMap.get(imageSrc);
 
-  gsap.killTweensOf(segmentNode);
-  gsap.fromTo(segmentNode, {
-    autoAlpha: 1,
+  if (existingSegment) return existingSegment;
+
+  const segmentNode = createSegment(imageSrc);
+
+  gsap.set(segmentNode, {
     clipPath: HIDDEN_CLIP,
-  }, {
-    autoAlpha: 1,
-    clipPath: VISIBLE_CLIP,
-    duration: REVEAL_DURATION,
-    ease: "power3.inOut",
   });
+  overlayNode.append(segmentNode);
+  segmentMap.set(imageSrc, segmentNode);
+
+  return segmentNode;
 }
 
-function setSegmentVisibility(segmentNode, imageSrc) {
+function animateImageParallax(segmentNode) {
   const imageNode = segmentNode.querySelector("img");
 
-  if (!imageNode || imageNode.complete) {
-    revealSegment(segmentNode, imageSrc);
-    return;
-  }
+  if (!imageNode) return;
 
-  imageNode.addEventListener("load", () => revealSegment(segmentNode, imageSrc), {
-    once: true,
+  gsap.killTweensOf(imageNode);
+  gsap.fromTo(imageNode, {
+    x: -getParallaxOffset(segmentNode.dataset.overlayImageSrc ?? ""),
+  }, {
+    x: 0,
+    duration: DURATION,
+    ease: EASE,
+    onComplete: () => {
+      gsap.set(imageNode, {
+        x: 0,
+      });
+    },
   });
 }
 
-export function animateFormImageOverlay(overlayNode, imageSources) {
+function animateSegmentClip(segmentNode, clipPath, {isVisible, start, withParallax = false}) {
+  segmentNode.dataset.isVisible = isVisible ? "1" : "0";
+
+  if (typeof start === "number") {
+    segmentNode.dataset.clipStart = String(start);
+  }
+
+  gsap.killTweensOf(segmentNode);
+
+  if (withParallax) {
+    animateImageParallax(segmentNode);
+  }
+
+  gsap.to(segmentNode, {
+    clipPath,
+    duration: DURATION,
+    ease: EASE,
+  });
+}
+
+export function animateFormImageOverlay(overlayNode, {availableSources = [], selectedSources = []} = {}) {
   if (!overlayNode) return;
 
-  const nextSources = Array.isArray(imageSources) ? imageSources.filter(Boolean) : [];
+  const preparedSources = Array.isArray(availableSources) ? availableSources.filter(Boolean) : [];
+  const nextSources = Array.isArray(selectedSources) ? selectedSources.filter(Boolean) : [];
   const segmentMap = new Map(
     Array.from(overlayNode.children).map((segmentNode) => [segmentNode.dataset.overlayImageSrc, segmentNode]),
   );
 
-  if (!nextSources.length) {
-    gsap.killTweensOf(overlayNode);
-    gsap.to(overlayNode, {
-      autoAlpha: 0,
-      duration: HIDE_DURATION,
-      ease: "power3.inOut",
-      onComplete: () => {
-        overlayNode.replaceChildren();
-      },
-    });
-    return;
-  }
-
-  gsap.killTweensOf(overlayNode);
-  gsap.to(overlayNode, {
-    autoAlpha: 1,
-    duration: 0.24,
-    ease: "power3.out",
+  preparedSources.forEach((imageSrc) => {
+    getOrCreateSegment(overlayNode, segmentMap, imageSrc);
   });
 
-  const nextSegments = [];
+  const nextSourceSet = new Set(nextSources);
 
-  nextSources.forEach((imageSrc) => {
-    let segmentNode = segmentMap.get(imageSrc);
-    const isNewSegment = !segmentNode;
+  segmentMap.forEach((segmentNode, imageSrc) => {
+    if (nextSourceSet.has(imageSrc)) return;
 
-    if (!segmentNode) {
-      segmentNode = createSegment(imageSrc);
+    const clipPath = segmentNode.dataset.isVisible === "1"
+      ? getCollapsedCurrentClip(segmentNode)
+      : HIDDEN_CLIP;
+
+    animateSegmentClip(segmentNode, clipPath, {
+      isVisible: false,
+    });
+  });
+
+  nextSources.forEach((imageSrc, index) => {
+    const segmentNode = getOrCreateSegment(overlayNode, segmentMap, imageSrc);
+    const targetClip = getSliceClip(index, nextSources.length);
+    const {start} = getVisibleRange(index, nextSources.length);
+    const previousStart = Number(segmentNode.dataset.clipStart ?? 0);
+    const wasVisible = segmentNode.dataset.isVisible === "1";
+
+    if (!wasVisible) {
       gsap.set(segmentNode, {
-        autoAlpha: 0,
-        clipPath: HIDDEN_CLIP,
-        flexBasis: 0,
+        clipPath: getCollapsedSliceClip(index, nextSources.length),
       });
     }
 
-    overlayNode.append(segmentNode);
-    nextSegments.push(segmentNode);
-    segmentMap.delete(imageSrc);
-
-    if (isNewSegment) {
-      setSegmentVisibility(segmentNode, imageSrc);
-    } else {
-      gsap.to(segmentNode, {
-        clipPath: VISIBLE_CLIP,
-        autoAlpha: 1,
-        duration: RESIZE_DURATION,
-        ease: "power3.inOut",
-      });
-    }
-  });
-
-  const segmentWidth = `${100 / nextSources.length}%`;
-
-  nextSegments.forEach((segmentNode) => {
-    gsap.to(segmentNode, {
-      flexBasis: segmentWidth,
-      duration: RESIZE_DURATION,
-      ease: "power3.inOut",
-    });
-  });
-
-  segmentMap.forEach((segmentNode) => {
-    gsap.killTweensOf(segmentNode);
-    gsap.to(segmentNode, {
-      autoAlpha: 0,
-      flexBasis: 0,
-      duration: HIDE_DURATION,
-      ease: "power3.inOut",
-      onComplete: () => {
-        segmentNode.remove();
-      },
+    animateSegmentClip(segmentNode, targetClip, {
+      isVisible: true,
+      start,
+      withParallax: !wasVisible || start > previousStart,
     });
   });
 }
