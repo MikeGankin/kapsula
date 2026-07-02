@@ -1,6 +1,5 @@
 .kapsula {
   position: relative;
-  min-height: calc(100vh - 56px);
   overflow: hidden;
   color: #ffffff;
   isolation: isolate;
@@ -36,7 +35,7 @@
 .kapsula__inner {
   position: relative;
   z-index: 1;
-  min-height: calc(100svh - 133px);
+  height: calc(100vh - 56px);
   display: grid;
   place-items: center;
   padding: 56px 24px 72px;
