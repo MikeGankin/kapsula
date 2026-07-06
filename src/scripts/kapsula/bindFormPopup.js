@@ -208,7 +208,7 @@ export function bindFormPopup(formExperience, hero) {
     const submittedAt = new Date();
     const payload = {
       ...snapshot.values,
-      elite: "Elite",
+      segment: "Elite",
       submittedAt: formatSubmittedAt(submittedAt),
       pagePath: window.location.pathname,
       contact: {
