@@ -1,4 +1,4 @@
-import formConfig from "./formConfig.json";
+import formConfig from "../formConfig.json";
 
 export function buildCapsuleMap(config = formConfig) {
   return new Map(Object.entries(config.capsules ?? {}));

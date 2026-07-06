@@ -1,5 +1,6 @@
 .kapsula-option-card {
   min-height: 98px;
+  position: relative;
   display: grid;
   align-content: start;
   justify-items: start;
@@ -13,6 +14,19 @@
   text-align: left;
   cursor: pointer;
   flex: 1;
+}
+
+.kapsula-form-option__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .kapsula-option-card__marker {

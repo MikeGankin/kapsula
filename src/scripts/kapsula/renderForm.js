@@ -8,35 +8,53 @@ function isSelected(section, currentValue, optionValue) {
   return currentValue === optionValue;
 }
 
+function getOptionInputType(section) {
+  return section.multiple ? "checkbox" : "radio";
+}
+
 function renderOptions(section, currentValue, values) {
   return getVisibleOptions(section, values).map((option) => `
-    <button
+    <label
       class="kapsula-option-card kapsula-form-option${isSelected(section, currentValue, option.value) ? " is-selected" : ""}"
-      type="button"
       data-kapsula-option
       data-section-id="${section.id}"
       data-option-value="${option.value}"
-      aria-pressed="${isSelected(section, currentValue, option.value) ? "true" : "false"}"
     >
+      <input
+        class="kapsula-form-option__input"
+        type="${getOptionInputType(section)}"
+        name="${section.id}"
+        value="${option.value}"
+        data-kapsula-choice
+        data-section-id="${section.id}"
+        ${isSelected(section, currentValue, option.value) ? "checked" : ""}
+      >
       <span class="kapsula-option-card__marker" aria-hidden="true"></span>
       <span class="kapsula-option-card__content">
         <span class="kapsula-option-card__title">${option.label}</span>
         ${option.description ? `<span class="kapsula-option-card__text">${option.description}</span>` : ""}
       </span>
-    </button>
+    </label>
   `).join("");
 }
 
 function createOptionButtonNode(section, option, isOptionSelected) {
-  const optionButton = document.createElement("button");
+  const optionButton = document.createElement("label");
   optionButton.className = `kapsula-option-card kapsula-form-option${isOptionSelected ? " is-selected" : ""}`;
-  optionButton.type = "button";
   optionButton.dataset.kapsulaOption = "";
   optionButton.dataset.sectionId = section.id;
   optionButton.dataset.optionValue = option.value;
-  optionButton.setAttribute("aria-pressed", isOptionSelected ? "true" : "false");
 
   optionButton.innerHTML = `
+    <input
+      class="kapsula-form-option__input"
+      type="${getOptionInputType(section)}"
+      name="${section.id}"
+      value="${option.value}"
+      data-kapsula-choice
+      data-section-id="${section.id}"
+      ${isOptionSelected ? "checked" : ""}
+    >
     <span class="kapsula-option-card__marker" aria-hidden="true"></span>
     <span class="kapsula-option-card__content">
       <span class="kapsula-option-card__title">${option.label}</span>
@@ -50,7 +68,7 @@ function createOptionButtonNode(section, option, isOptionSelected) {
 function renderSectionSubtitle(section) {
   if (!section.subtitle) return "";
 
-  return `<p class="kapsula-form-section__subtitle">${section.subtitle}</p>`;
+  return `<p class="kapsula-form-section__subtitle" id="kapsula-section-subtitle-${section.id}">${section.subtitle}</p>`;
 }
 
 function getSelectedOptionLabels(section, currentValue, values) {
@@ -91,43 +109,54 @@ function renderSectionSummary(section, currentValue, values) {
 
 function renderSectionBody(section, currentValue, values) {
   if (section.type === "textarea") {
+    const textareaId = `kapsula-field-${section.id}`;
+    const subtitleId = section.subtitle ? `kapsula-section-subtitle-${section.id}` : "";
+
     return `
       <div class="kapsula-form-section__content">
         ${renderSectionSubtitle(section)}
+        <label class="kapsula-form-section__label sr-only" for="${textareaId}">${section.title}</label>
         <textarea
           class="kapsula-form-textarea"
-          id="kapsula-field-${section.id}"
+          id="${textareaId}"
           name="${section.id}"
           data-kapsula-textarea
           data-section-id="${section.id}"
           placeholder="${section.placeholder ?? ""}"
+          ${subtitleId ? `aria-describedby="${subtitleId}"` : ""}
         >${currentValue ?? ""}</textarea>
       </div>
     `;
   }
 
   return `
-    <div class="kapsula-form-section__content">
+    <fieldset class="kapsula-form-section__content kapsula-form-section__fieldset">
+      <legend class="kapsula-form-section__legend">${section.title}</legend>
       ${renderSectionSubtitle(section)}
       <div class="kapsula-card-grid kapsula-form-options" data-kapsula-form-options>
         ${renderOptions(section, currentValue, values)}
       </div>
-    </div>
+    </fieldset>
   `;
 }
 
 function renderSection(section, currentValue, values, isExpanded, index) {
+  const triggerId = `kapsula-section-trigger-${section.id}`;
+  const panelId = `kapsula-section-panel-${section.id}`;
+
   return `
     <section
       class="kapsula-form-section${isExpanded ? " is-expanded" : ""}"
       data-kapsula-rendered-section="${section.id}"
     >
       <button
+        id="${triggerId}"
         class="kapsula-form-section__trigger"
         type="button"
         data-kapsula-section-trigger
         data-section-id="${section.id}"
         aria-expanded="${isExpanded ? "true" : "false"}"
+        aria-controls="${panelId}"
       >
         <span class="kapsula-form-section__heading">
           <span class="kapsula-form-section__index">${index + 1}.</span>
@@ -142,7 +171,12 @@ function renderSection(section, currentValue, values, isExpanded, index) {
           </span>
         </span>
       </button>
-      <div class="kapsula-form-section__panel">
+      <div
+        id="${panelId}"
+        class="kapsula-form-section__panel"
+        role="region"
+        aria-labelledby="${triggerId}"
+      >
         <div class="kapsula-form-section__panel-inner">
           ${renderSectionBody(section, currentValue, values)}
         </div>
@@ -186,8 +220,15 @@ function ensureSectionSummary(sectionNode, section, currentValue, values) {
 function syncOptionButtonNode(optionButton, section, option, isOptionSelected) {
   optionButton.dataset.sectionId = section.id;
   optionButton.dataset.optionValue = option.value;
-  optionButton.setAttribute("aria-pressed", isOptionSelected ? "true" : "false");
   optionButton.classList.toggle("is-selected", isOptionSelected);
+
+  const inputNode = optionButton.querySelector("[data-kapsula-choice]");
+
+  if (!inputNode) return;
+
+  inputNode.name = section.id;
+  inputNode.value = option.value;
+  inputNode.checked = isOptionSelected;
 }
 
 function syncOptionsNode(optionsNode, section, currentValue, values) {
@@ -250,7 +291,7 @@ function renderFormShell(formNode, schema, values, expandedState) {
       ${renderSections(schema, values, expandedState)}
     </div>
     <div class="kapsula-form__actions">
-      <button class="kapsula-button kapsula-form__submit" type="submit">${schema.submitLabel}</button>
+      <button class="kapsula-button kapsula-form__trigger" type="button">${schema.submitLabel}</button>
     </div>
   `;
 }
@@ -273,7 +314,7 @@ export function renderForm(formNode, schema, values, expandedState, {forceFull =
     syncSectionNode(sectionNode, section, currentValue, values, isExpanded);
   });
 
-  const submitButton = formNode.querySelector(".kapsula-form__submit");
+  const submitButton = formNode.querySelector(".kapsula-form__trigger");
 
   if (submitButton && submitButton.textContent !== schema.submitLabel) {
     submitButton.textContent = schema.submitLabel;

@@ -4,7 +4,7 @@
       "title": "Азиатский стиль",
       "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
       "imageSrc": "/asia-base.webp",
-      "imageAlt": "Азиатский стиль",
+      "imageAlt": "Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей",
       "submitLabel": "Забронировать капсулу",
       "sections": [
         {
@@ -37,23 +37,27 @@
           "title": "Стиль отеля",
           "type": "cards",
           "required": false,
-          "multiple": false,
+          "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Минимализм",
               "label": "Минимализм",
-              "description": "Лаконичные цвета и формы, ничего лишнего"
+              "description": "Лаконичные цвета и формы, ничего лишнего",
+              "overlayImageSrc": "/asia-desktop/minimal.webp"
             },
             {
               "value": "Бохо",
               "label": "Бохо",
-              "description": "Этнические мотивы, налет винтажности и живые растения"
+              "description": "Этнические мотивы, налет винтажности и живые растения",
+              "overlayImageSrc": "/asia-desktop/boho.webp"
             },
             {
               "value": "Хай-тек",
               "label": "Хай-тек",
-              "description": "Монохромная цветовая гамма, стекло и металл"
+              "description": "Монохромная цветовая гамма, стекло и металл",
+              "overlayImageSrc": "/asia-desktop/high-tech.webp"
             }
           ]
         },
@@ -63,22 +67,26 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Сьют",
               "label": "Сьют",
-              "description": "Номер повышенной комфортности"
+              "description": "Номер повышенной комфортности",
+              "overlayImageSrc": "/asia-desktop/suite.webp"
             },
             {
               "value": "Семейный номер",
               "label": "Семейный номер",
-              "description": "Просторный вариант для семей с детьми"
+              "description": "Просторный вариант для семей с детьми",
+              "overlayImageSrc": "/asia-desktop/family.webp"
             },
             {
               "value": "Вилла",
               "label": "Вилла",
-              "description": "Пространство для уединённого отдыха"
+              "description": "Пространство для уединённого отдыха",
+              "overlayImageSrc": "/asia-desktop/villa.webp"
             }
           ]
         },
@@ -88,23 +96,29 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Эконом",
-              "label": "Эконом"
+              "label": "Эконом",
+              "overlayImageSrc": "/asia-desktop/flight.webp"
             },
             {
               "value": "Комфорт",
-              "label": "Комфорт"
+              "label": "Комфорт",
+              "overlayImageSrc": "/asia-desktop/flight.webp"
             },
             {
               "value": "Бизнес",
-              "label": "Бизнес"
+              "label": "Бизнес",
+              "overlayImageSrc": "/asia-desktop/flight.webp"
             },
             {
               "value": "Без перелета",
-              "label": "Без перелета"
+              "label": "Без перелета",
+              "overlayImageSrc": "/asia-desktop/flight.webp"
             }
           ]
         },
@@ -114,15 +128,19 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Индивидуальный бизнес-трансфер",
-              "label": "Индивидуальный бизнес-трансфер"
+              "label": "Индивидуальный бизнес-трансфер",
+              "overlayImageSrc": "/asia-desktop/transfer.webp"
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
-              "label": "Индивидуальный ВИП-трансфер"
+              "label": "Индивидуальный ВИП-трансфер",
+              "overlayImageSrc": "/asia-desktop/transfer.webp"
             }
           ]
         },
@@ -132,31 +150,39 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Завтраки",
-              "label": "Завтраки"
+              "label": "Завтраки",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             },
             {
               "value": "Полный пансион",
-              "label": "Полный пансион"
+              "label": "Полный пансион",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             },
             {
               "value": "«Все включено» и рестораны а-ля карт",
-              "label": "«Все включено» и рестораны а-ля карт"
+              "label": "«Все включено» и рестораны а-ля карт",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             },
             {
               "value": "Завтраки и ужины",
-              "label": "Завтраки и ужины"
+              "label": "Завтраки и ужины",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             },
             {
               "value": "«Все включено»",
-              "label": "«Все включено»"
+              "label": "«Все включено»",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             },
             {
               "value": "Только рестораны а-ля карт",
-              "label": "Только рестораны а-ля карт"
+              "label": "Только рестораны а-ля карт",
+              "overlayImageSrc": "/asia-desktop/food.webp"
             }
           ]
         },
@@ -166,34 +192,39 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Насладиться морем или океаном",
               "label": "Насладиться морем или океаном",
-              "description": "Дайвинг, снорклинг, прогулки на яхте"
+              "description": "Дайвинг, снорклинг, прогулки на яхте",
+              "overlayImageSrc": "/asia-desktop/sea.webp"
             },
             {
               "value": "Расслабиться",
               "label": "Расслабиться",
-              "description": "Массаж, уходовые процедуры, йога на рассвете"
+              "description": "Массаж, уходовые процедуры, йога на рассвете",
+              "overlayImageSrc": "/asia-desktop/spa.webp"
             },
             {
               "value": "Погрузиться в культуру",
               "label": "Погрузиться в культуру",
-              "description": "Экскурсии к историческим местам и живописным локациям."
+              "description": "Экскурсии к историческим местам и живописным локациям.",
+              "overlayImageSrc": "/asia-desktop/nature.webp"
             },
             {
               "value": "Почувствовать ритм города",
               "label": "Почувствовать ритм города",
-              "description": "Вечеринки, шопинг, рынки и базары"
+              "description": "Вечеринки, шопинг, рынки и базары",
+              "overlayImageSrc": "/asia-desktop/city.webp"
             }
           ]
         },
         {
           "id": "special",
           "title": "Особые пожелания",
-          "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
+          "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев,<br> если желаете дополнить её&nbsp;тем, что имеет особое значение для вас.",
           "type": "textarea",
           "required": false,
           "expanded": false,
@@ -205,7 +236,7 @@
       "title": "Восточный стиль",
       "subtitle": "Струящийся шелк, орнаменты и яркие краски",
       "imageSrc": "/kapsula-hero.webp",
-      "imageAlt": "Восточный стиль",
+      "imageAlt": "Семья отдыхает у бассейна курорта с павильонами над водой",
       "submitLabel": "Забронировать капсулу",
       "sections": [
         {
@@ -218,11 +249,13 @@
           "options": [
             {
               "value": "Турция",
-              "label": "Турция"
+              "label": "Турция",
+              "overlayImageSrc": "/oriental-desktop/turkey.webp"
             },
             {
               "value": "Египет",
-              "label": "Египет"
+              "label": "Египет",
+              "overlayImageSrc": "/oriental-desktop/egypt.webp"
             }
           ]
         },
@@ -231,23 +264,27 @@
           "title": "Стиль отеля",
           "type": "cards",
           "required": false,
-          "multiple": false,
+          "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Минимализм",
               "label": "Минимализм",
-              "description": "Лаконичные цвета и формы, ничего лишнего"
+              "description": "Лаконичные цвета и формы, ничего лишнего",
+              "overlayImageSrc": "/oriental-desktop/minimal.webp"
             },
             {
               "value": "Бохо",
               "label": "Бохо",
-              "description": "Этнические мотивы, налет винтажности и живые растения"
+              "description": "Этнические мотивы, налет винтажности и живые растения",
+              "overlayImageSrc": "/oriental-desktop/boho.webp"
             },
             {
               "value": "Хай-тек",
               "label": "Хай-тек",
-              "description": "Монохромная цветовая гамма, стекло и металл"
+              "description": "Монохромная цветовая гамма, стекло и металл",
+              "overlayImageSrc": "/oriental-desktop/high-tech.webp"
             }
           ]
         },
@@ -257,22 +294,26 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Сьют",
               "label": "Сьют",
-              "description": "Номер повышенной комфортности"
+              "description": "Номер повышенной комфортности",
+              "overlayImageSrc": "/oriental-desktop/suite.webp"
             },
             {
               "value": "Семейный номер",
               "label": "Семейный номер",
-              "description": "Просторный вариант для семей с детьми"
+              "description": "Просторный вариант для семей с детьми",
+              "overlayImageSrc": "/oriental-desktop/family.webp"
             },
             {
               "value": "Вилла",
               "label": "Вилла",
-              "description": "Пространство для уединённого отдыха"
+              "description": "Пространство для уединённого отдыха",
+              "overlayImageSrc": "/oriental-desktop/villa.webp"
             }
           ]
         },
@@ -282,23 +323,29 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Эконом",
-              "label": "Эконом"
+              "label": "Эконом",
+              "overlayImageSrc": "/oriental-desktop/flight.webp"
             },
             {
               "value": "Комфорт",
-              "label": "Комфорт"
+              "label": "Комфорт",
+              "overlayImageSrc": "/oriental-desktop/flight.webp"
             },
             {
               "value": "Бизнес",
-              "label": "Бизнес"
+              "label": "Бизнес",
+              "overlayImageSrc": "/oriental-desktop/flight.webp"
             },
             {
               "value": "Без перелета",
-              "label": "Без перелета"
+              "label": "Без перелета",
+              "overlayImageSrc": "/oriental-desktop/flight.webp"
             }
           ]
         },
@@ -308,23 +355,29 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Индивидуальный бизнес-трансфер",
-              "label": "Индивидуальный бизнес-трансфер"
+              "label": "Индивидуальный бизнес-трансфер",
+              "overlayImageSrc": "/oriental-desktop/transfer.webp"
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
-              "label": "Индивидуальный ВИП-трансфер"
+              "label": "Индивидуальный ВИП-трансфер",
+              "overlayImageSrc": "/oriental-desktop/transfer.webp"
             },
             {
               "value": "Гидросамолет",
-              "label": "Гидросамолет"
+              "label": "Гидросамолет",
+              "overlayImageSrc": "/oriental-desktop/transfer.webp"
             },
             {
               "value": "Вертолет",
-              "label": "Вертолет"
+              "label": "Вертолет",
+              "overlayImageSrc": "/oriental-desktop/transfer.webp"
             }
           ]
         },
@@ -334,31 +387,39 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Завтраки",
-              "label": "Завтраки"
+              "label": "Завтраки",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             },
             {
               "value": "Полный пансион",
-              "label": "Полный пансион"
+              "label": "Полный пансион",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             },
             {
               "value": "«Все включено» и рестораны а-ля карт",
-              "label": "«Все включено» и рестораны а-ля карт"
+              "label": "«Все включено» и рестораны а-ля карт",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             },
             {
               "value": "Завтраки и ужины",
-              "label": "Завтраки и ужины"
+              "label": "Завтраки и ужины",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             },
             {
               "value": "«Все включено»",
-              "label": "«Все включено»"
+              "label": "«Все включено»",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             },
             {
               "value": "Только рестораны а-ля карт",
-              "label": "Только рестораны а-ля карт"
+              "label": "Только рестораны а-ля карт",
+              "overlayImageSrc": "/oriental-desktop/food.webp"
             }
           ]
         },
@@ -368,27 +429,32 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Насладиться морем или океаном",
               "label": "Насладиться морем или океаном",
-              "description": "Дайвинг, снорклинг, прогулки на яхте"
+              "description": "Дайвинг, снорклинг, прогулки на яхте",
+              "overlayImageSrc": "/oriental-desktop/sea.webp"
             },
             {
               "value": "Расслабиться",
               "label": "Расслабиться",
-              "description": "Массаж, уходовые процедуры, йога на рассвете"
+              "description": "Массаж, уходовые процедуры, йога на рассвете",
+              "overlayImageSrc": "/oriental-desktop/spa.webp"
             },
             {
               "value": "Погрузиться в культуру",
               "label": "Погрузиться в культуру",
-              "description": "Экскурсии к историческим местам и живописным локациям."
+              "description": "Экскурсии к историческим местам и живописным локациям.",
+              "overlayImageSrc": "/oriental-desktop/nature.webp"
             },
             {
               "value": "Почувствовать ритм города",
               "label": "Почувствовать ритм города",
-              "description": "Вечеринки, шопинг, рынки и базары"
+              "description": "Вечеринки, шопинг, рынки и базары",
+              "overlayImageSrc": "/oriental-desktop/city.webp"
             }
           ]
         },
@@ -407,7 +473,7 @@
       "title": "Островной стиль",
       "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
       "imageSrc": "/kapsula-hero.webp",
-      "imageAlt": "Островной стиль",
+      "imageAlt": "Семья отдыхает у бассейна курорта с павильонами над водой",
       "submitLabel": "Забронировать капсулу",
       "sections": [
         {
@@ -420,15 +486,18 @@
           "options": [
             {
               "value": "Мальдивы",
-              "label": "Мальдивы"
+              "label": "Мальдивы",
+              "overlayImageSrc": "/island-desktop/maldives.webp"
             },
             {
               "value": "Сейшелы",
-              "label": "Сейшелы"
+              "label": "Сейшелы",
+              "overlayImageSrc": "/island-desktop/seychelles.webp"
             },
             {
               "value": "Маврикий",
-              "label": "Маврикий"
+              "label": "Маврикий",
+              "overlayImageSrc": "/island-desktop/mauritius.webp"
             }
           ]
         },
@@ -437,23 +506,27 @@
           "title": "Стиль отеля",
           "type": "cards",
           "required": false,
-          "multiple": false,
+          "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Минимализм",
               "label": "Минимализм",
-              "description": "Лаконичные цвета и формы, ничего лишнего"
+              "description": "Лаконичные цвета и формы, ничего лишнего",
+              "overlayImageSrc": "/island-desktop/minimal.webp"
             },
             {
               "value": "Бохо",
               "label": "Бохо",
-              "description": "Этнические мотивы, налет винтажности и живые растения"
+              "description": "Этнические мотивы, налет винтажности и живые растения",
+              "overlayImageSrc": "/island-desktop/boho.webp"
             },
             {
               "value": "Хай-тек",
               "label": "Хай-тек",
-              "description": "Монохромная цветовая гамма, стекло и металл"
+              "description": "Монохромная цветовая гамма, стекло и металл",
+              "overlayImageSrc": "/island-desktop/high-tech.webp"
             }
           ]
         },
@@ -463,22 +536,26 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Сьют",
               "label": "Сьют",
-              "description": "Номер повышенной комфортности"
+              "description": "Номер повышенной комфортности",
+              "overlayImageSrc": "/island-desktop/suite.webp"
             },
             {
               "value": "Семейный номер",
               "label": "Семейный номер",
-              "description": "Просторный вариант для семей с детьми"
+              "description": "Просторный вариант для семей с детьми",
+              "overlayImageSrc": "/island-desktop/family.webp"
             },
             {
               "value": "Вилла",
               "label": "Вилла",
-              "description": "Пространство для уединённого отдыха"
+              "description": "Пространство для уединённого отдыха",
+              "overlayImageSrc": "/island-desktop/villa.webp"
             }
           ]
         },
@@ -488,23 +565,29 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Эконом",
-              "label": "Эконом"
+              "label": "Эконом",
+              "overlayImageSrc": "/island-desktop/flight.webp"
             },
             {
               "value": "Комфорт",
-              "label": "Комфорт"
+              "label": "Комфорт",
+              "overlayImageSrc": "/island-desktop/flight.webp"
             },
             {
               "value": "Бизнес",
-              "label": "Бизнес"
+              "label": "Бизнес",
+              "overlayImageSrc": "/island-desktop/flight.webp"
             },
             {
               "value": "Без перелета",
-              "label": "Без перелета"
+              "label": "Без перелета",
+              "overlayImageSrc": "/island-desktop/flight.webp"
             }
           ]
         },
@@ -514,23 +597,29 @@
           "type": "cards",
           "required": false,
           "multiple": false,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Индивидуальный бизнес-трансфер",
-              "label": "Индивидуальный бизнес-трансфер"
+              "label": "Индивидуальный бизнес-трансфер",
+              "overlayImageSrc": "/island-desktop/transfer.webp"
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
-              "label": "Индивидуальный ВИП-трансфер"
+              "label": "Индивидуальный ВИП-трансфер",
+              "overlayImageSrc": "/island-desktop/transfer.webp"
             },
             {
               "value": "Внутренний перелет",
-              "label": "Внутренний перелет"
+              "label": "Внутренний перелет",
+              "overlayImageSrc": "/island-desktop/transfer.webp"
             },
             {
               "value": "Гидросамолет",
               "label": "Гидросамолет",
+              "overlayImageSrc": "/island-desktop/transfer.webp",
               "visibleWhen": {
                 "countries": {
                   "includes": [
@@ -542,6 +631,7 @@
             {
               "value": "Вертолет",
               "label": "Вертолет",
+              "overlayImageSrc": "/island-desktop/transfer.webp",
               "hiddenWhen": {
                 "countries": {
                   "includes": [
@@ -552,7 +642,8 @@
             },
             {
               "value": "Скоростной катер",
-              "label": "Скоростной катер"
+              "label": "Скоростной катер",
+              "overlayImageSrc": "/island-desktop/transfer.webp"
             }
           ]
         },
@@ -562,31 +653,39 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
+          "overlayAnimation": "single",
           "expanded": false,
           "options": [
             {
               "value": "Завтраки",
-              "label": "Завтраки"
+              "label": "Завтраки",
+              "overlayImageSrc": "/island-desktop/food.webp"
             },
             {
               "value": "Полный пансион",
-              "label": "Полный пансион"
+              "label": "Полный пансион",
+              "overlayImageSrc": "/island-desktop/food.webp"
             },
             {
               "value": "«Все включено» и рестораны а-ля карт",
-              "label": "«Все включено» и рестораны а-ля карт"
+              "label": "«Все включено» и рестораны а-ля карт",
+              "overlayImageSrc": "/island-desktop/food.webp"
             },
             {
               "value": "Завтраки и ужины",
-              "label": "Завтраки и ужины"
+              "label": "Завтраки и ужины",
+              "overlayImageSrc": "/island-desktop/food.webp"
             },
             {
               "value": "«Все включено»",
-              "label": "«Все включено»"
+              "label": "«Все включено»",
+              "overlayImageSrc": "/island-desktop/food.webp"
             },
             {
               "value": "Только рестораны а-ля карт",
-              "label": "Только рестораны а-ля карт"
+              "label": "Только рестораны а-ля карт",
+              "overlayImageSrc": "/island-desktop/food.webp"
             }
           ]
         },
@@ -596,27 +695,32 @@
           "type": "cards",
           "required": false,
           "multiple": true,
+          "overlayPreviewOnEnter": true,
           "expanded": false,
           "options": [
             {
               "value": "Насладиться морем или океаном",
               "label": "Насладиться морем или океаном",
-              "description": "Дайвинг, снорклинг, прогулки на яхте"
+              "description": "Дайвинг, снорклинг, прогулки на яхте",
+              "overlayImageSrc": "/island-desktop/sea.webp"
             },
             {
               "value": "Расслабиться",
               "label": "Расслабиться",
-              "description": "Массаж, уходовые процедуры, йога на рассвете"
+              "description": "Массаж, уходовые процедуры, йога на рассвете",
+              "overlayImageSrc": "/island-desktop/spa.webp"
             },
             {
               "value": "Погрузиться в культуру",
               "label": "Погрузиться в культуру",
-              "description": "Экскурсии к историческим местам и живописным локациям."
+              "description": "Экскурсии к историческим местам и живописным локациям.",
+              "overlayImageSrc": "/island-desktop/nature.webp"
             },
             {
               "value": "Почувствовать ритм города",
               "label": "Почувствовать ритм города",
-              "description": "Вечеринки, шопинг, рынки и базары"
+              "description": "Вечеринки, шопинг, рынки и базары",
+              "overlayImageSrc": "/island-desktop/city.webp"
             }
           ]
         },

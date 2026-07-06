@@ -137,6 +137,39 @@
   padding-top: 16px;
 }
 
+.kapsula-form-section__fieldset {
+  margin: 0;
+  border: 0;
+  padding-inline: 0;
+  min-width: 0;
+}
+
+.kapsula-form-section__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .kapsula-form-section__subtitle {
   max-width: 760px;
   margin: 0 0 16px;
@@ -177,6 +210,13 @@
   justify-content: flex-start;
 }
 
-.kapsula-form__submit {
+.kapsula-form__trigger {
   align-self: flex-start;
+}
+
+.kapsula-form__trigger:disabled {
+  background: #d5c19a;
+  color: rgba(255, 255, 255, 0.88);
+  cursor: not-allowed;
+  pointer-events: none;
 }

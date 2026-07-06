@@ -6,7 +6,18 @@ export function setActiveProgressStep(hero, stepName) {
   const progressItems = hero.querySelectorAll(KAPSULA_ANIMATION.screenTransition.selectors.progressItem);
 
   progressItems.forEach((item) => {
-    item.classList.toggle("is-active", item.dataset.kapsulaProgressItem === stepName);
+    const isActive = item.dataset.kapsulaProgressItem === stepName;
+    const button = item.querySelector(KAPSULA_ANIMATION.screenTransition.selectors.progressButton);
+
+    item.classList.toggle("is-active", isActive);
+
+    if (!button) return;
+
+    if (isActive) {
+      button.setAttribute("aria-current", "step");
+    } else {
+      button.removeAttribute("aria-current");
+    }
   });
 }
 
@@ -38,6 +49,7 @@ export function restoreScreen({
       setScreenState(screen.node, {visible: false, interactive: false});
       gsap.set(screen.node, {
         opacity: 0,
+        y: 0,
       });
       gsap.set(screen.elements, {
         autoAlpha: 0,
@@ -73,6 +85,7 @@ export function restoreScreen({
     setScreenState(screen.node, {visible: isCurrent, interactive: isCurrent});
     gsap.set(screen.node, {
       opacity: isCurrent ? 1 : 0,
+      y: 0,
     });
     gsap.set(screen.elements, {
       autoAlpha: isCurrent ? 1 : 0,
@@ -126,6 +139,7 @@ export function transitionBetweenScreens({
   timeline
     .set(toScreen.node, {
       visibility: "visible",
+      y: 0,
     });
 
   if (fromKey === "hero") {
@@ -141,6 +155,7 @@ export function transitionBetweenScreens({
       .set(fromScreen.node, {
         visibility: "hidden",
         pointerEvents: "none",
+        y: 0,
       });
   }
 

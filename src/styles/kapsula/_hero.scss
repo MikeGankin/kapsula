@@ -35,10 +35,16 @@
 .kapsula__inner {
   position: relative;
   z-index: 1;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 64px);
+}
+
+.kapsula-screen--hero {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: grid;
   place-items: center;
-  padding: 56px 24px 72px;
+  padding-top: 56px;
 }
 
 .kapsula__content {
