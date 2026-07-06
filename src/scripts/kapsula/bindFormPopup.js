@@ -23,6 +23,16 @@ function openPopup(popupNode) {
   popupNode.show?.();
 }
 
+function setPopupState(popupNode, state) {
+  const successNode = popupNode.querySelector("[data-kapsula-popup-success]");
+
+  popupNode.dataset.state = state;
+
+  if (successNode instanceof HTMLElement) {
+    successNode.hidden = state !== "success";
+  }
+}
+
 function formatPhoneInput(value) {
   let digits = value.replace(/\D/g, "");
 
@@ -141,16 +151,19 @@ export function bindFormPopup(formExperience, hero) {
   }
 
   const popupFormNode = popupNode.querySelector("[data-kapsula-popup-form]");
+  const homeButtonNode = popupNode.querySelector("[data-kapsula-popup-home]");
 
   if (!popupFormNode) {
     return;
   }
 
   popupNode.dataset.popupBound = "1";
+  setPopupState(popupNode, "form");
   let boundSubmitButton = null;
 
   const handleOpenPopup = (event) => {
     event.preventDefault();
+    setPopupState(popupNode, "form");
     openPopup(popupNode);
   };
 
@@ -218,5 +231,10 @@ export function bindFormPopup(formExperience, hero) {
     };
 
     console.log("kapsula form object", payload);
+    setPopupState(popupNode, "success");
+  });
+
+  homeButtonNode?.addEventListener("click", () => {
+    window.location.assign(window.location.pathname);
   });
 }

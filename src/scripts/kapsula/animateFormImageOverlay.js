@@ -22,15 +22,67 @@ const OVERLAY_IMAGE_ALTS = {
   "/oriental-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/oriental-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/oriental-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
+  "/oriental-desktop/turkey.webp": "Пляжный курорт с бассейном и террасами у моря в Турции",
+  "/oriental-desktop/egypt.webp": "Курорт у побережья Красного моря с песчаным берегом и пальмами в Египте",
+  "/oriental-desktop/uae.webp": "Современный курорт у побережья с мариной и архитектурой ОАЭ",
+  "/oriental-desktop/suite.webp": "Светлый люкс с зоной отдыха и панорамными окнами курортного отеля",
+  "/oriental-desktop/family.webp": "Просторный семейный номер курортного отеля с большой кроватью и мягкой зоной",
+  "/oriental-desktop/villa.webp": "Уединенная вилла с личной террасой и бассейном среди курортного сада",
+  "/oriental-desktop/flight.webp": "Салон самолета с креслами разных классов обслуживания",
+  "/oriental-desktop/transfer.webp": "Премиальный трансфер к отелю на фоне курортной инфраструктуры",
+  "/oriental-desktop/food.webp": "Сервировка завтрака и блюда курортного ресторана у воды",
+  "/oriental-desktop/sea.webp": "Яхта и морское побережье для отдыха на воде",
+  "/oriental-desktop/spa.webp": "Спа-пространство с массажем и расслабляющей атмосферой",
+  "/oriental-desktop/nature.webp": "Живописная природная локация для экскурсий и прогулок",
+  "/oriental-desktop/city.webp": "Оживленный городской курортный район с вечерними огнями",
   "/oriental-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/oriental-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/oriental-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
+  "/oriental-mobile/turkey.webp": "Пляжный курорт с бассейном и террасами у моря в Турции",
+  "/oriental-mobile/egypt.webp": "Курорт у побережья Красного моря с песчаным берегом и пальмами в Египте",
+  "/oriental-mobile/uae.webp": "Современный курорт у побережья с мариной и архитектурой ОАЭ",
+  "/oriental-mobile/suite.webp": "Светлый люкс с зоной отдыха и панорамными окнами курортного отеля",
+  "/oriental-mobile/family.webp": "Просторный семейный номер курортного отеля с большой кроватью и мягкой зоной",
+  "/oriental-mobile/villa.webp": "Уединенная вилла с личной террасой и бассейном среди курортного сада",
+  "/oriental-mobile/flight.webp": "Салон самолета с креслами разных классов обслуживания",
+  "/oriental-mobile/transfer.webp": "Премиальный трансфер к отелю на фоне курортной инфраструктуры",
+  "/oriental-mobile/food.webp": "Сервировка завтрака и блюда курортного ресторана у воды",
+  "/oriental-mobile/sea.webp": "Яхта и морское побережье для отдыха на воде",
+  "/oriental-mobile/spa.webp": "Спа-пространство с массажем и расслабляющей атмосферой",
+  "/oriental-mobile/nature.webp": "Живописная природная локация для экскурсий и прогулок",
+  "/oriental-mobile/city.webp": "Оживленный городской курортный район с вечерними огнями",
   "/island-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/island-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/island-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
+  "/island-desktop/maldives.webp": "Виллы над водой и лагуна с бирюзовой водой на Мальдивах",
+  "/island-desktop/seychelles.webp": "Тропический пляж с гранитными валунами и пальмами на Сейшелах",
+  "/island-desktop/mauritius.webp": "Побережье с белым песком и курортными отелями на Маврикии",
+  "/island-desktop/suite.webp": "Светлый люкс курортного островного отеля с мягкой зоной отдыха",
+  "/island-desktop/family.webp": "Просторный семейный номер островного отеля с двумя зонами отдыха",
+  "/island-desktop/villa.webp": "Островная вилла с приватным бассейном и выходом к пляжу",
+  "/island-desktop/flight.webp": "Салон самолета для дальнего перелета на островной курорт",
+  "/island-desktop/transfer.webp": "Трансфер к островному отелю на фоне моря и причала",
+  "/island-desktop/food.webp": "Блюда и сервировка в ресторане островного курорта",
+  "/island-desktop/sea.webp": "Лодка у лазурной воды для морских впечатлений и снорклинга",
+  "/island-desktop/spa.webp": "Островное спа с массажем и видом на тропическую природу",
+  "/island-desktop/nature.webp": "Тропическая природная локация для прогулок и экскурсий",
+  "/island-desktop/city.webp": "Городской ритм островного направления с набережной и огнями",
   "/island-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/island-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/island-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
+  "/island-mobile/maldives.webp": "Виллы над водой и лагуна с бирюзовой водой на Мальдивах",
+  "/island-mobile/seychelles.webp": "Тропический пляж с гранитными валунами и пальмами на Сейшелах",
+  "/island-mobile/mauritius.webp": "Побережье с белым песком и курортными отелями на Маврикии",
+  "/island-mobile/suite.webp": "Светлый люкс курортного островного отеля с мягкой зоной отдыха",
+  "/island-mobile/family.webp": "Просторный семейный номер островного отеля с двумя зонами отдыха",
+  "/island-mobile/villa.webp": "Островная вилла с приватным бассейном и выходом к пляжу",
+  "/island-mobile/flight.webp": "Салон самолета для дальнего перелета на островной курорт",
+  "/island-mobile/transfer.webp": "Трансфер к островному отелю на фоне моря и причала",
+  "/island-mobile/food.webp": "Блюда и сервировка в ресторане островного курорта",
+  "/island-mobile/sea.webp": "Лодка у лазурной воды для морских впечатлений и снорклинга",
+  "/island-mobile/spa.webp": "Островное спа с массажем и видом на тропическую природу",
+  "/island-mobile/nature.webp": "Тропическая природная локация для прогулок и экскурсий",
+  "/island-mobile/city.webp": "Городской ритм островного направления с набережной и огнями",
 };
 
 function getOverlayImageAlt(imageSrc) {
@@ -202,8 +254,18 @@ function getOrCreateSegment(layerNode, segmentMap, imageSrc) {
 function animateLayerVisibility(layerNode, isVisible) {
   layerNode.dataset.isVisible = isVisible ? "1" : "0";
   gsap.killTweensOf(layerNode);
-  gsap.set(layerNode, {
-    autoAlpha: isVisible ? 1 : 0,
+
+  if (isVisible) {
+    gsap.set(layerNode, {
+      autoAlpha: 1,
+    });
+    return;
+  }
+
+  gsap.to(layerNode, {
+    autoAlpha: 0,
+    duration: 0,
+    delay: DURATION,
   });
 }
 

@@ -5,7 +5,7 @@
       "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
       "imageSrc": "/asia-base.webp",
       "imageAlt": "Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей",
-      "submitLabel": "Забронировать капсулу",
+      "submitLabel": "Сформировать капсулу",
       "sections": [
         {
           "id": "countries",
@@ -235,9 +235,9 @@
     "oriental": {
       "title": "Восточный стиль",
       "subtitle": "Струящийся шелк, орнаменты и яркие краски",
-      "imageSrc": "/kapsula-hero.webp",
-      "imageAlt": "Семья отдыхает у бассейна курорта с павильонами над водой",
-      "submitLabel": "Забронировать капсулу",
+      "imageSrc": "/oriental-style.webp",
+      "imageAlt": "Девушка в платье с орнаментом у резной двери восточного дворика",
+      "submitLabel": "Сформировать капсулу",
       "sections": [
         {
           "id": "countries",
@@ -256,6 +256,11 @@
               "value": "Египет",
               "label": "Египет",
               "overlayImageSrc": "/oriental-desktop/egypt.webp"
+            },
+            {
+              "value": "ОАЭ",
+              "label": "ОАЭ",
+              "overlayImageSrc": "/oriental-desktop/uae.webp"
             }
           ]
         },
@@ -372,11 +377,13 @@
             {
               "value": "Гидросамолет",
               "label": "Гидросамолет",
+              "description": "Доступно только в отеле Lujo",
               "overlayImageSrc": "/oriental-desktop/transfer.webp"
             },
             {
               "value": "Вертолет",
               "label": "Вертолет",
+              "description": "Только для отелей сети MaxRoyal",
               "overlayImageSrc": "/oriental-desktop/transfer.webp"
             }
           ]
@@ -472,9 +479,9 @@
     "island": {
       "title": "Островной стиль",
       "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
-      "imageSrc": "/kapsula-hero.webp",
-      "imageAlt": "Семья отдыхает у бассейна курорта с павильонами над водой",
-      "submitLabel": "Забронировать капсулу",
+      "imageSrc": "/island-style.webp",
+      "imageAlt": "Девушка в белом образе на пляже у бирюзовой воды и пальм",
+      "submitLabel": "Сформировать капсулу",
       "sections": [
         {
           "id": "countries",
@@ -604,17 +611,38 @@
             {
               "value": "Индивидуальный бизнес-трансфер",
               "label": "Индивидуальный бизнес-трансфер",
-              "overlayImageSrc": "/island-desktop/transfer.webp"
+              "overlayImageSrc": "/island-desktop/transfer.webp",
+              "hiddenWhen": {
+                "countries": {
+                  "includes": [
+                    "Мальдивы"
+                  ]
+                }
+              }
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
               "label": "Индивидуальный ВИП-трансфер",
-              "overlayImageSrc": "/island-desktop/transfer.webp"
+              "overlayImageSrc": "/island-desktop/transfer.webp",
+              "hiddenWhen": {
+                "countries": {
+                  "includes": [
+                    "Мальдивы"
+                  ]
+                }
+              }
             },
             {
               "value": "Внутренний перелет",
               "label": "Внутренний перелет",
-              "overlayImageSrc": "/island-desktop/transfer.webp"
+              "overlayImageSrc": "/island-desktop/transfer.webp",
+              "hiddenWhen": {
+                "countries": {
+                  "includes": [
+                    "Маврикий"
+                  ]
+                }
+              }
             },
             {
               "value": "Гидросамолет",
@@ -643,7 +671,14 @@
             {
               "value": "Скоростной катер",
               "label": "Скоростной катер",
-              "overlayImageSrc": "/island-desktop/transfer.webp"
+              "overlayImageSrc": "/island-desktop/transfer.webp",
+              "visibleWhen": {
+                "countries": {
+                  "includes": [
+                    "Мальдивы"
+                  ]
+                }
+              }
             }
           ]
         },

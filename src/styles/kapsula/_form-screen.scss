@@ -16,6 +16,10 @@
   padding-block: 48px;
 }
 
+.kapsula-form-screen--offset-top {
+  padding-top: 56px;
+}
+
 .kapsula-form-screen__layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 560px);

@@ -3,10 +3,10 @@ export function buildCapsuleHref(capsuleId) {
 
   try {
     const url = new URL(window.location.href);
-    url.searchParams.set("kapsulaStep", "form");
-    url.searchParams.set("kapsulaCapsule", capsuleId);
+    url.searchParams.set("step", "form");
+    url.searchParams.set("style", capsuleId);
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
-    return `?kapsulaStep=form&kapsulaCapsule=${encodeURIComponent(capsuleId)}`;
+    return `?step=form&style=${encodeURIComponent(capsuleId)}`;
   }
 }

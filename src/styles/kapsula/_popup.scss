@@ -7,6 +7,10 @@
   padding: 16px;
 }
 
+.kapsula-popup[data-state="success"] .kapsula-popup__layout {
+  display: none;
+}
+
 .kapsula-popup__layout::after {
   content: "";
   position: absolute;
@@ -25,8 +29,30 @@
   height: 100%;
 }
 
+.kapsula-popup__success {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 32px;
+  min-height: 340px;
+  padding: 40px 68px;
+}
+
+.kapsula-popup__success-text {
+  margin: 0;
+  max-width: 620px;
+  color: #000000;
+  font-size: 16px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.kapsula-popup__success-button {
+  min-width: 197px;
+}
+
 .kapsula-copy--popup .kapsula-copy__title {
-  color: #575757;
+  color: #000000;
   font-size: 32px;
   font-style: normal;
   font-weight: 400;
@@ -40,7 +66,7 @@
   margin: 0;
   color: #000000;
   font-size: 16px;
-  line-height: 1.38;
+  line-height: 24px;
   text-align: left;
 }
 
@@ -274,6 +300,11 @@
     padding-right: 0;
   }
 
+  .kapsula-popup__success {
+    min-height: auto;
+    padding: 16px 0 8px;
+  }
+
   .kapsula-popup__aside {
     border-top: 1px solid rgba(17, 17, 17, 0.1);
     padding-left: 0;
@@ -316,6 +347,11 @@
     gap: 28px;
   }
 
+  .kapsula-popup__success {
+    gap: 24px;
+    padding: 12px 0 0;
+  }
+
   .kapsula-copy--popup {
     gap: 16px;
   }
@@ -351,6 +387,10 @@
   .kapsula-popup-form__input,
   .kapsula-popup-form__submit {
     min-height: 64px;
+  }
+
+  .kapsula-popup__success-button {
+    min-width: 100%;
   }
 
   .kapsula-popup-form__prefix {

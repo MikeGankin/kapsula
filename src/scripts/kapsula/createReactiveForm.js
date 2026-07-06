@@ -54,13 +54,18 @@ function getFormSnapshot(capsuleMap, capsuleId, values) {
   };
 }
 
-function getOverlayLayers(capsule, values, expandedState, activeSectionId) {
+function getOverlayLayers(capsule, values, expandedState, activeSectionId, touchedSections) {
   const activeSection = capsule.sections.find((section) => section.id === activeSectionId);
 
   if (activeSection?.overlayPreviewOnEnter && expandedState[activeSection.id]) {
     const selectedSources = getSelectedSectionOverlayImages(activeSection, values);
     const availableSources = getSectionOverlaySources(activeSection);
-    const previewSources = selectedSources.length > 0 ? selectedSources : availableSources;
+    const shouldShowPreview = !touchedSections[activeSection.id];
+    const previewSources = selectedSources.length > 0
+      ? selectedSources
+      : shouldShowPreview
+        ? availableSources
+        : [];
 
     if (previewSources.length === 0) {
       return [];
@@ -107,6 +112,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   const values$ = new BehaviorSubject({});
   const expandedState$ = new BehaviorSubject({});
   const activeSectionId$ = new BehaviorSubject(null);
+  const touchedSections$ = new BehaviorSubject({});
   let previousExpandedState = {};
   let previousValues = {};
   let previousCapsuleId = null;
@@ -120,7 +126,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     distinctUntilChanged(),
   );
 
-  combineLatest([schema$, values$, expandedState$, activeSectionId$]).subscribe(([capsule, values, expandedState, activeSectionId]) => {
+  combineLatest([schema$, values$, expandedState$, activeSectionId$, touchedSections$]).subscribe(([capsule, values, expandedState, activeSectionId, touchedSections]) => {
     const capsuleId = selectedCapsule$.value;
     titleNode.textContent = capsule.title;
     subtitleNode.textContent = capsule.subtitle;
@@ -159,7 +165,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
 
     renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
     animateFormImageOverlay(overlayImageNode, {
-      layers: getOverlayLayers(capsule, nextValues, nextExpandedState, nextActiveSectionId),
+      layers: getOverlayLayers(capsule, nextValues, nextExpandedState, nextActiveSectionId, touchedSections),
     });
     animateFormSections(formNode, nextExpandedState, previousExpandedState, nextValues, previousValues);
     previousExpandedState = nextExpandedState;
@@ -190,7 +196,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     }
   });
 
-  fromEvent(formNode, "input").subscribe((event) => {
+  fromEvent(formNode, "change").subscribe((event) => {
     const choiceInput = event.target.closest("[data-kapsula-choice]");
 
     if (choiceInput) {
@@ -205,9 +211,15 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
         ...values$.value,
         [section.id]: toggleOptionValue(section, values$.value[section.id], optionValue),
       });
-      return;
-    }
 
+      touchedSections$.next({
+        ...touchedSections$.value,
+        [section.id]: true,
+      });
+    }
+  });
+
+  fromEvent(formNode, "input").subscribe((event) => {
     const textarea = event.target.closest("[data-kapsula-textarea]");
 
     if (!textarea) return;
@@ -217,6 +229,11 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     values$.next({
       ...values$.value,
       [sectionId]: textarea.value,
+    });
+
+    touchedSections$.next({
+      ...touchedSections$.value,
+      [sectionId]: true,
     });
   });
 
@@ -231,6 +248,15 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     setCapsule(capsuleId) {
       if (!capsuleMap.has(capsuleId)) return false;
 
+      if (selectedCapsule$.value === capsuleId) {
+        return true;
+      }
+
+      previousExpandedState = {};
+      previousValues = {};
+      expandedState$.next({});
+      values$.next({});
+      touchedSections$.next({});
       activeSectionId$.next(null);
       selectedCapsule$.next(capsuleId);
       return true;

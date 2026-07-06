@@ -3,8 +3,8 @@ const SESSION_STORAGE_KEYS = {
   capsule: "kapsula.selectedCapsule",
 };
 const URL_SEARCH_KEYS = {
-  screen: "kapsulaStep",
-  capsule: "kapsulaCapsule",
+  screen: "step",
+  capsule: "style",
 };
 const RESTORABLE_SCREENS = new Set(["hero", "steps", "styles", "form"]);
 

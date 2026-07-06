@@ -44,9 +44,20 @@ div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
   align-items: center;
 }
 
+.kapsula-header-logo__link {
+  margin-right: 6px;
+}
+
 .kapsula-header-logo__link,
 .kapsula-header-logo__image {
   display: block;
+}
+
+.kapsula-header-logo__image {
+  display: block;
+  width: 100%;
+  object-fit: contain;
+  height: 100%;
 }
 
 .submenu .custom-link {

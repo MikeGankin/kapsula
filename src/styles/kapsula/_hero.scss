@@ -1,4 +1,5 @@
 .kapsula {
+  --kapsula-header-height: 64px;
   position: relative;
   overflow: hidden;
   color: #ffffff;
@@ -35,7 +36,7 @@
 .kapsula__inner {
   position: relative;
   z-index: 1;
-  height: calc(100vh - 64px);
+  height: calc(100dvh - var(--kapsula-header-height));
 }
 
 .kapsula-screen--hero {
