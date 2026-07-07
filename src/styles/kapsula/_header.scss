@@ -9,7 +9,7 @@ div[class*="HeaderWidget_headerClientSideDesktop___"] {
 }
 
 .basic-menu-item {
-  color: #FFFFFF;
+  color: var(--kapsula-white);
 
   .menu-item-label span {
     color: inherit;
@@ -17,26 +17,22 @@ div[class*="HeaderWidget_headerClientSideDesktop___"] {
 }
 
 div[class*="HeaderTopBar_iconContainer__"] > * {
-  color: #ffffff !important;
+  color: var(--kapsula-white) !important;
 }
 
 div[class*="HeaderTopBar_iconContainer__"] > * button,
 div[class*="HeaderTopBar_iconContainer__"] > * a {
-  color: #ffffff !important;
+  color: var(--kapsula-white) !important;
 }
 
 div[class*="DepartureContact_departureContactPhone__"] {
-  color: #ffffff !important;
+  color: var(--kapsula-white) !important;
 }
 
 div[class*="HeaderTopBar_iconContainer__"] svg path,
 div[class*="HeaderTopBar_iconContainer__"] svg circle,
 div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
-  stroke: #ffffff !important;
-}
-
-div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
-  display: none;
+  stroke: var(--kapsula-white) !important;
 }
 
 .kapsula-header-logo {
@@ -61,5 +57,17 @@ div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
 }
 
 .submenu .custom-link {
-  color: #000;
+  color: var(--kapsula-black);
+}
+
+@media (min-width: 993px) {
+  div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
+    display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .header-mobile {
+    height: 56px !important;
+  }
 }

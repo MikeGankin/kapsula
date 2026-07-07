@@ -13,7 +13,7 @@
   max-height: 100%;
   overflow-y: scroll;
   padding-right: 20px;
-  scrollbar-color: rgba(185, 145, 75, 0.72) rgba(17, 17, 17, 0.08);
+  scrollbar-color: var(--kapsula-gold-scroll) var(--kapsula-dark-008);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   min-height: 0;
@@ -24,14 +24,14 @@
 }
 
 .kapsula-form__sections::-webkit-scrollbar-track {
-  border-radius: 999px;
-  background: rgba(17, 17, 17, 0.08);
+  border-radius: var(--kapsula-radius-pill);
+  background: var(--kapsula-dark-008);
 }
 
 .kapsula-form__sections::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
-  border-radius: 999px;
-  background: rgba(185, 145, 75, 0.72);
+  border-radius: var(--kapsula-radius-pill);
+  background: var(--kapsula-gold-scroll);
   background-clip: padding-box;
 }
 
@@ -53,7 +53,7 @@
   border: 0;
   background: transparent;
   padding: 0;
-  color: rgba(17, 17, 17, 0.72);
+  color: var(--kapsula-dark-072);
   cursor: pointer;
   text-align: left;
 }
@@ -62,21 +62,21 @@
   display: inline-flex;
   align-items: baseline;
   gap: 14px;
-  font-size: 20px;
+  font-size: var(--kapsula-font-size-xl);
   transform-origin: left center;
 }
 
 .kapsula-form-section__index {
   color: currentColor;
   font-family: var(--kapsula-heading-font);
-  font-size: 24px;
-  line-height: 1;
+  font-size: var(--kapsula-font-size-2xl);
+  line-height: var(--kapsula-line-height-tight);
 }
 
 .kapsula-form-section__title {
   font-family: var(--kapsula-heading-font);
-  font-size: 20px;
-  line-height: 1.2;
+  font-size: var(--kapsula-font-size-xl);
+  line-height: var(--kapsula-line-height-title);
 }
 
 .kapsula-form-section__meta {
@@ -92,9 +92,9 @@
   display: inline-block;
   max-width: 360px;
   overflow: hidden;
-  color: rgba(17, 17, 17, 0.46);
-  font-size: 18px;
-  line-height: 1.2;
+  color: var(--kapsula-dark-046);
+  font-size: var(--kapsula-font-size-lg);
+  line-height: var(--kapsula-line-height-title);
   text-overflow: ellipsis;
   white-space: nowrap;
   will-change: opacity;
@@ -122,7 +122,7 @@
 }
 
 .kapsula-form-section.is-expanded .kapsula-form-section__trigger {
-  color: #111111;
+  color: var(--kapsula-text-dark);
 }
 
 .kapsula-form-section.is-expanded .kapsula-form-section__index {
@@ -173,35 +173,31 @@
 .kapsula-form-section__subtitle {
   max-width: 760px;
   margin: 0 0 16px;
-  color: #111111;
-  font-size: 16px;
-  line-height: 1.4;
-}
-
-.kapsula-form-options {
-  --kapsula-card-grid-gap: 24px;
+  color: var(--kapsula-text-dark);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-copy);
 }
 
 .kapsula-form-textarea {
   width: 100%;
   min-height: 132px;
-  border: 1px solid rgba(17, 17, 17, 0.24);
-  border-radius: 8px;
-  background: #ffffff;
+  border: 1px solid var(--kapsula-dark-024);
+  border-radius: var(--kapsula-radius-md);
+  background: var(--kapsula-white);
   padding: 16px;
-  color: #111111;
+  color: var(--kapsula-text-dark);
   font: inherit;
-  line-height: 1.5;
+  line-height: var(--kapsula-line-height-field);
   resize: vertical;
 }
 
 .kapsula-form-textarea::placeholder {
-  color: rgba(17, 17, 17, 0.42);
+  color: var(--kapsula-dark-042);
 }
 
 .kapsula-form-textarea:focus {
   outline: none;
-  border-color: rgba(17, 17, 17, 0.56);
+  border-color: var(--kapsula-dark-056);
 }
 
 .kapsula-form__actions {
@@ -215,8 +211,8 @@
 }
 
 .kapsula-form__trigger:disabled {
-  background: #d5c19a;
-  color: rgba(255, 255, 255, 0.88);
+  background: var(--kapsula-gold-muted);
+  color: var(--kapsula-white-088);
   cursor: not-allowed;
   pointer-events: none;
 }

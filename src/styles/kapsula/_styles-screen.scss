@@ -1,10 +1,9 @@
 .kapsula-screen--styles {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: var(--kapsula-z-styles);
   display: grid;
   place-items: center;
-  padding-top: 56px;
 }
 
 .kapsula-styles {
@@ -17,5 +16,5 @@
 }
 
 .kapsula-styles__grid {
-  --kapsula-card-grid-gap: 14px;
+  gap: var(--kapsula-card-grid-gap-styles);
 }

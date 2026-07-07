@@ -6,8 +6,13 @@ const INJECTED_LOGO_CLASS = "HeaderLogo_container__MHYx4";
 const INJECTED_LOGO_LINK_CLASS = "HeaderLogo_headerLogo__caiMB";
 const CTA_BUTTON_SELECTOR = ".kapsula-button--header";
 const SECONDARY_LOGO_SELECTOR = ".kapsula-header-logo";
+const DESKTOP_HEADER_QUERY = "(min-width: 993px)";
 
 export function setupHeaderUi(menuHost) {
+  if (!window.matchMedia(DESKTOP_HEADER_QUERY).matches) {
+    return;
+  }
+
   const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
 
   if (headerIcons && headerIcons.parentElement !== menuHost) {

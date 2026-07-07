@@ -5,11 +5,11 @@
   align-content: start;
   justify-items: start;
   gap: 18px;
-  border: 1px solid rgba(17, 17, 17, 0.28);
-  border-radius: 8px;
-  background: #ffffff;
+  border: 1px solid var(--kapsula-dark-028);
+  border-radius: var(--kapsula-radius-md);
+  background: var(--kapsula-white);
   padding: 16px;
-  color: #111111;
+  color: var(--kapsula-text-dark);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -34,8 +34,8 @@
   width: 20px;
   height: 20px;
   box-sizing: border-box;
-  border: 1px solid rgba(17, 17, 17, 0.24);
-  border-radius: 4px;
+  border: 1px solid var(--kapsula-dark-024);
+  border-radius: var(--kapsula-radius-sm);
   display: block;
 }
 
@@ -45,14 +45,14 @@
 }
 
 .kapsula-option-card__title {
-  font-size: 16px;
-  line-height: 1.2;
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-title);
 }
 
 .kapsula-option-card__text {
-  color: rgba(17, 17, 17, 0.62);
-  font-size: 14px;
-  line-height: 1.35;
+  color: var(--kapsula-dark-062);
+  font-size: var(--kapsula-font-size-sm);
+  line-height: var(--kapsula-line-height-card);
 }
 
 .kapsula-option-card.is-selected {

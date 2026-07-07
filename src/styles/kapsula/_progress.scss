@@ -1,10 +1,10 @@
 .kapsula-progress {
   position: fixed;
-  top: calc(var(--kapsula-header-height) + 16px);
+  top: calc(var(--kapsula-header-height) + var(--kapsula-progress-top-offset));
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 10;
+  z-index: var(--kapsula-z-progress);
 }
 
 .kapsula-progress__inner {
@@ -28,16 +28,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.56);
-  font-size: 16px;
-  line-height: 1.15;
+  color: var(--kapsula-white-056);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-progress);
 }
 
 .kapsula-progress__item:not(:last-child)::after {
   content: "\2022";
   display: block;
   margin: 0 20px;
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--kapsula-white-056);
 }
 
 .kapsula-progress__item:has(+ .kapsula-progress__item.is-active)::after {
@@ -66,7 +66,7 @@
   left: 0;
   width: 14px;
   height: 14px;
-  border-radius: 50%;
+  border-radius: var(--kapsula-radius-round);
   border: 2px solid currentColor;
   transform: translateY(-50%);
 }
@@ -75,7 +75,7 @@
   content: "";
   position: absolute;
   inset: 3px;
-  border-radius: 50%;
+  border-radius: var(--kapsula-radius-round);
   background: currentColor;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .kapsula-progress__item.is-active {
-  color: #ffffff;
+  color: var(--kapsula-white);
 }
 
 .kapsula-progress__item.is-active .kapsula-progress__button {
@@ -97,15 +97,15 @@
 }
 
 .kapsula[data-screen="form"] .kapsula-progress__item {
-  color: rgba(17, 17, 17, 0.44);
+  color: var(--kapsula-dark-044);
 }
 
 .kapsula[data-screen="form"] .kapsula-progress__item:not(:last-child)::after {
-  color: rgba(17, 17, 17, 0.44);
+  color: var(--kapsula-dark-044);
 }
 
 .kapsula[data-screen="form"] .kapsula-progress__item.is-active {
-  color: #111111;
+  color: var(--kapsula-text-dark);
 }
 
 @media (max-width: 1024px) {
@@ -114,7 +114,7 @@
   }
 
   .kapsula-progress__item {
-    font-size: 16px;
+    font-size: var(--kapsula-font-size-md);
   }
 
   .kapsula-progress__item:not(:last-child)::after {
@@ -133,7 +133,7 @@
   }
 
   .kapsula-progress__item {
-    font-size: 16px;
+    font-size: var(--kapsula-font-size-md);
   }
 
   .kapsula-progress__label {

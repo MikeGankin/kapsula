@@ -7,78 +7,84 @@
   display: none;
 }
 
-.row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
-  display: none;
-}
+@media (min-width: 933px) {
+  .row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
+    display: none;
+  }
 
-.basic-menu-item:hover {
-  color: #ffffff;
-}
+  .basic-menu-item {
+    font-weight: var(--kapsula-font-weight-regular);
+  }
 
-.submenu .basic-menu-item:hover {
-  color: #000000;
-}
+  .basic-menu-item:hover {
+    color: var(--kapsula-white);
+  }
 
-[class*="DepartureContact_departureContactWrapper__"] {
-  display: none;
-}
+  .submenu .basic-menu-item:hover {
+    color: var(--kapsula-black);
+  }
 
-[class*="HeaderTopBar_headerTopBar__"] {
-  display: none;
-}
+  [class*="DepartureContact_departureContactWrapper__"] {
+    display: none;
+  }
 
-[class*="HeaderTopBar_whereToBuy__"] {
-  display: none !important;
-}
+  [class*="HeaderTopBar_headerTopBar__"] {
+    display: none;
+  }
 
-[class*="DepartureCitySelectModal_departureCitySelectContainer__"] + div {
-  display: none !important;
-}
+  [class*="HeaderTopBar_whereToBuy__"] {
+    display: none !important;
+  }
 
-[class*="HeaderFavBadge_headerFavBadgeWrapper"] .container-text {
-  display: none !important;
-}
+  [class*="DepartureCitySelectModal_departureCitySelectContainer__"] + div {
+    display: none !important;
+  }
 
-[class*="LoginButton_loginButtonText__"] {
-  display: none !important;
-}
+  [class*="HeaderFavBadge_headerFavBadgeWrapper"] .container-text {
+    display: none !important;
+  }
 
-.unfinished-booking-child-wrapper .container-text {
-  display: none !important;
-}
+  [class*="LoginButton_loginButtonText__"] {
+    display: none !important;
+  }
 
-[class*="HeaderMenuBar_menu"] {
-  margin-right: auto;
-}
+  .unfinished-booking-child-wrapper .container-text {
+    display: none !important;
+  }
 
-[class*="DepartureCitySelectModal_departureCitySelectContainer__"] {
-  margin-right: 24px;
-}
+  [class*="HeaderMenuBar_menu"] {
+    margin-right: auto;
+  }
 
-[class*="lazy-headerWidget__MapIcon"] {
-  width: 24px;
-  height: 24px;
-  margin: 0;
-}
+  [class*="DepartureCitySelectModal_departureCitySelectContainer__"] {
+    margin-right: 24px;
+  }
 
-[class*="lazy-headerWidget__MapIcon"] svg {
-  display: none;
-}
+  [class*="lazy-headerWidget__MapIcon"] {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+  }
 
-[class*="lazy-headerWidget__MapIcon"]::before {
-  content: "";
-  width: 24px;
-  height: 24px;
-  display: block;
-  background: center / 24px 24px no-repeat url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-linecap='round'%3E%3Cg stroke-width='0'/%3E%3Cg stroke-linejoin='round'/%3E%3Cpath d='M20 10c0 8-8 12-8 12s-8-4-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
-}
+  [class*="lazy-headerWidget__MapIcon"] svg {
+    display: none;
+  }
 
-.header-fav-badge > span,
-[class*="LoginButton_loginButton"] > span {
-  width: 24px;
-  margin: 0 !important;
-}
+  [class*="lazy-headerWidget__MapIcon"]::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    display: block;
+    background: center / 24px 24px no-repeat url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-linecap='round'%3E%3Cg stroke-width='0'/%3E%3Cg stroke-linejoin='round'/%3E%3Cpath d='M20 10c0 8-8 12-8 12s-8-4-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
+  }
 
-.menu-dropdown-item svg path {
-  fill: #ffffff;
+  .header-fav-badge > span,
+  [class*="LoginButton_loginButton"] > span {
+    width: 24px;
+    margin: 0 !important;
+  }
+
+  .menu-dropdown-item svg path {
+    fill: var(--kapsula-white);
+  }
 }

@@ -3,18 +3,18 @@
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--kapsula-radius-md);
   background: var(--kapsula-gold);
   padding: 16px 20px;
-  color: #ffffff;
-  font-size: 16px;
-  line-height: 1;
+  color: var(--kapsula-white);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-tight);
   cursor: pointer;
   transition: background-color 180ms ease;
 
   &:hover {
     background: var(--kapsula-gold-strong);
-    color: #ffffff;
+    color: var(--kapsula-white);
   }
 
   &:active {
@@ -27,5 +27,30 @@
 }
 
 .kapsula-button--header {
-  margin-left: 24px;
+  margin-left: 20px;
+}
+
+.kapsula-button__icon {
+  display: none;
+  line-height: var(--kapsula-line-height-zero);
+}
+
+.kapsula-button__icon svg {
+  display: block;
+}
+
+@media (max-width: 1280px) {
+  .kapsula-button--header {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+  }
+
+  .kapsula-button--header .kapsula-button__text {
+    display: none;
+  }
+
+  .kapsula-button--header .kapsula-button__icon {
+    display: inline-flex;
+  }
 }

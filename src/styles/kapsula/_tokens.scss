@@ -7,10 +7,107 @@
 }
 
 :root {
+  --kapsula-heading-font: "Trajan Pro 3", serif;
+  --kapsula-body-font: inherit;
+
   --kapsula-gold: #A88545;
   --kapsula-gold-strong: #957941;
   --kapsula-gold-active: #7E6635;
+  --kapsula-gold-muted: #d5c19a;
+  --kapsula-gold-scroll: rgba(185, 145, 75, 0.72);
   --kapsula-night: #262321;
   --kapsula-cream: #f7efe2;
-  --kapsula-heading-font: "Trajan Pro 3", serif;
+  --kapsula-white: #ffffff;
+  --kapsula-black: #000000;
+  --kapsula-text-dark: #111111;
+  --kapsula-surface-muted: #dcdcdc;
+  --kapsula-error: #c95f4a;
+
+  --kapsula-white-001: rgba(255, 255, 255, 0.01);
+  --kapsula-white-006: rgba(255, 255, 255, 0.06);
+  --kapsula-white-056: rgba(255, 255, 255, 0.56);
+  --kapsula-white-072: rgba(255, 255, 255, 0.72);
+  --kapsula-white-082: rgba(255, 255, 255, 0.82);
+  --kapsula-white-088: rgba(255, 255, 255, 0.88);
+  --kapsula-white-09: rgba(255, 255, 255, 0.9);
+  --kapsula-dark-007: rgba(17, 17, 17, 0.07);
+  --kapsula-dark-008: rgba(17, 17, 17, 0.08);
+  --kapsula-dark-01: rgba(17, 17, 17, 0.1);
+  --kapsula-dark-024: rgba(17, 17, 17, 0.24);
+  --kapsula-dark-028: rgba(17, 17, 17, 0.28);
+  --kapsula-dark-042: rgba(17, 17, 17, 0.42);
+  --kapsula-dark-044: rgba(17, 17, 17, 0.44);
+  --kapsula-dark-046: rgba(17, 17, 17, 0.46);
+  --kapsula-dark-056: rgba(17, 17, 17, 0.56);
+  --kapsula-dark-062: rgba(17, 17, 17, 0.62);
+  --kapsula-dark-072: rgba(17, 17, 17, 0.72);
+  --kapsula-black-015: rgba(0, 0, 0, 0.15);
+  --kapsula-placeholder: rgba(61, 61, 61, 0.38);
+  --kapsula-placeholder-focus: rgba(61, 61, 61, 0.42);
+
+  --kapsula-font-size-xs: 12px;
+  --kapsula-font-size-sm: 14px;
+  --kapsula-font-size-md: 16px;
+  --kapsula-font-size-note: 17px;
+  --kapsula-font-size-lg: 18px;
+  --kapsula-font-size-step: 19px;
+  --kapsula-font-size-xl: 20px;
+  --kapsula-font-size-2xl: 24px;
+  --kapsula-font-size-3xl: 30px;
+  --kapsula-font-size-4xl: 32px;
+  --kapsula-font-size-5xl: 34px;
+  --kapsula-font-size-title: 40px;
+  --kapsula-font-size-subtitle: clamp(18px, 2vw, 24px);
+
+  --kapsula-font-weight-regular: 400;
+  --kapsula-line-height-tight: 1;
+  --kapsula-line-height-zero: 0;
+  --kapsula-line-height-compact: 1.08;
+  --kapsula-line-height-subtitle: 1.1;
+  --kapsula-line-height-progress: 1.15;
+  --kapsula-line-height-title: 1.2;
+  --kapsula-line-height-body: 1.3;
+  --kapsula-line-height-card: 1.35;
+  --kapsula-line-height-copy: 1.4;
+  --kapsula-line-height-text: 1.45;
+  --kapsula-line-height-field: 1.5;
+  --kapsula-line-height-popup-title: 40px;
+  --kapsula-line-height-popup-text: 24px;
+
+  --kapsula-radius-sm: 4px;
+  --kapsula-radius-md: 8px;
+  --kapsula-radius-lg: 16px;
+  --kapsula-radius-xl: 24px;
+  --kapsula-radius-2xl: 28px;
+  --kapsula-radius-round: 50%;
+  --kapsula-radius-pill: 999px;
+
+  --kapsula-text-shadow: 0 2px 14px rgba(0, 0, 0, 0.2);
+  --kapsula-shadow-none: none;
+
+  --kapsula-hero-backdrop-gradient: linear-gradient(180deg, rgba(18, 28, 42, 0.48) 0%, rgba(18, 28, 42, 0.42) 34%, rgba(11, 18, 30, 0.62) 100%);
+  --kapsula-hero-veil-gradient: radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.06), transparent 24%), linear-gradient(90deg, rgba(12, 20, 32, 0.34) 0%, rgba(12, 20, 32, 0.08) 22%, rgba(12, 20, 32, 0.08) 78%, rgba(12, 20, 32, 0.34) 100%);
+  --kapsula-section-veil-gradient: linear-gradient(0deg, rgba(0, 0, 0, 0.70) 0%, rgba(0, 0, 0, 0.70) 100%);
+  --kapsula-style-card-bg: rgba(17, 19, 24, 0.72);
+  --kapsula-style-card-media-bg: #1c1a19;
+  --kapsula-style-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(6, 7, 10, 0.18) 100%);
+  --kapsula-popup-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 31.12%, rgba(0, 0, 0, 0.54) 100%);
+
+  --kapsula-header-height: 64px;
+  --kapsula-card-grid-gap: 24px;
+  --kapsula-card-grid-gap-steps: 22px;
+  --kapsula-card-grid-gap-styles: 14px;
+  --kapsula-progress-top-offset: 16px;
+
+  --kapsula-z-base: 1;
+  --kapsula-z-steps: 2;
+  --kapsula-z-styles: 3;
+  --kapsula-z-form: 4;
+  --kapsula-z-progress: 10;
+}
+
+@media (max-width: 992px) {
+  :root {
+    --kapsula-header-height: 56px;
+  }
 }
