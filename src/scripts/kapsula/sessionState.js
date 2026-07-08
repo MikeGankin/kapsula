@@ -3,8 +3,8 @@ const SESSION_STORAGE_KEYS = {
   capsule: "kapsula.selectedCapsule",
 };
 const URL_SEARCH_KEYS = {
-  screen: "step",
-  capsule: "style",
+  screen: "screen",
+  capsule: "capsule",
 };
 const RESTORABLE_SCREENS = new Set(["hero", "steps", "styles", "form"]);
 
@@ -26,7 +26,9 @@ function writeSessionValue(key, value) {
 
 function readUrlValue(key) {
   try {
-    return new URL(window.location.href).searchParams.get(key);
+    const url = new URL(window.location.href);
+
+    return url.searchParams.get(key);
   } catch {
     return null;
   }

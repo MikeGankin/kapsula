@@ -1,7 +1,7 @@
 .kapsula-card-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--kapsula-card-grid-gap, 24px);
 }
 
@@ -34,6 +34,10 @@
 }
 
 @media (min-width: 993px) {
+  .kapsula-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .kapsula-embla__viewport {
     overflow: visible;
   }
