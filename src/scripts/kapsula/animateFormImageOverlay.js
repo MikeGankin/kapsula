@@ -1,4 +1,5 @@
 import {gsap} from "gsap";
+import {createResponsivePictureNode, getResponsiveImageSources} from "./formResponsiveImages.js";
 
 const HIDDEN_CLIP = "inset(0 100% 0 0)";
 const DURATION = 1;
@@ -169,24 +170,24 @@ function createLayer(sectionId) {
 
 function createSegment(imageSrc) {
   const segmentNode = document.createElement("div");
-  const imageNode = document.createElement("img");
+  const {pictureNode} = createResponsivePictureNode({
+    ...getResponsiveImageSources(imageSrc),
+    alt: getOverlayImageAlt(imageSrc),
+    pictureClassName: "kapsula-form-screen__overlay-picture",
+    imageClassName: "kapsula-form-screen__overlay-image",
+    loading: "eager",
+  });
 
   segmentNode.className = "kapsula-form-screen__overlay-segment";
   segmentNode.dataset.overlayImageSrc = imageSrc;
   segmentNode.dataset.isVisible = "0";
   segmentNode.dataset.clipStart = "0";
-  imageNode.className = "kapsula-form-screen__overlay-image";
-  imageNode.src = imageSrc;
-  imageNode.alt = getOverlayImageAlt(imageSrc);
-  imageNode.decoding = "async";
-  imageNode.loading = "eager";
-
-  segmentNode.append(imageNode);
+  segmentNode.append(pictureNode);
 
   return segmentNode;
 }
 
-function preloadImage(imageSrc) {
+function preloadSingleImage(imageSrc) {
   if (!imageSrc) {
     return Promise.resolve();
   }
@@ -216,6 +217,14 @@ function preloadImage(imageSrc) {
   imageLoadCache.set(imageSrc, preloadPromise);
 
   return preloadPromise;
+}
+
+function preloadImage(imageSrc) {
+  const {desktopSrc, mobileSrc} = getResponsiveImageSources(imageSrc);
+
+  return Promise.all(
+    [desktopSrc, mobileSrc].filter(Boolean).map((src) => preloadSingleImage(src)),
+  );
 }
 
 function getOrCreateLayer(overlayNode, layerMap, sectionId) {
@@ -270,7 +279,7 @@ function animateLayerVisibility(layerNode, isVisible) {
 }
 
 function animateImageParallax(segmentNode, {offsetOverride, direction = -1, multiplier = 1} = {}) {
-  const imageNode = segmentNode.querySelector("img");
+  const imageNode = segmentNode.querySelector(".kapsula-form-screen__overlay-image");
 
   if (!imageNode) return;
 

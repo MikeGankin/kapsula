@@ -29,6 +29,10 @@ div[class*="DepartureContact_departureContactPhone__"] {
   color: var(--kapsula-white) !important;
 }
 
+.header-mobile {
+  height: 56px !important;
+}
+
 div[class*="HeaderTopBar_iconContainer__"] svg path,
 div[class*="HeaderTopBar_iconContainer__"] svg circle,
 div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
@@ -63,11 +67,5 @@ div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
 @media (min-width: 993px) {
   div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
     display: none;
-  }
-}
-
-@media (max-width: 992px) {
-  .header-mobile {
-    height: 56px !important;
   }
 }

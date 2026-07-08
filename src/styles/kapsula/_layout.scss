@@ -7,7 +7,16 @@
   display: none;
 }
 
-@media (min-width: 933px) {
+div[class*="QSBlockMobile_qsBlockMobileContainer__"] {
+  padding: 0 !important;
+}
+
+.layout-container-limit {
+  max-width: 100%;
+  padding: 0 16px;
+}
+
+@media (min-width: 993px) {
   .row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
     display: none;
   }

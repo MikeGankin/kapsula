@@ -56,8 +56,16 @@
   --kapsula-font-size-3xl: 30px;
   --kapsula-font-size-4xl: 32px;
   --kapsula-font-size-5xl: 34px;
-  --kapsula-font-size-title: 40px;
+  --kapsula-font-size-title: 32px;
   --kapsula-font-size-subtitle: clamp(18px, 2vw, 24px);
+  --kapsula-font-size-form-title: 28px;
+  --kapsula-font-size-form-section-index: 16px;
+  --kapsula-font-size-form-section-title: 16px;
+  --kapsula-font-size-form-section-summary: 14px;
+  --kapsula-font-size-progress-label: 14px;
+  --kapsula-font-size-popup-aside-title: 16px;
+  --kapsula-font-size-popup-card-title: 16px;
+  --kapsula-font-size-popup-card-location: 12px;
 
   --kapsula-font-weight-regular: 400;
   --kapsula-line-height-tight: 1;
@@ -73,6 +81,7 @@
   --kapsula-line-height-field: 1.5;
   --kapsula-line-height-popup-title: 40px;
   --kapsula-line-height-popup-text: 24px;
+  --kapsula-line-height-popup-card-title: 1.5;
 
   --kapsula-radius-sm: 4px;
   --kapsula-radius-md: 8px;
@@ -93,7 +102,7 @@
   --kapsula-style-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(6, 7, 10, 0.18) 100%);
   --kapsula-popup-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 31.12%, rgba(0, 0, 0, 0.54) 100%);
 
-  --kapsula-header-height: 64px;
+  --kapsula-header-height: 56px;
   --kapsula-card-grid-gap: 24px;
   --kapsula-card-grid-gap-steps: 22px;
   --kapsula-card-grid-gap-styles: 14px;
@@ -106,8 +115,20 @@
   --kapsula-z-progress: 10;
 }
 
-@media (max-width: 992px) {
+@media (min-width: 993px) {
   :root {
-    --kapsula-header-height: 56px;
+    --kapsula-header-height: 64px;
+    --kapsula-font-size-form-title: 32px;
+    --kapsula-font-size-form-section-index: 24px;
+    --kapsula-font-size-form-section-title: 20px;
+    --kapsula-font-size-form-section-summary: 18px;
+    --kapsula-font-size-popup-card-location: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --kapsula-font-size-popup-card-title: 16px;
+    --kapsula-line-height-popup-card-title: 1.08;
   }
 }

@@ -10,28 +10,26 @@
 .kapsula-form-screen {
   width: 100%;
   min-height: 100%;
-  height: 100%;
   display: grid;
-  align-content: stretch;
-  padding-block: 48px;
+  align-content: start;
+  padding-top: 0 !important;
+  padding-bottom: 24px !important;
 }
 
 .kapsula-form-screen--offset-top {
-  padding-top: 56px;
+  padding-top: 0;
 }
 
 .kapsula-form-screen__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
   min-height: 0;
-  height: 100%;
 }
 
 .kapsula-form-screen__main {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
   gap: 24px;
   min-height: 0;
 }
@@ -44,8 +42,9 @@
 
 .kapsula-screen--form .kapsula-copy__title {
   color: var(--kapsula-text-dark);
-  font-size: var(--kapsula-font-size-4xl);
+  font-size: var(--kapsula-font-size-form-title);
   text-shadow: var(--kapsula-shadow-none);
+  text-align: center;
 }
 
 .kapsula-form-screen__subtitle {
@@ -57,17 +56,24 @@
 
 .kapsula-form-screen__aside {
   display: grid;
-  max-width: 560px;
+  order: -1;
+  max-width: none;
   min-height: 0;
 }
 
 .kapsula-form-screen__media {
   position: relative;
   width: 100%;
-  max-width: 560px;
-  height: 100%;
+  max-width: none;
+  height: 220px;
   min-height: 0;
   overflow: clip;
+}
+
+.kapsula-form-screen__picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .kapsula-form-screen__image {
@@ -100,6 +106,14 @@
   clip-path: inset(0 100% 0 0);
 }
 
+.kapsula-form-screen__overlay-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .kapsula-form-screen__overlay-image {
   position: absolute;
   inset: 0;
@@ -107,4 +121,36 @@
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+@media (min-width: 993px) {
+  .kapsula-form-screen {
+    height: 100%;
+    align-content: stretch;
+    padding-block: 48px !important;
+  }
+
+  .kapsula-form-screen--offset-top {
+    padding-top: 56px;
+  }
+
+  .kapsula-form-screen__layout {
+    grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
+    align-items: stretch;
+    height: 100%;
+  }
+
+  .kapsula-form-screen__main {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .kapsula-form-screen__aside {
+    order: 0;
+    max-width: 560px;
+  }
+
+  .kapsula-form-screen__media {
+    max-width: 560px;
+    height: 100%;
+  }
 }

@@ -27,11 +27,14 @@
 }
 
 .kapsula-button--header {
+  width: 48px;
+  height: 48px;
   margin-left: 20px;
+  padding: 0;
 }
 
 .kapsula-button__icon {
-  display: none;
+  display: inline-flex;
   line-height: var(--kapsula-line-height-zero);
 }
 
@@ -39,18 +42,22 @@
   display: block;
 }
 
-@media (max-width: 1280px) {
+.kapsula-button--header .kapsula-button__text {
+  display: none;
+}
+
+@media (min-width: 1200px) {
   .kapsula-button--header {
-    width: 48px;
-    height: 48px;
-    padding: 0;
+    width: auto;
+    height: auto;
+    padding: 16px 20px;
   }
 
   .kapsula-button--header .kapsula-button__text {
-    display: none;
+    display: inline;
   }
 
   .kapsula-button--header .kapsula-button__icon {
-    display: inline-flex;
+    display: none;
   }
 }

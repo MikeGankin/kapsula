@@ -1,7 +1,6 @@
 .kapsula-copy {
   display: grid;
   justify-items: start;
-  text-align: center;
 }
 
 .kapsula-copy__title {
@@ -11,7 +10,7 @@
   font-size: var(--kapsula-font-size-title);
   font-weight: var(--kapsula-font-weight-regular);
   line-height: var(--kapsula-line-height-title);
-  text-align: left;
+  text-align: center;
   text-shadow: var(--kapsula-text-shadow);
 }
 

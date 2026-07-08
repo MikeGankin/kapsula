@@ -1,5 +1,4 @@
 .kapsula-option-card {
-  min-height: 98px;
   position: relative;
   display: grid;
   align-content: start;
@@ -8,12 +7,11 @@
   border: 1px solid var(--kapsula-dark-028);
   border-radius: var(--kapsula-radius-md);
   background: var(--kapsula-white);
-  padding: 16px;
+  padding: 8px;
   color: var(--kapsula-text-dark);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  flex: 1;
 }
 
 .kapsula-form-option__input {
@@ -74,4 +72,11 @@
   height: 16px;
   background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2.97855 8.31344C3.17382 8.11818 3.4904 8.11818 3.68566 8.31344L5.99877 10.6266L12.3119 4.31344C12.5071 4.11818 12.8237 4.11818 13.019 4.31344C13.2143 4.5087 13.2143 4.82528 13.019 5.02055L6.35233 11.6872C6.15706 11.8825 5.84048 11.8825 5.64522 11.6872L2.97855 9.02055C2.78329 8.82528 2.78329 8.5087 2.97855 8.31344Z' fill='white'/%3E%3C/svg%3E");
   transform: translate(-50%, -50%);
+}
+
+@media (min-width: 993px) {
+  .kapsula-option-card,
+  .kapsula-form-option {
+    padding: 16px;
+  }
 }

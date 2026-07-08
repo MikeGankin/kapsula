@@ -11,6 +11,7 @@ import {normalizeFormValues, toggleOptionValue} from "./formValues.js";
 import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay} from "./animateFormImageOverlay.js";
+import {getResponsiveImageSources, syncResponsivePicture} from "./formResponsiveImages.js";
 
 function getSectionOverlaySources(section) {
   return Array.from(new Set(
@@ -130,8 +131,10 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     const capsuleId = selectedCapsule$.value;
     titleNode.textContent = capsule.title;
     subtitleNode.textContent = capsule.subtitle;
-    imageNode.src = capsule.imageSrc;
-    imageNode.alt = capsule.imageAlt;
+    syncResponsivePicture(imageNode, {
+      ...getResponsiveImageSources(capsule.imageSrc, capsule.imageMobileSrc),
+      alt: capsule.imageAlt,
+    });
 
     const nextValues = normalizeFormValues(capsule.sections, buildInitialValues(capsule.sections, values));
     const nextExpandedState = buildExpandedState(capsule.sections, expandedState);

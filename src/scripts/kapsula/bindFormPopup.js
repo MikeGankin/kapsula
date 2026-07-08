@@ -1,4 +1,6 @@
 import * as z from "zod/mini";
+import {syncEmblaCarousel} from "./syncEmblaCarousel.js";
+import {bindEmblaDots} from "./syncEmblaDots.js";
 
 const POPUP_ID = "coral-popup-kapsula";
 const POPUP_FIELD_ERRORS = {
@@ -152,6 +154,8 @@ export function bindFormPopup(formExperience, hero) {
 
   const popupFormNode = popupNode.querySelector("[data-kapsula-popup-form]");
   const homeButtonNode = popupNode.querySelector("[data-kapsula-popup-home]");
+  const popupCardsNode = popupNode.querySelector(".kapsula-popup__cards");
+  const popupPaginationNode = popupNode.querySelector("[data-kapsula-popup-pagination]");
 
   if (!popupFormNode) {
     return;
@@ -159,12 +163,22 @@ export function bindFormPopup(formExperience, hero) {
 
   popupNode.dataset.popupBound = "1";
   setPopupState(popupNode, "form");
+  const popupCardsCarousel = syncEmblaCarousel(popupCardsNode, {
+    align: "start",
+    containScroll: "trimSnaps",
+  });
+  bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
+    label: "Перейти к карточке",
+  });
   let boundSubmitButton = null;
 
   const handleOpenPopup = (event) => {
     event.preventDefault();
     setPopupState(popupNode, "form");
     openPopup(popupNode);
+    window.requestAnimationFrame(() => {
+      popupCardsCarousel?.reInit();
+    });
   };
 
   const bindSubmitButton = () => {

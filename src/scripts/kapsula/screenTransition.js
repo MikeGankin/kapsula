@@ -2,6 +2,12 @@ import {gsap} from "gsap";
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveCurrentScreen} from "./sessionState.js";
 
+function emitScreenChange(hero, screenKey) {
+  hero.dispatchEvent(new CustomEvent("kapsula:screen-change", {
+    detail: {screenKey},
+  }));
+}
+
 export function setActiveProgressStep(hero, stepName) {
   const progressItems = hero.querySelectorAll(KAPSULA_ANIMATION.screenTransition.selectors.progressItem);
 
@@ -65,6 +71,7 @@ export function restoreScreen({
     setActiveProgressStep(hero, "steps");
     hero.dataset.screen = "hero";
     saveCurrentScreen("hero");
+    emitScreenChange(hero, "hero");
 
     return true;
   }
@@ -101,6 +108,7 @@ export function restoreScreen({
   setActiveProgressStep(hero, restoredScreen.stepName);
   hero.dataset.screen = screenKey;
   saveCurrentScreen(screenKey);
+  emitScreenChange(hero, screenKey);
 
   return true;
 }
@@ -131,6 +139,7 @@ export function transitionBetweenScreens({
   setActiveProgressStep(hero, toScreen.stepName);
   hero.dataset.screen = toKey;
   saveCurrentScreen(toKey);
+  emitScreenChange(hero, toKey);
 
   const timeline = gsap.timeline({
     defaults: timelineConfig.defaults,

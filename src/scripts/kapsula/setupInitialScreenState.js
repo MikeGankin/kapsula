@@ -30,7 +30,7 @@ export function setupInitialScreenState(screenNodes, initial) {
   hideScreen(stylesScreen);
   hideScreen(formScreen);
 
-  gsap.set([stepsTitle, ...stepsCards, stepsNote, stepsButton, stepsProgress], {
+  gsap.set([stepsTitle, ...stepsCards, stepsNote, stepsButton, ...stepsProgress], {
     autoAlpha: 0,
     y: initial.y,
   });

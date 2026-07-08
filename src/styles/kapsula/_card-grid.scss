@@ -4,3 +4,49 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--kapsula-card-grid-gap, 24px);
 }
+
+.kapsula-embla__viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.kapsula-form-options {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--kapsula-card-grid-gap, 24px);
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.kapsula-form-options::-webkit-scrollbar {
+  display: none;
+}
+
+.kapsula-form-options > * {
+  flex: 0 0 calc(100% - 32px);
+  scroll-snap-align: start;
+}
+
+@media (min-width: 993px) {
+  .kapsula-embla__viewport {
+    overflow: visible;
+  }
+
+  .kapsula-form-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: visible;
+    scroll-snap-type: none;
+    scroll-padding-inline: 0;
+  }
+
+  .kapsula-form-options > * {
+    flex: initial;
+  }
+}

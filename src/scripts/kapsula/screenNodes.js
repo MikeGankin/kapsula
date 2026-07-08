@@ -10,7 +10,7 @@ function hasRequiredNodes(nodes) {
       nodes.stepsCards.length &&
       nodes.stepsNote &&
       nodes.stepsButton &&
-      nodes.stepsProgress &&
+      nodes.stepsProgress.length &&
       nodes.stylesTitle &&
       nodes.styleCards.length &&
       nodes.styleCardButtons.length &&
@@ -34,7 +34,7 @@ export function getScreenNodes(hero) {
     stepsCards: hero.querySelectorAll(selectors.stepsCards),
     stepsNote: hero.querySelector(selectors.stepsNote),
     stepsButton: hero.querySelector(selectors.stepsButton),
-    stepsProgress: hero.querySelector(selectors.stepsProgress),
+    stepsProgress: hero.querySelectorAll(selectors.stepsProgress),
     stylesTitle: hero.querySelector(selectors.stylesTitle),
     styleCards: hero.querySelectorAll(selectors.styleCards),
     styleCardButtons: hero.querySelectorAll(selectors.styleCardButtons),

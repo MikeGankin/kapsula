@@ -10,9 +10,11 @@
   align-self: start;
   display: grid;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
   max-height: 100%;
+  overflow-x: hidden;
   overflow-y: scroll;
-  padding-right: 20px;
   scrollbar-color: var(--kapsula-gold-scroll) var(--kapsula-dark-008);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
@@ -41,11 +43,14 @@
 }
 
 .kapsula-form-section {
-  padding-bottom: 12px;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 0;
 }
 
 .kapsula-form-section__trigger {
   width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -61,21 +66,22 @@
 .kapsula-form-section__heading {
   display: inline-flex;
   align-items: baseline;
-  gap: 14px;
+  gap: 4px;
   font-size: var(--kapsula-font-size-xl);
   transform-origin: left center;
+  min-width: 0;
 }
 
 .kapsula-form-section__index {
   color: currentColor;
   font-family: var(--kapsula-heading-font);
-  font-size: var(--kapsula-font-size-2xl);
+  font-size: var(--kapsula-font-size-form-section-index);
   line-height: var(--kapsula-line-height-tight);
 }
 
 .kapsula-form-section__title {
   font-family: var(--kapsula-heading-font);
-  font-size: var(--kapsula-font-size-xl);
+  font-size: var(--kapsula-font-size-form-section-title);
   line-height: var(--kapsula-line-height-title);
 }
 
@@ -83,8 +89,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 40px;
-  min-width: 240px;
+  gap: 16px;
+  min-width: 0;
   margin-left: auto;
 }
 
@@ -93,7 +99,7 @@
   max-width: 360px;
   overflow: hidden;
   color: var(--kapsula-dark-046);
-  font-size: var(--kapsula-font-size-lg);
+  font-size: var(--kapsula-font-size-form-section-summary);
   line-height: var(--kapsula-line-height-title);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -215,4 +221,10 @@
   color: var(--kapsula-white-088);
   cursor: not-allowed;
   pointer-events: none;
+}
+
+@media (min-width: 993px) {
+  .kapsula-form-section {
+    padding-bottom: 12px;
+  }
 }
