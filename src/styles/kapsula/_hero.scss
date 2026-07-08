@@ -34,7 +34,7 @@
 .kapsula__inner {
   position: relative;
   z-index: var(--kapsula-z-base);
-  height: calc(100dvh - var(--kapsula-header-height));
+  height: calc(100dvh - var(--site-header-mobile-height));
 }
 
 .kapsula-screen--hero {
@@ -43,7 +43,7 @@
   z-index: var(--kapsula-z-base);
   display: grid;
   place-items: center;
-  padding-top: 56px;
+  padding: 16px;
 }
 
 .kapsula-screen--hero .kapsula-copy__title {
@@ -54,6 +54,8 @@
   font-family: inherit;
   font-size: var(--kapsula-font-size-md);
   font-weight: var(--kapsula-font-weight-regular);
+  text-align: center;
+  margin: 0 auto;
 }
 
 .kapsula__content {
@@ -70,4 +72,5 @@
   display: block;
   width: min(220px, 52vw);
   height: auto;
+  margin: 0 auto;
 }

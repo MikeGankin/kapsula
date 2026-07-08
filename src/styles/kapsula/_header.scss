@@ -30,7 +30,28 @@ div[class*="DepartureContact_departureContactPhone__"] {
 }
 
 .header-mobile {
-  height: 56px !important;
+  height: var(--site-header-mobile-height);
+  background: #262626;
+}
+
+[class*="LoginButton_loginButton__"] {
+  svg {
+    circle, path {
+      stroke: #ffffff;
+    }
+  }
+}
+
+[class*="HeaderHamburgerMenu_menuButton__"] {
+  svg {
+    path {
+      fill: #ffffff;
+    }
+  }
+}
+
+[class*="HeaderHamburgerMenu_menuContainer__"] {
+  top: 60px !important;
 }
 
 div[class*="HeaderTopBar_iconContainer__"] svg path,
@@ -63,6 +84,20 @@ div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
 .submenu .custom-link {
   color: var(--kapsula-black);
 }
+
+[data-testid="header-logo"] {
+  width: 113px;
+  height: 40px;
+  background: url("https://b2ccdn.coral.ru/content/elite-service-logo.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  img {
+    display: none;
+  }
+}
+
 
 @media (min-width: 993px) {
   div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
