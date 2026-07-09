@@ -1,24 +1,42 @@
 .kapsula-screen {
   width: 100%;
   height: 100%;
+  padding-block: 16px !important;
+
+  @media (max-width: 991px) {
+    padding: 16px;
+  }
 }
 
 .kapsula-screen--steps {
   position: absolute;
   inset: 0;
   z-index: var(--kapsula-z-steps);
-  display: grid;
-  place-items: center;
-  padding-top: 56px;
+}
+
+.kapsula-button--steps {
+  align-self: end;
+
+  @media (min-width: 993px) {
+    width: fit-content;
+    justify-self: center;
+  }
 }
 
 .kapsula-steps {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
   display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 30px;
+  gap: 16px;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
+
+  @media (min-width: 993px) {
+    gap: 32px;
+    grid-template-rows: repeat(5, auto);
+    align-content: center;
+  }
 }
 
 .kapsula-copy--steps .kapsula-copy__title {
@@ -26,14 +44,20 @@
 }
 
 .kapsula-steps__cards {
+  min-height: 0;
   gap: var(--kapsula-card-grid-gap-steps);
   margin: 0;
-  padding: 0;
+  padding: 0 8px 0 0;
   list-style: none;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+
+  @media (min-width: 993px) {
+    height: fit-content;
+  }
 }
 
 .kapsula-step-card {
-  min-height: 198px;
   display: grid;
   align-content: space-between;
   gap: 24px;
@@ -42,12 +66,17 @@
   background: var(--kapsula-white-001);
   backdrop-filter: blur(10px);
   padding: 26px 24px 22px;
+  scroll-snap-align: start;
+
+  @media (min-width: 993px) {
+    min-height: 200px;
+  }
 }
 
 .kapsula-step-card__number {
   color: var(--kapsula-white-072);
-  font-family: var(--kapsula-heading-font);
-  font-size: var(--kapsula-font-size-5xl);
+  font-family: var(--kapsula-heading-font), serif;
+  font-size: var(--kapsula-font-size-2xl);
   line-height: var(--kapsula-line-height-tight);
 }
 
@@ -61,7 +90,8 @@
 .kapsula-steps__note {
   margin: 0;
   color: var(--kapsula-white-09);
-  font-size: var(--kapsula-font-size-note);
+  font-size: 16px;
   line-height: var(--kapsula-line-height-body);
   text-align: center;
+  align-self: end;
 }

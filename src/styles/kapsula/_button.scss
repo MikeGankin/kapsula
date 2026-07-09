@@ -9,6 +9,7 @@
   color: var(--kapsula-white);
   font-size: var(--kapsula-font-size-md);
   line-height: var(--kapsula-line-height-tight);
+  text-align: center;
   cursor: pointer;
   transition: background-color 180ms ease;
 
@@ -27,10 +28,14 @@
 }
 
 .kapsula-button--header {
-  width: 48px;
+  width: fit-content;
   height: 48px;
   margin-left: 20px;
   padding: 0;
+
+  @media (min-width: 1250px) {
+    padding-inline: 16px;
+  }
 }
 
 .kapsula-button__icon {
@@ -40,24 +45,17 @@
 
 .kapsula-button__icon svg {
   display: block;
+
+  @media (min-width: 1250px) {
+    display: none;
+  }
 }
 
 .kapsula-button--header .kapsula-button__text {
   display: none;
-}
 
-@media (min-width: 1200px) {
-  .kapsula-button--header {
-    width: auto;
-    height: auto;
-    padding: 16px 20px;
-  }
-
-  .kapsula-button--header .kapsula-button__text {
+  @media (min-width: 1250px) {
     display: inline;
   }
-
-  .kapsula-button--header .kapsula-button__icon {
-    display: none;
-  }
 }
+

@@ -5,9 +5,8 @@
   right: auto;
   width: 100%;
   height: fit-content;
-  padding-top: 24px;
   z-index: auto;
-  margin-bottom: 16px;
+  margin-bottom: 16px !important;
   --kapsula-progress-accent: var(--kapsula-white);
 }
 
@@ -25,6 +24,10 @@
   justify-content: stretch;
   gap: 0;
   width: 100%;
+  
+  @media (min-width: 993px) {
+    gap: 16px;
+  }
 }
 
 .kapsula-progress__item {
@@ -40,12 +43,16 @@
 .kapsula-progress__item:not(:last-child)::after {
   content: "";
   position: absolute;
-  top: 8px;
+  top: 5px;
   left: calc(50% + 22px);
   width: calc(100% - 44px);
   height: 2px;
   margin: 0;
   background: currentColor;
+
+  @media (min-width: 993px) {
+    display: none;
+  }
 }
 
 .kapsula-progress__item:has(+ .kapsula-progress__item.is-active)::after {
@@ -61,7 +68,7 @@
   gap: 0;
   border: 0;
   background: transparent;
-  padding: 32px 0 0;
+  padding: 24px 0 0;
   color: inherit;
   font: inherit;
   text-align: left;
@@ -73,8 +80,8 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   border-radius: var(--kapsula-radius-round);
   border: 2px solid currentColor;
   transform: translateX(-50%);
@@ -130,13 +137,6 @@
     display: flex;
     align-items: center;
     text-align: left;
-  }
-
-  .kapsula-progress__item:not(:last-child)::after {
-    content: "\2022";
-    display: block;
-    margin: 0 20px;
-    color: var(--kapsula-white-056);
   }
 
   .kapsula-progress__item:has(+ .kapsula-progress__item.is-active)::after {

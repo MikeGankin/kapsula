@@ -153,15 +153,16 @@ export function transitionBetweenScreens({
 
   if (fromKey === "hero") {
     timeline
-      .to(heroScreen, timelineConfig.heroScreen)
       .set(heroScreen, {
+        opacity: 0,
         visibility: "hidden",
         pointerEvents: "none",
+        y: 0,
       });
   } else {
     timeline
-      .to(fromScreen.node, timelineConfig.heroScreen)
       .set(fromScreen.node, {
+        opacity: 0,
         visibility: "hidden",
         pointerEvents: "none",
         y: 0,

@@ -2,8 +2,6 @@
   position: absolute;
   inset: 0;
   z-index: var(--kapsula-z-styles);
-  display: grid;
-  place-items: center;
 }
 
 .kapsula-styles {
@@ -13,6 +11,10 @@
   align-content: start;
   justify-items: center;
   gap: 30px;
+
+  @media (min-width: 993px) {
+    align-content: center;
+  }
 }
 
 .kapsula-styles__grid {
@@ -61,10 +63,6 @@
 }
 
 @media (min-width: 993px) {
-  .kapsula-styles {
-    align-content: center;
-  }
-
   .kapsula-styles__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

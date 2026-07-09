@@ -1,19 +1,19 @@
 import {getVisibleOptions} from "./formConditions.js";
 
 function isSelected(section, currentValue, optionValue) {
-  if (section.multiple) {
-    return Array.isArray(currentValue) && currentValue.includes(optionValue);
-  }
+    if (section.multiple) {
+        return Array.isArray(currentValue) && currentValue.includes(optionValue);
+    }
 
-  return currentValue === optionValue;
+    return currentValue === optionValue;
 }
 
 function getOptionInputType(section) {
-  return section.multiple ? "checkbox" : "radio";
+    return section.multiple ? "checkbox" : "radio";
 }
 
 function renderOptions(section, currentValue, values) {
-  return getVisibleOptions(section, values).map((option) => `
+    return getVisibleOptions(section, values).map((option) => `
     <label
       class="kapsula-option-card kapsula-form-option${isSelected(section, currentValue, option.value) ? " is-selected" : ""}"
       data-kapsula-option
@@ -39,13 +39,13 @@ function renderOptions(section, currentValue, values) {
 }
 
 function createOptionButtonNode(section, option, isOptionSelected) {
-  const optionButton = document.createElement("label");
-  optionButton.className = `kapsula-option-card kapsula-form-option${isOptionSelected ? " is-selected" : ""}`;
-  optionButton.dataset.kapsulaOption = "";
-  optionButton.dataset.sectionId = section.id;
-  optionButton.dataset.optionValue = option.value;
+    const optionButton = document.createElement("label");
+    optionButton.className = `kapsula-option-card kapsula-form-option${isOptionSelected ? " is-selected" : ""}`;
+    optionButton.dataset.kapsulaOption = "";
+    optionButton.dataset.sectionId = section.id;
+    optionButton.dataset.optionValue = option.value;
 
-  optionButton.innerHTML = `
+    optionButton.innerHTML = `
     <input
       class="kapsula-form-option__input"
       type="${getOptionInputType(section)}"
@@ -62,57 +62,57 @@ function createOptionButtonNode(section, option, isOptionSelected) {
     </span>
   `;
 
-  return optionButton;
+    return optionButton;
 }
 
 function renderSectionSubtitle(section) {
-  if (!section.subtitle) return "";
+    if (!section.subtitle) return "";
 
-  return `<p class="kapsula-form-section__subtitle" id="kapsula-section-subtitle-${section.id}">${section.subtitle}</p>`;
+    return `<p class="kapsula-form-section__subtitle" id="kapsula-section-subtitle-${section.id}">${section.subtitle}</p>`;
 }
 
 function getSelectedOptionLabels(section, currentValue, values) {
-  const selectedValues = Array.isArray(currentValue) ? currentValue : [currentValue].filter(Boolean);
+    const selectedValues = Array.isArray(currentValue) ? currentValue : [currentValue].filter(Boolean);
 
-  return getVisibleOptions(section, values)
-    .filter((option) => selectedValues.includes(option.value))
-    .map((option) => option.label);
+    return getVisibleOptions(section, values)
+        .filter((option) => selectedValues.includes(option.value))
+        .map((option) => option.label);
 }
 
 function getSectionSummary(section, currentValue, values) {
-  if (section.type === "textarea") {
-    return "";
-  }
+    if (section.type === "textarea") {
+        return "";
+    }
 
-  const selectedLabels = getSelectedOptionLabels(section, currentValue, values);
+    const selectedLabels = getSelectedOptionLabels(section, currentValue, values);
 
-  if (selectedLabels.length > 0) {
-    return selectedLabels.join(", ");
-  }
+    if (selectedLabels.length > 0) {
+        return selectedLabels.join(", ");
+    }
 
-  if (Array.isArray(currentValue)) {
-    return currentValue.filter(Boolean).join(", ");
-  }
+    if (Array.isArray(currentValue)) {
+        return currentValue.filter(Boolean).join(", ");
+    }
 
-  return currentValue ?? "";
+    return currentValue ?? "";
 }
 
 function renderSectionSummary(section, currentValue, values) {
-  const summaryValue = getSectionSummary(section, currentValue, values);
+    const summaryValue = getSectionSummary(section, currentValue, values);
 
-  if (!summaryValue) {
-    return "";
-  }
+    if (!summaryValue) {
+        return "";
+    }
 
-  return `<span class="kapsula-form-section__summary" data-kapsula-section-summary>${summaryValue}</span>`;
+    return `<span class="kapsula-form-section__summary" data-kapsula-section-summary>${summaryValue}</span>`;
 }
 
 function renderSectionBody(section, currentValue, values) {
-  if (section.type === "textarea") {
-    const textareaId = `kapsula-field-${section.id}`;
-    const subtitleId = section.subtitle ? `kapsula-section-subtitle-${section.id}` : "";
+    if (section.type === "textarea") {
+        const textareaId = `kapsula-field-${section.id}`;
+        const subtitleId = section.subtitle ? `kapsula-section-subtitle-${section.id}` : "";
 
-    return `
+        return `
       <div class="kapsula-form-section__content">
         ${renderSectionSubtitle(section)}
         <label class="kapsula-form-section__label sr-only" for="${textareaId}">${section.title}</label>
@@ -127,9 +127,9 @@ function renderSectionBody(section, currentValue, values) {
         >${currentValue ?? ""}</textarea>
       </div>
     `;
-  }
+    }
 
-  return `
+    return `
     <fieldset class="kapsula-form-section__content kapsula-form-section__fieldset">
       <legend class="kapsula-form-section__legend">${section.title}</legend>
       ${renderSectionSubtitle(section)}
@@ -141,10 +141,10 @@ function renderSectionBody(section, currentValue, values) {
 }
 
 function renderSection(section, currentValue, values, isExpanded, index) {
-  const triggerId = `kapsula-section-trigger-${section.id}`;
-  const panelId = `kapsula-section-panel-${section.id}`;
+    const triggerId = `kapsula-section-trigger-${section.id}`;
+    const panelId = `kapsula-section-panel-${section.id}`;
 
-  return `
+    return `
     <section
       class="kapsula-form-section${isExpanded ? " is-expanded" : ""}"
       data-kapsula-rendered-section="${section.id}"
@@ -186,137 +186,134 @@ function renderSection(section, currentValue, values, isExpanded, index) {
 }
 
 function renderSections(schema, values, expandedState) {
-  return schema.sections.map((section, index) => {
-    const isExpanded = Boolean(expandedState[section.id]);
-    const currentValue = values[section.id];
+    return schema.sections.map((section, index) => {
+        const isExpanded = Boolean(expandedState[section.id]);
+        const currentValue = values[section.id];
 
-    return renderSection(section, currentValue, values, isExpanded, index);
-  }).join("");
+        return renderSection(section, currentValue, values, isExpanded, index);
+    }).join("");
 }
 
 function ensureSectionSummary(sectionNode, section, currentValue, values) {
-  const metaNode = sectionNode.querySelector("[data-kapsula-section-meta]");
+    const metaNode = sectionNode.querySelector("[data-kapsula-section-meta]");
 
-  if (!metaNode) return;
+    if (!metaNode) return;
 
-  const summaryValue = getSectionSummary(section, currentValue, values);
-  let summaryNode = metaNode.querySelector("[data-kapsula-section-summary]");
+    const summaryValue = getSectionSummary(section, currentValue, values);
+    let summaryNode = metaNode.querySelector("[data-kapsula-section-summary]");
 
-  if (!summaryValue) {
-    summaryNode?.remove();
-    return;
-  }
+    if (!summaryValue) {
+        summaryNode?.remove();
+        return;
+    }
 
-  if (!summaryNode) {
-    metaNode.insertAdjacentHTML("afterbegin", renderSectionSummary(section, currentValue, values));
-    return;
-  }
+    if (!summaryNode) {
+        metaNode.insertAdjacentHTML("afterbegin", renderSectionSummary(section, currentValue, values));
+        return;
+    }
 
-  if (summaryNode.textContent !== summaryValue) {
-    summaryNode.textContent = summaryValue;
-  }
+    if (summaryNode.textContent !== summaryValue) {
+        summaryNode.textContent = summaryValue;
+    }
 }
 
 function syncOptionButtonNode(optionButton, section, option, isOptionSelected) {
-  optionButton.dataset.sectionId = section.id;
-  optionButton.dataset.optionValue = option.value;
-  optionButton.classList.toggle("is-selected", isOptionSelected);
+    optionButton.dataset.sectionId = section.id;
+    optionButton.dataset.optionValue = option.value;
+    optionButton.classList.toggle("is-selected", isOptionSelected);
 
-  const inputNode = optionButton.querySelector("[data-kapsula-choice]");
+    const inputNode = optionButton.querySelector("[data-kapsula-choice]");
 
-  if (!inputNode) return;
+    if (!inputNode) return;
 
-  inputNode.name = section.id;
-  inputNode.value = option.value;
-  inputNode.checked = isOptionSelected;
+    inputNode.name = section.id;
+    inputNode.value = option.value;
+    inputNode.checked = isOptionSelected;
 }
 
 function syncOptionsNode(optionsNode, section, currentValue, values) {
-  const visibleOptions = getVisibleOptions(section, values);
-  const existingOptionButtons = new Map(
-    Array.from(optionsNode.querySelectorAll("[data-kapsula-option]"))
-      .map((node) => [node.dataset.optionValue, node]),
-  );
+    const visibleOptions = getVisibleOptions(section, values);
+    const existingOptionButtons = new Map(
+        Array.from(optionsNode.querySelectorAll("[data-kapsula-option]"))
+            .map((node) => [node.dataset.optionValue, node]),
+    );
 
-  visibleOptions.forEach((option) => {
-    const isOptionSelected = isSelected(section, currentValue, option.value);
-    const existingOptionButton = existingOptionButtons.get(option.value);
+    visibleOptions.forEach((option) => {
+        const isOptionSelected = isSelected(section, currentValue, option.value);
+        const existingOptionButton = existingOptionButtons.get(option.value);
 
-    if (existingOptionButton) {
-      syncOptionButtonNode(existingOptionButton, section, option, isOptionSelected);
-      optionsNode.append(existingOptionButton);
-      existingOptionButtons.delete(option.value);
-      return;
-    }
+        if (existingOptionButton) {
+            syncOptionButtonNode(existingOptionButton, section, option, isOptionSelected);
+            optionsNode.append(existingOptionButton);
+            existingOptionButtons.delete(option.value);
+            return;
+        }
 
-    optionsNode.append(createOptionButtonNode(section, option, isOptionSelected));
-  });
+        optionsNode.append(createOptionButtonNode(section, option, isOptionSelected));
+    });
 
-  existingOptionButtons.forEach((node) => {
-    node.remove();
-  });
+    existingOptionButtons.forEach((node) => {
+        node.remove();
+    });
 }
 
 function syncSectionNode(sectionNode, section, currentValue, values, isExpanded) {
-  sectionNode.classList.toggle("is-expanded", isExpanded);
+    sectionNode.classList.toggle("is-expanded", isExpanded);
 
-  const triggerNode = sectionNode.querySelector("[data-kapsula-section-trigger]");
+    const triggerNode = sectionNode.querySelector("[data-kapsula-section-trigger]");
 
-  if (triggerNode) {
-    triggerNode.setAttribute("aria-expanded", isExpanded ? "true" : "false");
-  }
-
-  ensureSectionSummary(sectionNode, section, currentValue, values);
-
-  if (section.type === "textarea") {
-    const textareaNode = sectionNode.querySelector("[data-kapsula-textarea]");
-
-    if (textareaNode && textareaNode.value !== (currentValue ?? "")) {
-      textareaNode.value = currentValue ?? "";
+    if (triggerNode) {
+        triggerNode.setAttribute("aria-expanded", isExpanded ? "true" : "false");
     }
 
-    return;
-  }
+    ensureSectionSummary(sectionNode, section, currentValue, values);
 
-  const optionsNode = sectionNode.querySelector("[data-kapsula-form-options]");
+    if (section.type === "textarea") {
+        const textareaNode = sectionNode.querySelector("[data-kapsula-textarea]");
 
-  if (optionsNode) {
-    syncOptionsNode(optionsNode, section, currentValue, values);
-  }
+        if (textareaNode && textareaNode.value !== (currentValue ?? "")) {
+            textareaNode.value = currentValue ?? "";
+        }
+
+        return;
+    }
+
+    const optionsNode = sectionNode.querySelector("[data-kapsula-form-options]");
+
+    if (optionsNode) {
+        syncOptionsNode(optionsNode, section, currentValue, values);
+    }
 }
 
 function renderFormShell(formNode, schema, values, expandedState) {
-  formNode.innerHTML = `
+    formNode.innerHTML = `
     <div class="kapsula-form__sections" data-kapsula-form-sections>
       ${renderSections(schema, values, expandedState)}
-    </div>
-    <div class="kapsula-form__actions">
-      <button class="kapsula-button kapsula-form__trigger" type="button">${schema.submitLabel}</button>
     </div>
   `;
 }
 
 export function renderForm(formNode, schema, values, expandedState, {forceFull = false} = {}) {
-  const sectionsNode = formNode.querySelector("[data-kapsula-form-sections]");
+    const sectionsNode = formNode.querySelector("[data-kapsula-form-sections]");
 
-  if (forceFull || !sectionsNode) {
-    renderFormShell(formNode, schema, values, expandedState);
-    return;
-  }
+    if (forceFull || !sectionsNode) {
+        renderFormShell(formNode, schema, values, expandedState);
+        return;
+    }
 
-  schema.sections.forEach((section) => {
-    const currentValue = values[section.id];
-    const isExpanded = Boolean(expandedState[section.id]);
-    const sectionNode = sectionsNode.querySelector(`[data-kapsula-rendered-section="${section.id}"]`);
+    schema.sections.forEach((section) => {
+        const currentValue = values[section.id];
+        const isExpanded = Boolean(expandedState[section.id]);
+        const sectionNode = sectionsNode.querySelector(`[data-kapsula-rendered-section="${section.id}"]`);
 
-    if (!sectionNode) return;
+        if (!sectionNode) return;
 
-    syncSectionNode(sectionNode, section, currentValue, values, isExpanded);
-  });
+        syncSectionNode(sectionNode, section, currentValue, values, isExpanded);
+    });
 
-  const submitButton = formNode.querySelector(".kapsula-form__trigger");
+    const submitButton = formNode.querySelector(".kapsula-form__trigger");
 
-  if (submitButton && submitButton.textContent !== schema.submitLabel) {
-    submitButton.textContent = schema.submitLabel;
-  }
+    if (submitButton && submitButton.textContent !== schema.submitLabel) {
+        submitButton.textContent = schema.submitLabel;
+    }
 }

@@ -1,28 +1,29 @@
+@use '../mixins';
+
+.kapsula-form-section {
+  @media (min-width: 993px) {
+    padding-bottom: 12px;
+  }
+}
+
 .kapsula-form {
-  width: 100%;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 24px;
-  min-height: 0;
+  overflow-y: scroll;
+  @include mixins.custom-bar(4px);
+
+  @media (min-width: 993px) {
+    @include mixins.custom-bar(8px)
+  }
 }
 
 .kapsula-form__sections {
   align-self: start;
   display: grid;
   gap: 12px;
-  width: 100%;
-  min-width: 0;
-  max-height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  scrollbar-color: var(--kapsula-gold-scroll) var(--kapsula-dark-008);
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  min-height: 0;
-}
 
-.kapsula-form__sections::-webkit-scrollbar {
-  width: 8px;
+  @media (min-width: 993px) {
+    gap: 24px;
+    padding-right: 16px;
+  }
 }
 
 .kapsula-form__sections::-webkit-scrollbar-track {
@@ -213,7 +214,11 @@
 }
 
 .kapsula-form__trigger {
-  align-self: flex-start;
+  align-self: end;
+
+  @media (min-width: 993px) {
+    width: fit-content;
+  }
 }
 
 .kapsula-form__trigger:disabled {
@@ -223,8 +228,4 @@
   pointer-events: none;
 }
 
-@media (min-width: 993px) {
-  .kapsula-form-section {
-    padding-bottom: 12px;
-  }
-}
+

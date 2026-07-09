@@ -14,12 +14,10 @@
 
 .kapsula__backdrop {
   background-image: var(--kapsula-hero-backdrop-gradient),
-  url("/banner-desktop.webp");
-  background-position: center;
+  url("/banner-mobile.webp");
+  background-position: center bottom;
   background-repeat: no-repeat;
   background-size: cover;
-  transform: scale(1.04);
-  transform-origin: center;
 }
 
 .kapsula__veil {
@@ -43,7 +41,6 @@
   z-index: var(--kapsula-z-base);
   display: grid;
   place-items: center;
-  padding: 16px;
 }
 
 .kapsula-screen--hero .kapsula-copy__title {

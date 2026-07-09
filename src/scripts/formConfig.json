@@ -29,6 +29,11 @@
               "value": "Китай",
               "label": "Китай",
               "overlayImageSrc": "/asia-desktop/china.webp"
+            },
+            {
+              "value": "Вьетнам",
+              "label": "Вьетнам",
+              "overlayImageSrc": "/asia-desktop/china.webp"
             }
           ]
         },

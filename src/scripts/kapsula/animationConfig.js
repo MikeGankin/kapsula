@@ -71,7 +71,6 @@ export const KAPSULA_ANIMATION = {
     },
     initial: {
       y: 24,
-      heroOutY: -18,
     },
     timeline: {
       defaults: {
@@ -79,7 +78,6 @@ export const KAPSULA_ANIMATION = {
       },
       heroScreen: {
         opacity: 0,
-        y: -18,
         duration: 0.45,
       },
       stepsScreen: {

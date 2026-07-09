@@ -9,14 +9,20 @@
                 </div>
 
                 <form class="kapsula-form" data-kapsula-form novalidate></form>
+                <button class="kapsula-button kapsula-form__trigger" type="button">Сформировать капсулу</button>
             </div>
 
             <aside class="kapsula-form-screen__aside">
                 <div class="kapsula-form-screen__media">
                     <picture class="kapsula-form-screen__picture">
-                        <img class="kapsula-form-screen__image" data-kapsula-form-image src="/asia-base.webp"
-                             alt="Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей"
-                             loading="lazy" decoding="async">
+                        <source media="(min-width: 993px)" srcset="/asia-base.webp">
+                        <img
+                                class="kapsula-form-screen__image"
+                                data-kapsula-form-image
+                                src="/asia-base-mob.webp"
+                                alt="Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей"
+                                loading="lazy"
+                                decoding="async">
                     </picture>
                     <div class="kapsula-form-screen__overlay" data-kapsula-form-overlay-images aria-hidden="true"></div>
                 </div>

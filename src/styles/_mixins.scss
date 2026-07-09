@@ -170,3 +170,14 @@ $breakpoints: (
     display: none;
   }
 }
+
+
+@mixin custom-bar($width: 8px) {
+  scrollbar-color: var(--kapsula-gold-scroll) var(--kapsula-dark-008);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+}
