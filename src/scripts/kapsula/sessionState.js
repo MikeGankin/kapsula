@@ -2,6 +2,7 @@ const SESSION_STORAGE_KEYS = {
   screen: "kapsula.currentScreen",
   capsule: "kapsula.selectedCapsule",
   formValues: "kapsula.formValues",
+  formValuesPrefix: "kapsula.formValues",
 };
 const URL_SEARCH_KEYS = {
   screen: "screen",
@@ -97,6 +98,13 @@ export function readSavedFormValues(capsuleId) {
   }
 
   try {
+    const capsuleStorageKey = `${SESSION_STORAGE_KEYS.formValuesPrefix}.${capsuleId}`;
+    const capsuleValue = window.sessionStorage.getItem(capsuleStorageKey);
+
+    if (capsuleValue) {
+      return JSON.parse(capsuleValue);
+    }
+
     const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.formValues);
 
     if (!rawValue) {
@@ -105,7 +113,13 @@ export function readSavedFormValues(capsuleId) {
 
     const parsedValue = JSON.parse(rawValue);
 
-    return parsedValue?.[capsuleId] ?? null;
+    const legacyValues = parsedValue?.[capsuleId] ?? null;
+
+    if (legacyValues) {
+      window.sessionStorage.setItem(capsuleStorageKey, JSON.stringify(legacyValues));
+    }
+
+    return legacyValues;
   } catch {
     return null;
   }
@@ -117,14 +131,9 @@ export function saveFormValues(capsuleId, values) {
   }
 
   try {
-    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.formValues);
-    const parsedValue = rawValue ? JSON.parse(rawValue) : {};
-
-    parsedValue[capsuleId] = values;
-
     window.sessionStorage.setItem(
-      SESSION_STORAGE_KEYS.formValues,
-      JSON.stringify(parsedValue),
+      `${SESSION_STORAGE_KEYS.formValuesPrefix}.${capsuleId}`,
+      JSON.stringify(values),
     );
   } catch {
     // Storage can be unavailable in restricted browser contexts.

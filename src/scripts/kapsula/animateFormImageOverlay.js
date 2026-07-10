@@ -295,8 +295,12 @@ function animateLayerVisibility(layerNode, isVisible) {
   gsap.to(layerNode, {
     autoAlpha: 0,
     duration: 0,
-    delay: DURATION,
+    delay: getAnimationDuration(),
   });
+}
+
+function getAnimationDuration() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 0 : DURATION;
 }
 
 function animateImageParallax(segmentNode, {offsetOverride, direction = -1, multiplier = 1} = {}) {
@@ -312,7 +316,7 @@ function animateImageParallax(segmentNode, {offsetOverride, direction = -1, mult
     x: offset,
   }, {
     x: 0,
-    duration: DURATION,
+    duration: getAnimationDuration(),
     ease: EASE,
   });
 }
@@ -325,6 +329,9 @@ function animateSegmentClip(segmentNode, clipPath, {
   parallaxDirection,
   parallaxMultiplier,
 }) {
+  const animationRevision = String(Number(segmentNode.dataset.animationRevision ?? 0) + 1);
+
+  segmentNode.dataset.animationRevision = animationRevision;
   segmentNode.dataset.isVisible = isVisible ? "1" : "0";
 
   if (typeof start === "number") {
@@ -335,14 +342,17 @@ function animateSegmentClip(segmentNode, clipPath, {
 
   gsap.to(segmentNode, {
     clipPath,
-    duration: DURATION,
+    duration: getAnimationDuration(),
     ease: EASE,
   });
 
   if (withParallax) {
     preloadImage(segmentNode.dataset.overlayImageSrc ?? "")
       .then(() => {
-        if (segmentNode.dataset.isVisible !== "1") return;
+        if (
+          segmentNode.dataset.isVisible !== "1"
+          || segmentNode.dataset.animationRevision !== animationRevision
+        ) return;
         animateImageParallax(segmentNode, {
           offsetOverride: parallaxOffset,
           direction: parallaxDirection,
@@ -509,4 +519,12 @@ export function animateFormImageOverlay(overlayNode, {layers = []} = {}) {
 
     animateLayerVisibility(layerNode, false);
   });
+}
+
+export function destroyFormImageOverlay(overlayNode) {
+  if (!overlayNode) return;
+
+  const animatedNodes = [overlayNode, ...overlayNode.querySelectorAll("*")];
+  gsap.killTweensOf(animatedNodes);
+  overlayNode.replaceChildren();
 }

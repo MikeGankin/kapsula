@@ -1,3 +1,5 @@
+@use "media";
+
 .kapsula-screen--styles {
   position: absolute;
   inset: 0;
@@ -12,7 +14,7 @@
   justify-items: center;
   gap: 30px;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     align-content: center;
   }
 }
@@ -23,14 +25,27 @@
   flex-wrap: nowrap;
   gap: var(--kapsula-card-grid-gap-styles);
   box-sizing: border-box;
+
+  @include media.desktop {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .kapsula-styles__grid > * {
   flex: 0 0 100%;
+
+  @include media.desktop {
+    flex: initial;
+  }
 }
 
 .kapsula-style-card__media {
   height: 250px;
+
+  @include media.desktop {
+    height: auto;
+  }
 }
 
 .kapsula-styles__pagination {
@@ -38,6 +53,10 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
+
+  @include media.desktop {
+    display: none;
+  }
 }
 
 .kapsula-styles__pagination[hidden] {
@@ -62,21 +81,6 @@
   background-color: var(--kapsula-white) !important;
 }
 
-@media (min-width: 993px) {
-  .kapsula-styles__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .kapsula-styles__grid > * {
-    flex: initial;
-  }
-
-  .kapsula-style-card__media {
-    height: auto;
-  }
-
-  .kapsula-styles__pagination {
-    display: none;
-  }
+.kapsula-screen--steps nav {
+  padding: 0 !important;
 }

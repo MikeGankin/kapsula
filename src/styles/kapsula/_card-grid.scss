@@ -1,13 +1,23 @@
+@use "media";
+
 .kapsula-card-grid {
   width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--kapsula-card-grid-gap, 24px);
+
+  @include media.desktop {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .kapsula-embla__viewport {
   width: 100%;
   overflow: hidden;
+
+  @include media.desktop {
+    overflow: visible;
+  }
 }
 
 .kapsula-form-options {
@@ -22,6 +32,14 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
+
+  @include media.desktop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: visible;
+    scroll-snap-type: none;
+    scroll-padding-inline: 0;
+  }
 }
 
 .kapsula-form-options::-webkit-scrollbar {
@@ -31,32 +49,12 @@
 .kapsula-form-options > * {
   flex: 0 0 40%;
   scroll-snap-align: start;
-}
 
-@media (min-width: 768px) {
-  .kapsula-form-options > * {
+  @include media.tablet {
     flex: 0 0 25%;
   }
-}
 
-@media (min-width: 993px) {
-  .kapsula-card-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .kapsula-embla__viewport {
-    overflow: visible;
-  }
-
-  .kapsula-form-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    overflow: visible;
-    scroll-snap-type: none;
-    scroll-padding-inline: 0;
-  }
-
-  .kapsula-form-options > * {
+  @include media.desktop {
     flex: 1;
   }
 }

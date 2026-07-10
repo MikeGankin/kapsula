@@ -1,3 +1,5 @@
+@use "media";
+
 .kapsula-button {
   display: inline-flex;
   align-items: center;
@@ -32,11 +34,11 @@
   height: 40px;
   padding: 0;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     margin-left: 16px;
   }
 
-  @media (min-width: 1250px) {
+  @include media.wide {
     padding-inline: 16px;
     height: 48px;
     width: fit-content;
@@ -51,7 +53,7 @@
 .kapsula-button__icon svg {
   display: block;
 
-  @media (min-width: 1250px) {
+  @include media.wide {
     display: none;
   }
 }
@@ -59,7 +61,7 @@
 .kapsula-button--header .kapsula-button__text {
   display: none;
 
-  @media (min-width: 1250px) {
+  @include media.wide {
     display: inline;
   }
 }

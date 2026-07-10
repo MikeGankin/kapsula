@@ -1,3 +1,5 @@
+@use "media";
+
 .kapsula-screen--form {
   position: absolute;
   inset: 0;
@@ -12,10 +14,20 @@
   width: 100%;
   height: 100%;
   min-height: 0;
+
+  @include media.desktop {
+    height: 100%;
+    align-content: stretch;
+    padding-block: 48px !important;
+  }
 }
 
 .kapsula-form-screen--offset-top {
   padding-top: 0;
+
+  @include media.desktop {
+    padding-top: 56px;
+  }
 }
 
 .kapsula-form-screen__layout {
@@ -24,6 +36,12 @@
   height: 100%;
   grid-template-rows: auto minmax(0, 1fr);
   align-items: stretch;
+
+  @include media.desktop {
+    grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
+    align-items: stretch;
+    height: 100%;
+  }
 }
 
 .kapsula-form-screen__main {
@@ -33,8 +51,9 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   align-content: stretch;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     gap: 24px;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 }
 
@@ -42,7 +61,7 @@
   justify-items: center;
   gap: 8px;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     justify-items: start;
     width: 100%;
   }
@@ -54,7 +73,7 @@
   text-shadow: var(--kapsula-shadow-none);
   text-align: center;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     text-align: left;
   }
 }
@@ -65,7 +84,7 @@
   font-size: var(--kapsula-font-size-md);
   line-height: var(--kapsula-line-height-body);
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     text-align: left;
   }
 }
@@ -75,6 +94,11 @@
   order: -1;
   max-width: none;
   min-height: 0;
+
+  @include media.desktop {
+    order: 0;
+    max-width: 560px;
+  }
 }
 
 .kapsula-form-screen__media {
@@ -84,6 +108,11 @@
   height: 220px;
   min-height: 0;
   overflow: clip;
+
+  @include media.desktop {
+    max-width: 560px;
+    height: 100%;
+  }
 }
 
 .kapsula-form-screen__picture {
@@ -137,36 +166,4 @@
   height: 100%;
   display: block;
   object-fit: cover;
-}
-
-@media (min-width: 993px) {
-  .kapsula-form-screen {
-    height: 100%;
-    align-content: stretch;
-    padding-block: 48px !important;
-  }
-
-  .kapsula-form-screen--offset-top {
-    padding-top: 56px;
-  }
-
-  .kapsula-form-screen__layout {
-    grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
-    align-items: stretch;
-    height: 100%;
-  }
-
-  .kapsula-form-screen__main {
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .kapsula-form-screen__aside {
-    order: 0;
-    max-width: 560px;
-  }
-
-  .kapsula-form-screen__media {
-    max-width: 560px;
-    height: 100%;
-  }
 }

@@ -44,3 +44,35 @@ export function normalizeFormValues(sections, values) {
     return accumulator;
   }, {});
 }
+
+function areValuesEqual(sections, previousValues, nextValues) {
+  return sections.every((section) => {
+    const previousValue = previousValues[section.id];
+    const nextValue = nextValues[section.id];
+
+    if (Array.isArray(previousValue) || Array.isArray(nextValue)) {
+      return Array.isArray(previousValue)
+        && Array.isArray(nextValue)
+        && previousValue.length === nextValue.length
+        && previousValue.every((value, index) => value === nextValue[index]);
+    }
+
+    return previousValue === nextValue;
+  });
+}
+
+export function normalizeFormValuesUntilStable(sections, values) {
+  let normalizedValues = values;
+
+  for (let pass = 0; pass < sections.length; pass += 1) {
+    const nextValues = normalizeFormValues(sections, normalizedValues);
+
+    if (areValuesEqual(sections, normalizedValues, nextValues)) {
+      return nextValues;
+    }
+
+    normalizedValues = nextValues;
+  }
+
+  return normalizedValues;
+}

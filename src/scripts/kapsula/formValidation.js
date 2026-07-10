@@ -1,5 +1,7 @@
 import {z} from "zod";
 
+const capsuleSchemaCache = new WeakMap();
+
 function buildSectionSchema(section) {
   if (section.multiple) {
     const schema = z.array(z.string());
@@ -25,5 +27,12 @@ function buildCapsuleSchema(schema) {
 }
 
 export function validateSchema(schema, values) {
-  return buildCapsuleSchema(schema).safeParse(values);
+  let validationSchema = capsuleSchemaCache.get(schema);
+
+  if (!validationSchema) {
+    validationSchema = buildCapsuleSchema(schema);
+    capsuleSchemaCache.set(schema, validationSchema);
+  }
+
+  return validationSchema.safeParse(values);
 }

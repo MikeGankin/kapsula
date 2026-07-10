@@ -8,7 +8,7 @@ import {buildScreenRegistry} from "./screenRegistry.js";
 import {readCurrentScreen, readSelectedCapsule} from "./sessionState.js";
 import {setupInitialScreenState} from "./setupInitialScreenState.js";
 import {restoreScreen, setActiveProgressStep} from "./screenTransition.js";
-import {syncEmblaCarousel} from "./syncEmblaCarousel.js";
+import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 
 function bindStyleCardLinks(styleCardButtons) {
@@ -78,9 +78,10 @@ export function setupScreenFlow(rootNode = document) {
 
   bindStyleCardLinks(screenNodes.styleCardButtons);
   let stylesCarousel = null;
+  let stylesGridNode = null;
 
   try {
-    const stylesGridNode = hero.querySelector(".kapsula-styles__grid");
+    stylesGridNode = hero.querySelector(".kapsula-styles__grid");
     const stylesPaginationNode = hero.querySelector("[data-kapsula-styles-pagination]");
 
     stylesCarousel = syncEmblaCarousel(stylesGridNode, {
@@ -100,16 +101,18 @@ export function setupScreenFlow(rootNode = document) {
     });
   };
 
-  hero.addEventListener("kapsula:screen-change", (event) => {
+  const handleScreenChange = (event) => {
     if (event.detail?.screenKey === "styles") {
       refreshStylesCarousel();
     }
-  });
+  };
+
+  hero.addEventListener("kapsula:screen-change", handleScreenChange);
 
   if (hero.dataset.screen === "styles") {
     refreshStylesCarousel();
   }
-  bindScreenActions({
+  const unbindScreenActions = bindScreenActions({
     formExperience,
     hero,
     progressButtons: screenNodes.progressButtons,
@@ -127,7 +130,16 @@ export function setupScreenFlow(rootNode = document) {
     stepsProgress: screenNodes.stepsProgress,
   });
 
-  if (canInitForm) {
-    bindFormPopup(formExperience, hero);
-  }
+  const unbindFormPopup = canInitForm
+    ? bindFormPopup(formExperience, hero)
+    : null;
+
+  return () => {
+    hero.removeEventListener("kapsula:screen-change", handleScreenChange);
+    unbindScreenActions?.();
+    unbindFormPopup?.();
+    formExperience.destroy?.();
+    destroyEmblaCarousel(stylesGridNode);
+    delete hero.dataset.transitionBound;
+  };
 }

@@ -1,15 +1,23 @@
 import {filter, firstValueFrom, map, merge, Observable, share, take, timeout} from 'rxjs';
 import {observe} from 'selector-observer';
 
-export async function hostReactAppReady(selector = "#__next > div", timeout = 300) {
+export async function hostReactAppReady(selector = "#__next > div", pollIntervalMs = 300, timeoutMs = 10000) {
   return new Promise((resolve) => {
+    const startedAt = Date.now();
+
     const waiter = () => {
-      const host_el = document.querySelector(selector);
-      if (host_el?.getBoundingClientRect().height) {
-        resolve();
-      } else {
-        setTimeout(waiter, timeout);
+      const hostElement = document.querySelector(selector);
+      if (hostElement?.getBoundingClientRect().height) {
+        resolve(hostElement);
+        return;
       }
+
+      if (Date.now() - startedAt >= timeoutMs) {
+        resolve(null);
+        return;
+      }
+
+      setTimeout(waiter, pollIntervalMs);
     };
     waiter();
   });

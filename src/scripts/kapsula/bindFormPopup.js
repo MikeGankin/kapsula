@@ -1,7 +1,8 @@
 import * as z from "zod/mini";
-import {syncEmblaCarousel} from "./syncEmblaCarousel.js";
+import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 import {getFormSubmitEndpoint} from "./formSchema.js";
+import {sendKapsulaPopupForm} from "./sendKapsulaPopupForm.js";
 
 const POPUP_ID = "coral-popup-kapsula";
 const POPUP_FIELD_ERRORS = {
@@ -147,6 +148,15 @@ function setPopupSubmitPending(popupFormNode, isPending) {
   }
 }
 
+function setPopupSubmitError(popupFormNode, message = "") {
+  const errorNode = popupFormNode.querySelector("[data-kapsula-popup-submit-error]");
+
+  if (!(errorNode instanceof HTMLElement)) return;
+
+  errorNode.textContent = message;
+  errorNode.hidden = !message;
+}
+
 function validatePopupForm(popupFormNode) {
   clearPopupFieldErrors(popupFormNode);
 
@@ -204,6 +214,7 @@ export function bindFormPopup(formExperience, hero) {
   const handleOpenPopup = (event) => {
     event.preventDefault();
     setPopupState(popupNode, "form");
+    setPopupSubmitError(popupFormNode);
     openPopup(popupNode);
     window.requestAnimationFrame(() => {
       popupCardsCarousel?.reInit();
@@ -235,7 +246,8 @@ export function bindFormPopup(formExperience, hero) {
     });
   }
 
-  popupFormNode.addEventListener("input", (event) => {
+  const handleInput = (event) => {
+    if (!(event.target instanceof Element)) return;
     const fieldNode = event.target.closest("input");
 
     if (!(fieldNode instanceof HTMLInputElement)) {
@@ -249,9 +261,9 @@ export function bindFormPopup(formExperience, hero) {
     if (fieldNode.name in POPUP_FIELD_ERRORS) {
       setPopupFieldError(popupFormNode, fieldNode.name);
     }
-  });
+  };
 
-  popupFormNode.addEventListener("submit", async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (isSubmitting) {
@@ -264,6 +276,8 @@ export function bindFormPopup(formExperience, hero) {
       return;
     }
 
+    setPopupSubmitError(popupFormNode);
+
     const snapshot = formExperience.getSnapshot();
     const submittedAt = new Date();
     const payload = buildManagerLeadPayload({
@@ -275,20 +289,35 @@ export function bindFormPopup(formExperience, hero) {
     try {
       isSubmitting = true;
       setPopupSubmitPending(popupFormNode, true);
-      console.log("Kapsula manager lead payload", {
-        endpoint: getFormSubmitEndpoint(),
-        payload,
-      });
+      await sendKapsulaPopupForm(payload, getFormSubmitEndpoint());
       setPopupState(popupNode, "success");
     } catch (error) {
-      console.error("Failed to prepare kapsula popup form payload", error);
+      console.error("Failed to submit kapsula popup form", error);
+      setPopupSubmitError(
+        popupFormNode,
+        "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
+      );
     } finally {
       isSubmitting = false;
       setPopupSubmitPending(popupFormNode, false);
     }
-  });
+  };
 
-  homeButtonNode?.addEventListener("click", () => {
+  const handleHome = () => {
     window.location.assign(window.location.pathname);
-  });
+  };
+
+  popupFormNode.addEventListener("input", handleInput);
+  popupFormNode.addEventListener("submit", handleSubmit);
+  homeButtonNode?.addEventListener("click", handleHome);
+
+  return () => {
+    buttonObserver.disconnect();
+    boundSubmitButton?.removeEventListener("click", handleOpenPopup);
+    popupFormNode.removeEventListener("input", handleInput);
+    popupFormNode.removeEventListener("submit", handleSubmit);
+    homeButtonNode?.removeEventListener("click", handleHome);
+    destroyEmblaCarousel(popupCardsNode);
+    delete popupNode.dataset.popupBound;
+  };
 }

@@ -1,3 +1,5 @@
+@use "media";
+
 #quick-search-tab-area,
 #breadcrumb-widget,
 div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"] {
@@ -96,11 +98,29 @@ div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
   img {
     display: none;
   }
+
 }
 
-
-@media (min-width: 993px) {
-  div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
+div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
+  @include media.desktop {
     display: none;
   }
+}
+
+.user-profile-dropdown-button {
+  background: transparent;
+  border: 1px solid #a88546;
+}
+
+[class*="LoginButton_avatar__"] {
+  background: #a88546;
+  color: #fff;
+
+  .ant-avatar-string {
+    font-weight: 300;
+  }
+}
+
+sup[class*="Badge_badge__FLhh1"] {
+  z-index: unset;
 }

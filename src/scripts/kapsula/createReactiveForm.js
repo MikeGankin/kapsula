@@ -1,4 +1,4 @@
-import {BehaviorSubject, combineLatest, distinctUntilChanged, fromEvent, map} from "rxjs";
+import {BehaviorSubject, debounceTime, distinctUntilChanged, fromEvent, map, Subscription} from "rxjs";
 import {
   buildCapsuleMap,
   buildExpandedState,
@@ -7,10 +7,10 @@ import {
   getInitialCapsuleId,
 } from "./formSchema.js";
 import {validateSchema} from "./formValidation.js";
-import {normalizeFormValues, toggleOptionValue} from "./formValues.js";
+import {normalizeFormValuesUntilStable, toggleOptionValue} from "./formValues.js";
 import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
-import {animateFormImageOverlay} from "./animateFormImageOverlay.js";
+import {animateFormImageOverlay, destroyFormImageOverlay} from "./animateFormImageOverlay.js";
 import {getResponsiveImageSources, syncResponsivePicture} from "./formResponsiveImages.js";
 import {readSavedFormValues, saveFormValues} from "./sessionState.js";
 
@@ -58,7 +58,10 @@ function getExpandedSectionId(capsule, expandedState) {
 
 function getFormSnapshot(capsuleMap, capsuleId, values) {
   const capsule = getCapsule(capsuleMap, capsuleId);
-  const normalizedValues = normalizeFormValues(capsule.sections, buildInitialValues(capsule.sections, values));
+  const normalizedValues = normalizeFormValuesUntilStable(
+    capsule.sections,
+    buildInitialValues(capsule.sections, values),
+  );
 
   return {
     capsuleId,
@@ -67,7 +70,7 @@ function getFormSnapshot(capsuleMap, capsuleId, values) {
   };
 }
 
-function getOverlayLayers(capsule, values, expandedState, activeSectionId, touchedSections) {
+function getOverlayLayers(capsule, values) {
   return capsule.sections.flatMap((section) => {
     const selectedSources = getSelectedSectionOverlayImages(section, values);
     const availableSources = getSectionOverlaySources(section);
@@ -85,12 +88,36 @@ function getOverlayLayers(capsule, values, expandedState, activeSectionId, touch
   });
 }
 
+function createFormState(capsuleMap, capsuleId, savedValues = null) {
+  const capsule = getCapsule(capsuleMap, capsuleId);
+  const values = normalizeFormValuesUntilStable(
+    capsule.sections,
+    buildInitialValues(capsule.sections, savedValues ?? {}),
+  );
+  const expandedState = buildExpandedState(capsule.sections);
+
+  return {
+    capsuleId,
+    values,
+    expandedState,
+    activeSectionId: getExpandedSectionId(capsule, expandedState),
+    touchedSections: {},
+  };
+}
+
+function sameRenderState(previous, current) {
+  return previous.capsuleId === current.capsuleId
+    && previous.values === current.values
+    && previous.expandedState === current.expandedState;
+}
+
 export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   const titleNode = rootNode.querySelector("[data-kapsula-form-title]");
   const subtitleNode = rootNode.querySelector("[data-kapsula-form-subtitle]");
   const imageNode = rootNode.querySelector("[data-kapsula-form-image]");
   const overlayImageNode = rootNode.querySelector("[data-kapsula-form-overlay-images]");
   const formNode = rootNode.querySelector("[data-kapsula-form]");
+  const submitButton = rootNode.querySelector(".kapsula-form__trigger");
 
   if (!titleNode || !subtitleNode || !imageNode || !formNode) {
     throw new Error("Kapsula form screen is missing required nodes");
@@ -98,174 +125,189 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
 
   const capsuleMap = buildCapsuleMap();
   const initialResolvedCapsuleId = getInitialCapsuleId(capsuleMap, initialCapsuleId);
-  const initialCapsule = getCapsule(capsuleMap, initialResolvedCapsuleId);
   const initialSavedValues = readSavedFormValues(initialResolvedCapsuleId);
-  const selectedCapsule$ = new BehaviorSubject(initialResolvedCapsuleId);
-  const values$ = new BehaviorSubject(
-    initialSavedValues ? buildInitialValues(initialCapsule.sections, initialSavedValues) : {},
+  const state$ = new BehaviorSubject(
+    createFormState(capsuleMap, initialResolvedCapsuleId, initialSavedValues),
   );
-  const expandedState$ = new BehaviorSubject({});
-  const activeSectionId$ = new BehaviorSubject(null);
-  const touchedSections$ = new BehaviorSubject({});
+  const subscriptions = new Subscription();
   let previousExpandedState = {};
   let previousValues = {};
   let previousCapsuleId = null;
 
-  const schema$ = selectedCapsule$.pipe(
-    map((capsuleId) => getCapsule(capsuleMap, capsuleId)),
-  );
+  const updateState = (updater) => {
+    const currentState = state$.value;
+    const nextState = updater(currentState);
 
-  const validity$ = combineLatest([schema$, values$]).pipe(
-    map(([capsule, values]) => validateSchema(capsule, values).success),
-    distinctUntilChanged(),
-  );
+    if (nextState !== currentState) {
+      state$.next(nextState);
+    }
+  };
 
-  combineLatest([schema$, values$, expandedState$, activeSectionId$, touchedSections$]).subscribe(([capsule, values, expandedState, activeSectionId, touchedSections]) => {
-    const capsuleId = selectedCapsule$.value;
+  subscriptions.add(state$.pipe(
+    map((state) => ({
+      capsuleId: state.capsuleId,
+      capsule: getCapsule(capsuleMap, state.capsuleId),
+    })),
+    distinctUntilChanged((previous, current) => previous.capsuleId === current.capsuleId),
+  ).subscribe(({capsule}) => {
     titleNode.textContent = capsule.title;
     subtitleNode.textContent = capsule.subtitle;
+    if (submitButton) submitButton.textContent = capsule.submitLabel;
     syncResponsivePicture(imageNode, {
       ...getResponsiveImageSources(capsule.imageSrc, capsule.imageMobileSrc),
       alt: capsule.imageAlt,
     });
+  }));
 
-    const nextValues = normalizeFormValues(capsule.sections, buildInitialValues(capsule.sections, values));
-    const nextExpandedState = buildExpandedState(capsule.sections, expandedState);
-
-    if (JSON.stringify(nextValues) !== JSON.stringify(values)) {
-      values$.next(nextValues);
-      return;
-    }
-
-    if (JSON.stringify(nextExpandedState) !== JSON.stringify(expandedState)) {
-      expandedState$.next(nextExpandedState);
-      return;
-    }
-
-    const hasActiveExpandedSection = activeSectionId && nextExpandedState[activeSectionId];
-    const nextActiveSectionId = hasActiveExpandedSection
-      ? activeSectionId
-      : getExpandedSectionId(capsule, nextExpandedState);
-
-    if (nextActiveSectionId !== activeSectionId) {
-      activeSectionId$.next(nextActiveSectionId);
-      return;
-    }
-
+  subscriptions.add(state$.pipe(
+    map((state) => ({
+      capsuleId: state.capsuleId,
+      capsule: getCapsule(capsuleMap, state.capsuleId),
+      values: state.values,
+      expandedState: state.expandedState,
+    })),
+    distinctUntilChanged(sameRenderState),
+  ).subscribe(({capsuleId, capsule, values, expandedState}) => {
     const forceFullRender = previousCapsuleId !== capsuleId;
-
-    if (forceFullRender) {
-      previousExpandedState = nextExpandedState;
-      previousValues = nextValues;
-    }
-
-    renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
-    saveFormValues(capsuleId, getPersistedOptionValues(capsule, nextValues));
-    animateFormImageOverlay(overlayImageNode, {
-      layers: getOverlayLayers(capsule, nextValues, nextExpandedState, nextActiveSectionId, touchedSections),
-    });
+    renderForm(formNode, capsule, values, expandedState, {forceFull: forceFullRender});
     animateFormSections(
       formNode,
-      nextExpandedState,
+      expandedState,
       previousExpandedState,
-      nextValues,
+      values,
       previousValues,
     );
-    previousExpandedState = nextExpandedState;
-    previousValues = nextValues;
+    previousExpandedState = expandedState;
+    previousValues = values;
     previousCapsuleId = capsuleId;
-  });
+  }));
 
-  validity$.subscribe((isValid) => {
-    const submitButton = formNode.querySelector(".kapsula-form__trigger");
-
+  subscriptions.add(state$.pipe(
+    map((state) => ({
+      capsule: getCapsule(capsuleMap, state.capsuleId),
+      values: state.values,
+    })),
+    distinctUntilChanged((previous, current) => (
+      previous.capsule === current.capsule && previous.values === current.values
+    )),
+    map(({capsule, values}) => validateSchema(capsule, values).success),
+    distinctUntilChanged(),
+  ).subscribe((isValid) => {
     if (submitButton) {
       submitButton.disabled = !isValid;
     }
-  });
+  }));
 
-  fromEvent(formNode, "click").subscribe((event) => {
+  subscriptions.add(state$.pipe(
+    map((state) => ({
+      capsule: getCapsule(capsuleMap, state.capsuleId),
+      values: state.values,
+    })),
+    distinctUntilChanged((previous, current) => (
+      previous.capsule === current.capsule && previous.values === current.values
+    )),
+  ).subscribe(({capsule, values}) => {
+    animateFormImageOverlay(overlayImageNode, {
+      layers: getOverlayLayers(capsule, values),
+    });
+  }));
+
+  subscriptions.add(state$.pipe(
+    map((state) => ({capsuleId: state.capsuleId, values: state.values})),
+    distinctUntilChanged((previous, current) => (
+      previous.capsuleId === current.capsuleId && previous.values === current.values
+    )),
+    debounceTime(150),
+  ).subscribe(({capsuleId, values}) => {
+    const capsule = getCapsule(capsuleMap, capsuleId);
+    saveFormValues(capsuleId, getPersistedOptionValues(capsule, values));
+  }));
+
+  subscriptions.add(fromEvent(formNode, "click").subscribe((event) => {
+    if (!(event.target instanceof Element)) return;
     const sectionTrigger = event.target.closest("[data-kapsula-section-trigger]");
 
     if (sectionTrigger) {
       const sectionId = sectionTrigger.dataset.sectionId;
-      previousExpandedState = expandedState$.value;
-      activeSectionId$.next(sectionId);
-      expandedState$.next({
-        ...expandedState$.value,
-        [sectionId]: !expandedState$.value[sectionId],
-      });
+      updateState((state) => ({
+        ...state,
+        activeSectionId: sectionId,
+        expandedState: {
+          ...state.expandedState,
+          [sectionId]: !state.expandedState[sectionId],
+        },
+      }));
       return;
     }
-  });
+  }));
 
-  fromEvent(formNode, "change").subscribe((event) => {
+  subscriptions.add(fromEvent(formNode, "change").subscribe((event) => {
+    if (!(event.target instanceof Element)) return;
     const choiceInput = event.target.closest("[data-kapsula-choice]");
 
     if (choiceInput) {
       const sectionId = choiceInput.dataset.sectionId;
       const optionValue = choiceInput.value;
-      const capsule = getCapsule(capsuleMap, selectedCapsule$.value);
-      const section = capsule.sections.find((item) => item.id === sectionId);
+      updateState((state) => {
+        const capsule = getCapsule(capsuleMap, state.capsuleId);
+        const section = capsule.sections.find((item) => item.id === sectionId);
 
-      if (!section) return;
+        if (!section) return state;
 
-      values$.next({
-        ...values$.value,
-        [section.id]: toggleOptionValue(section, values$.value[section.id], optionValue),
-      });
+        const values = normalizeFormValuesUntilStable(capsule.sections, {
+          ...state.values,
+          [section.id]: toggleOptionValue(section, state.values[section.id], optionValue),
+        });
 
-      touchedSections$.next({
-        ...touchedSections$.value,
-        [section.id]: true,
+        return {
+          ...state,
+          values,
+          touchedSections: {...state.touchedSections, [section.id]: true},
+        };
       });
     }
-  });
+  }));
 
-  fromEvent(formNode, "input").subscribe((event) => {
+  subscriptions.add(fromEvent(formNode, "input").subscribe((event) => {
+    if (!(event.target instanceof Element)) return;
     const textarea = event.target.closest("[data-kapsula-textarea]");
 
     if (!textarea) return;
 
     const sectionId = textarea.dataset.sectionId;
+    updateState((state) => ({
+      ...state,
+      values: {...state.values, [sectionId]: textarea.value},
+      touchedSections: {...state.touchedSections, [sectionId]: true},
+    }));
+  }));
 
-    values$.next({
-      ...values$.value,
-      [sectionId]: textarea.value,
-    });
-
-    touchedSections$.next({
-      ...touchedSections$.value,
-      [sectionId]: true,
-    });
-  });
-
-  fromEvent(formNode, "submit").subscribe((event) => {
+  subscriptions.add(fromEvent(formNode, "submit").subscribe((event) => {
     event.preventDefault();
-  });
+  }));
 
   return {
     getSnapshot() {
-      return getFormSnapshot(capsuleMap, selectedCapsule$.value, values$.value);
+      const {capsuleId, values} = state$.value;
+      return getFormSnapshot(capsuleMap, capsuleId, values);
     },
     setCapsule(capsuleId) {
       if (!capsuleMap.has(capsuleId)) return false;
 
-      if (selectedCapsule$.value === capsuleId) {
+      if (state$.value.capsuleId === capsuleId) {
         return true;
       }
 
-      const nextCapsule = getCapsule(capsuleMap, capsuleId);
       const savedValues = readSavedFormValues(capsuleId);
-
       previousExpandedState = {};
       previousValues = {};
-      expandedState$.next({});
-      values$.next(savedValues ? buildInitialValues(nextCapsule.sections, savedValues) : {});
-      touchedSections$.next({});
-      activeSectionId$.next(null);
-      selectedCapsule$.next(capsuleId);
+      state$.next(createFormState(capsuleMap, capsuleId, savedValues));
       return true;
+    },
+    destroy() {
+      subscriptions.unsubscribe();
+      state$.complete();
+      destroyFormImageOverlay(overlayImageNode);
     },
   };
 }

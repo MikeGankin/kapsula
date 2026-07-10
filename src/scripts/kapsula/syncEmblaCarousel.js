@@ -45,3 +45,15 @@ export function syncEmblaCarousel(containerNode, userOptions = {}) {
 export function syncEmblaCarousels(containerNodes, userOptions = {}) {
   return Array.from(containerNodes, (containerNode) => syncEmblaCarousel(containerNode, userOptions));
 }
+
+export function destroyEmblaCarousel(containerNode) {
+  const carousel = containerNode ? carouselRegistry.get(containerNode) : null;
+
+  if (!carousel) {
+    return false;
+  }
+
+  carousel.api.destroy();
+  carouselRegistry.delete(containerNode);
+  return true;
+}

@@ -1,4 +1,5 @@
 import {gsap} from "gsap";
+import {getMotionDuration, getMotionOffset} from "./motionPreferences.js";
 
 function setIfPresent(node, properties) {
   if (!node) return;
@@ -29,7 +30,7 @@ function animateSummaryReveal(node) {
     autoAlpha: 0,
   }, {
     autoAlpha: 1,
-    duration: 0.24,
+    duration: getMotionDuration(0.24),
     ease: "power2.out",
   });
 }
@@ -62,7 +63,7 @@ function setSectionState(nodes, isExpanded) {
   });
   gsap.set(nodes.panelInner, {
     opacity: isExpanded ? 1 : 0,
-    y: isExpanded ? 0 : -8,
+    y: isExpanded ? 0 : getMotionOffset(-8),
   });
   gsap.set(nodes.heading, {
     scale: isExpanded ? 1.08 : 1,
@@ -84,26 +85,26 @@ function animateSectionState(nodes, isExpanded) {
     .to(nodes.panel, {
       height: isExpanded ? "auto" : 0,
       opacity: isExpanded ? 1 : 0,
-      duration: 0.32,
+      duration: getMotionDuration(0.32),
     }, 0)
     .to(nodes.panelInner, {
       opacity: isExpanded ? 1 : 0,
-      y: isExpanded ? 0 : -8,
-      duration: 0.24,
+      y: isExpanded ? 0 : getMotionOffset(-8),
+      duration: getMotionDuration(0.24),
     }, isExpanded ? 0.08 : 0)
     .to(nodes.heading, {
       scale: isExpanded ? 1.08 : 1,
-      duration: 0.24,
+      duration: getMotionDuration(0.24),
     }, 0);
 
   toIfPresent(timeline, nodes.summary, {
     ...getSummaryState(nodes.summary),
-    duration: 0.24,
+    duration: getMotionDuration(0.24),
   }, 0.1);
 
   toIfPresent(timeline, nodes.chevron, {
     rotation: isExpanded ? 180 : 0,
-    duration: 0.28,
+    duration: getMotionDuration(0.28),
   }, 0);
 }
 

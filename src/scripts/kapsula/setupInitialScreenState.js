@@ -5,6 +5,8 @@ function hideScreen(screenNode) {
     return;
   }
 
+  screenNode.inert = true;
+
   gsap.set(screenNode, {
     opacity: 0,
     visibility: "hidden",

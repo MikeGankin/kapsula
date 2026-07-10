@@ -1,5 +1,6 @@
 import {gsap} from "gsap";
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
+import {getMotionDuration, getMotionOffset, prefersReducedMotion} from "./motionPreferences.js";
 
 export function animateHero(rootNode = document) {
   const {selectors, initial, timeline: timelineConfig} = KAPSULA_ANIMATION.heroReveal;
@@ -22,37 +23,40 @@ export function animateHero(rootNode = document) {
 
   gsap.set([eyebrow, title, subtitle, startButton], {
     autoAlpha: 0,
-    y: initial.contentY,
+    y: getMotionOffset(initial.contentY),
   });
 
   gsap.set(backdrop, {
-    scale: initial.backdropScale,
+    scale: prefersReducedMotion() ? 1 : initial.backdropScale,
   });
 
   const timeline = gsap.timeline({
     defaults: timelineConfig.defaults,
   });
 
-  timeline
-    .to(backdrop, timelineConfig.backdrop)
+  return timeline
+    .to(backdrop, {
+      ...timelineConfig.backdrop,
+      duration: getMotionDuration(timelineConfig.backdrop.duration),
+    })
     .to(eyebrow, {
       autoAlpha: timelineConfig.eyebrow.autoAlpha,
       y: timelineConfig.eyebrow.y,
-      duration: timelineConfig.eyebrow.duration,
+      duration: getMotionDuration(timelineConfig.eyebrow.duration),
     }, timelineConfig.eyebrow.at)
     .to(title, {
       autoAlpha: timelineConfig.title.autoAlpha,
       y: timelineConfig.title.y,
-      duration: timelineConfig.title.duration,
+      duration: getMotionDuration(timelineConfig.title.duration),
     }, timelineConfig.title.at)
     .to(subtitle, {
       autoAlpha: timelineConfig.subtitle.autoAlpha,
       y: timelineConfig.subtitle.y,
-      duration: timelineConfig.subtitle.duration,
+      duration: getMotionDuration(timelineConfig.subtitle.duration),
     }, timelineConfig.subtitle.at)
     .to(startButton, {
       autoAlpha: timelineConfig.startButton.autoAlpha,
       y: timelineConfig.startButton.y,
-      duration: timelineConfig.startButton.duration,
+      duration: getMotionDuration(timelineConfig.startButton.duration),
     }, timelineConfig.startButton.at);
 }

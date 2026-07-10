@@ -1,6 +1,7 @@
 import {gsap} from "gsap";
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveCurrentScreen} from "./sessionState.js";
+import {getMotionDuration, getMotionOffset} from "./motionPreferences.js";
 
 function emitScreenChange(hero, screenKey) {
   hero.dispatchEvent(new CustomEvent("kapsula:screen-change", {
@@ -32,6 +33,7 @@ export function setScreenState(screenNode, {visible, interactive}) {
 
   screenNode.style.visibility = visible ? "visible" : "hidden";
   screenNode.style.pointerEvents = interactive ? "auto" : "none";
+  screenNode.inert = !interactive;
   screenNode.setAttribute("aria-hidden", visible ? "false" : "true");
 }
 
@@ -45,6 +47,7 @@ export function restoreScreen({
 }) {
   if (screenKey === "hero") {
     heroScreen.setAttribute("aria-hidden", "false");
+    heroScreen.inert = false;
     gsap.set(heroScreen, {
       autoAlpha: 1,
       visibility: "visible",
@@ -59,13 +62,13 @@ export function restoreScreen({
       });
       gsap.set(screen.elements, {
         autoAlpha: 0,
-        y: initial.y,
+        y: getMotionOffset(initial.y),
       });
     });
 
     gsap.set(stepsProgress, {
       autoAlpha: 0,
-      y: initial.y,
+      y: getMotionOffset(initial.y),
     });
 
     setActiveProgressStep(hero, "steps");
@@ -81,6 +84,7 @@ export function restoreScreen({
   if (!restoredScreen) return false;
 
   heroScreen.setAttribute("aria-hidden", "true");
+  heroScreen.inert = true;
   gsap.set(heroScreen, {
     visibility: "hidden",
     pointerEvents: "none",
@@ -131,6 +135,7 @@ export function transitionBetweenScreens({
 
   if (fromKey === "hero") {
     heroScreen.setAttribute("aria-hidden", "true");
+    heroScreen.inert = true;
   } else {
     setScreenState(fromScreen.node, {visible: false, interactive: false});
   }
@@ -171,12 +176,12 @@ export function transitionBetweenScreens({
 
   gsap.set(toScreen.elements, {
     autoAlpha: 0,
-    y: initial.y,
+    y: getMotionOffset(initial.y),
   });
 
   timeline.to(toScreen.node, {
     opacity: toScreen.reveal.opacity,
-    duration: toScreen.reveal.duration,
+    duration: getMotionDuration(toScreen.reveal.duration),
     pointerEvents: "auto",
   }, toScreen.reveal.at);
 
@@ -184,7 +189,7 @@ export function transitionBetweenScreens({
     timeline.to(node, {
       autoAlpha: config.autoAlpha,
       y: config.y,
-      duration: config.duration,
+      duration: getMotionDuration(config.duration),
       ...(config.stagger ? {stagger: config.stagger} : {}),
     }, config.at);
   });

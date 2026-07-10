@@ -1,6 +1,14 @@
+@use "media";
+
 .layout-container-limit:has(.kapsula) {
   max-width: unset !important;
   padding: 0 !important;
+}
+
+.row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
+  @include media.desktop {
+    display: none;
+  }
 }
 
 #footer-row {
@@ -12,89 +20,92 @@ div[class*="QSBlockMobile_qsBlockMobileContainer__"] {
 }
 
 .layout-container-limit {
-  @media (max-width: 992px) {
+  @include media.mobile-only {
     padding: 0;
   }
 }
 
-@media (min-width: 993px) {
-  .row-outer-container:not(:has([class*="header"])):not(:has(.kapsula-screen)) {
-    display: none;
-  }
-
-  .basic-menu-item {
+.basic-menu-item {
+  @include media.desktop {
     font-weight: var(--kapsula-font-weight-regular);
   }
+}
 
-  .basic-menu-item:hover {
+.basic-menu-item:hover {
+  @include media.desktop {
     color: var(--kapsula-white);
   }
+}
 
-  .submenu .basic-menu-item:hover {
+.submenu .basic-menu-item:hover {
+  @include media.desktop {
     color: var(--kapsula-black);
   }
+}
 
-  [class*="DepartureContact_departureContactWrapper__"] {
+[class*="DepartureContact_departureContactWrapper__"],
+[class*="HeaderTopBar_headerTopBar__"] {
+  @include media.desktop {
     display: none;
   }
+}
 
-  [class*="HeaderTopBar_headerTopBar__"] {
-    display: none;
-  }
-
-  [class*="HeaderTopBar_whereToBuy__"] {
+[class*="HeaderTopBar_whereToBuy__"],
+[class*="DepartureCitySelectModal_departureCitySelectContainer__"] + div,
+[class*="HeaderFavBadge_headerFavBadgeWrapper"] .container-text,
+[class*="LoginButton_loginButtonText__"],
+.unfinished-booking-child-wrapper .container-text {
+  @include media.desktop {
     display: none !important;
   }
+}
 
-  [class*="DepartureCitySelectModal_departureCitySelectContainer__"] + div {
-    display: none !important;
-  }
-
-  [class*="HeaderFavBadge_headerFavBadgeWrapper"] .container-text {
-    display: none !important;
-  }
-
-  [class*="LoginButton_loginButtonText__"] {
-    display: none !important;
-  }
-
-  .unfinished-booking-child-wrapper .container-text {
-    display: none !important;
-  }
-
-  [class*="HeaderMenuBar_menu"] {
+[class*="HeaderMenuBar_menu"] {
+  @include media.desktop {
     margin-right: auto;
   }
+}
 
-  [class*="DepartureCitySelectModal_departureCitySelectContainer__"] {
+[class*="DepartureCitySelectModal_departureCitySelectContainer__"] {
+  @include media.desktop {
     margin-right: 24px;
   }
+}
 
-  [class*="lazy-headerWidget__MapIcon"] {
+[class*="lazy-headerWidget__MapIcon"] {
+  @include media.desktop {
     width: 24px;
     height: 24px;
     margin: 0;
   }
+}
 
-  [class*="lazy-headerWidget__MapIcon"] svg {
+[class*="lazy-headerWidget__MapIcon"] svg {
+  @include media.desktop {
     display: none;
   }
+}
 
-  [class*="lazy-headerWidget__MapIcon"]::before {
+[class*="lazy-headerWidget__MapIcon"]::before {
+  @include media.desktop {
     content: "";
     width: 24px;
     height: 24px;
     display: block;
     background: center / 24px 24px no-repeat url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-linecap='round'%3E%3Cg stroke-width='0'/%3E%3Cg stroke-linejoin='round'/%3E%3Cpath d='M20 10c0 8-8 12-8 12s-8-4-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
   }
+}
 
-  .header-fav-badge > span,
-  [class*="LoginButton_loginButton"] > span {
+.header-fav-badge > span,
+[class*="LoginButton_loginButton"] > span {
+  @include media.desktop {
     width: 24px;
     margin: 0 !important;
   }
+}
 
-  .menu-dropdown-item svg path {
+.menu-dropdown-item svg path {
+  @include media.desktop {
     fill: var(--kapsula-white);
   }
 }

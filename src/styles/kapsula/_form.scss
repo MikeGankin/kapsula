@@ -1,7 +1,9 @@
+@use "media";
+
 @use '../mixins';
 
 .kapsula-form-section {
-  @media (min-width: 993px) {
+  @include media.desktop {
     padding-bottom: 12px;
   }
 }
@@ -10,7 +12,7 @@
   overflow-y: scroll;
   @include mixins.custom-bar(4px);
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     @include mixins.custom-bar(8px)
   }
 }
@@ -20,7 +22,7 @@
   display: grid;
   gap: 12px;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     gap: 24px;
     padding-right: 16px;
   }
@@ -216,7 +218,7 @@
 .kapsula-form__trigger {
   align-self: end;
 
-  @media (min-width: 993px) {
+  @include media.desktop {
     width: fit-content;
   }
 }

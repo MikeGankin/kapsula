@@ -1,5 +1,5 @@
 @use "./kapsula/tokens";
-@use "./kapsula/layout";
+@use "./kapsula/integrations";
 @use "./kapsula/button";
 @use "./kapsula/copy";
 @use "./kapsula/header";
@@ -13,3 +13,4 @@
 @use "./kapsula/form";
 @use "./kapsula/popup";
 @use "./kapsula/progress";
+@use "./kapsula/accessibility";

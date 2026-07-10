@@ -1,6 +1,7 @@
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveSelectedCapsule} from "./sessionState.js";
 import {transitionBetweenScreens} from "./screenTransition.js";
+import {getMotionDuration} from "./motionPreferences.js";
 
 const STEP_TO_SCREEN = {
   steps: "steps",
@@ -24,18 +25,37 @@ export function bindScreenActions({
     styleCardButtons,
   } = screenNodes;
   const initial = KAPSULA_ANIMATION.screenTransition.initial;
+  let activeTimeline = null;
 
-  const transitionToScreen = (fromKey, toKey) => transitionBetweenScreens({
-    fromKey,
-    hero,
-    heroScreen,
-    initial,
-    screenRegistry,
-    timelineConfig,
-    toKey,
-  });
+  const transitionToScreen = (fromKey, toKey) => {
+    if (activeTimeline) {
+      return null;
+    }
 
-  hero.addEventListener("click", (event) => {
+    const timeline = transitionBetweenScreens({
+      fromKey,
+      hero,
+      heroScreen,
+      initial,
+      screenRegistry,
+      timelineConfig,
+      toKey,
+    });
+
+    if (timeline) {
+      activeTimeline = timeline;
+      timeline.eventCallback("onComplete", () => {
+        if (activeTimeline === timeline) {
+          activeTimeline = null;
+        }
+      });
+    }
+
+    return timeline;
+  };
+
+  const handleClick = (event) => {
+    if (!(event.target instanceof Element)) return;
     const startButtonNode = event.target.closest(".kapsula-button--hero");
 
     if (startButtonNode) {
@@ -47,7 +67,7 @@ export function bindScreenActions({
         timeline.to(stepsProgress, {
           autoAlpha: timelineConfig.stepsProgress.autoAlpha,
           y: timelineConfig.stepsProgress.y,
-          duration: timelineConfig.stepsProgress.duration,
+          duration: getMotionDuration(timelineConfig.stepsProgress.duration),
         }, timelineConfig.stepsProgress.at);
       }
 
@@ -95,5 +115,13 @@ export function bindScreenActions({
 
       transitionToScreen(currentScreen, targetScreen);
     }
-  });
+  };
+
+  hero.addEventListener("click", handleClick);
+
+  return () => {
+    hero.removeEventListener("click", handleClick);
+    activeTimeline?.kill();
+    activeTimeline = null;
+  };
 }

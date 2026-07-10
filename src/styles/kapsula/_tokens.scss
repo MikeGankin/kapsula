@@ -1,3 +1,5 @@
+@use "media";
+
 @font-face {
   font-family: "Trajan Pro 3";
   src: url("https://font.static.useinsider.com/coraltravel/TrajanPro3Regular.ttf") format("truetype");
@@ -115,10 +117,8 @@
   --kapsula-z-form: 4;
   --kapsula-z-progress: 10;
   --site-header-mobile-height: 60px;
-}
 
-@media (min-width: 993px) {
-  :root {
+  @include media.desktop {
     --kapsula-header-height: 64px;
     --kapsula-font-size-form-title: 32px;
     --kapsula-font-size-form-section-index: 24px;
@@ -127,10 +127,8 @@
     --kapsula-font-size-popup-card-location: 16px;
     --kapsula-font-size-title: 32px;
   }
-}
 
-@media (min-width: 1024px) {
-  :root {
+  @include media.desktop-content {
     --kapsula-font-size-popup-card-title: 16px;
     --kapsula-line-height-popup-card-title: 1.08;
   }
