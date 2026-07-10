@@ -12,6 +12,10 @@
   --kapsula-progress-accent: var(--kapsula-white);
 }
 
+.kapsula-screen--styles .kapsula-progress {
+  padding: 0 !important;
+}
+
 .kapsula-progress__inner {
   width: 100%;
 }
@@ -26,7 +30,7 @@
   justify-content: stretch;
   gap: 0;
   width: 100%;
-  
+
   @include media.desktop {
     gap: 16px;
     display: flex;
