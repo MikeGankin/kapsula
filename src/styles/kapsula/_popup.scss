@@ -401,7 +401,7 @@
   }
 
   #coral-popup-kapsula::part(popup-body) {
-    padding-top: unset;
+    padding-top: 1rem;
   }
 }
 
@@ -415,8 +415,6 @@
 
   .kapsula-popup__layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 48px;
-    gap: 0;
   }
 
   .kapsula-popup__layout::after {

@@ -1,4 +1,4 @@
-import {concat, filter, firstValueFrom, map, Observable, of, share, take, timeout} from 'rxjs';
+import {filter, firstValueFrom, map, merge, Observable, share, take, timeout} from 'rxjs';
 import {observe} from 'selector-observer';
 
 export async function hostReactAppReady(selector = "#__next > div", timeout = 300) {
@@ -55,50 +55,26 @@ export const reactDomObserver = (defaultOptions = {}) => {
     }).pipe(share());
   };
 
-  const added$ = (selector, options = {}) => {
-    return observeSelector$(selector, options).pipe(
-      filter((event) => event.type === 'add')
-    );
-  };
-
-  const removed$ = (selector, options = {}) => {
-    return observeSelector$(selector, options).pipe(
-      filter((event) => event.type === 'remove')
-    );
-  };
-
-  const initialized$ = (selector, options = {}) => {
-    return observeSelector$(selector, options).pipe(
-      filter((event) => event.type === 'initialize')
-    );
-  };
-
-  const element$ = (selector, options = {}) => {
-    return added$(selector, options).pipe(
-      map((event) => event.element)
-    );
-  };
-
-  const waitElement$ = (selector, options = {}) => {
+  const waitElement = (selector, options = {}) => {
+    const {timeoutMs = 10000, ...watchOptions} = options;
     const existingElement = document.querySelector(selector);
 
     if (existingElement) {
-      return of(existingElement);
+      return Promise.resolve(existingElement);
     }
 
-    return concat(
-      initialized$(selector, options).pipe(
-        map((event) => event.element)
-      ),
-      element$(selector, options)
-    ).pipe(take(1));
-  };
-
-  const waitElement = (selector, options = {}) => {
-    const {timeoutMs = 10000, ...watchOptions} = options;
-
     return firstValueFrom(
-      waitElement$(selector, watchOptions).pipe(
+      merge(
+        observeSelector$(selector, watchOptions).pipe(
+          filter((event) => event.type === 'initialize'),
+          map((event) => event.element)
+        ),
+        observeSelector$(selector, watchOptions).pipe(
+          filter((event) => event.type === 'add'),
+          map((event) => event.element)
+        )
+      ).pipe(
+        take(1),
         timeout({first: timeoutMs})
       )
     );
@@ -106,11 +82,6 @@ export const reactDomObserver = (defaultOptions = {}) => {
 
   return {
     observeSelector$,
-    added$,
-    removed$,
-    initialized$,
-    element$,
-    waitElement$,
     waitElement,
   };
 };

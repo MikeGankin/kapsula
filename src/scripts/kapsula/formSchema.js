@@ -1,7 +1,15 @@
-import formConfig from "../formConfig.json";
+import formConfig from "../formConfig.js";
+
+export function getFormConfig() {
+  return formConfig;
+}
 
 export function buildCapsuleMap(config = formConfig) {
   return new Map(Object.entries(config.capsules ?? {}));
+}
+
+export function getFormSubmitEndpoint(config = formConfig) {
+  return config.submitEndpoint ?? "";
 }
 
 export function getDefaultCapsuleId(config = formConfig) {

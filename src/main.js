@@ -6,9 +6,18 @@ import {setupLocalCdnAssetRewrite} from "./lib/rewriteAssetsDev.js";
 const CONTAINER_ID = "monkey-app";
 const FLAG = "monkeyMounted";
 const CDN_BASE = "http://localhost:3001";
+let teardownAssetRewrite = null;
 
-function mount(container) {
-  if (container.dataset[FLAG] === "1") return;
+function mount(container, {force = false} = {}) {
+  if (!force && container.dataset[FLAG] === "1") return;
+
+  teardownAssetRewrite?.();
+  teardownAssetRewrite = null;
+
+  if (force) {
+    container.innerHTML = "";
+    delete container.dataset[FLAG];
+  }
 
   for (const part of parts) {
     if (typeof part?.html === "string" && part.html.trim()) {
@@ -17,6 +26,12 @@ function mount(container) {
   }
 
   container.dataset[FLAG] = "1";
+  document.documentElement.style.setProperty("--cdn-prefix", CDN_BASE);
+  teardownAssetRewrite = setupLocalCdnAssetRewrite({
+    root: container,
+    cdnBase: CDN_BASE,
+    enabled: true, // dev-only (потому что этот код будет жить только в dev bundle)
+  });
 
   for (const part of parts) {
     const init = part?.key ? initsMap.get(part.key) : null;
@@ -28,10 +43,33 @@ function mount(container) {
   const container = document.getElementById(CONTAINER_ID);
   if (!container) return;
   mount(container);
-  document.documentElement.style.setProperty("--cdn-prefix", CDN_BASE);
-  setupLocalCdnAssetRewrite({
-    root: container,
-    cdnBase: CDN_BASE,
-    enabled: true, // dev-only (потому что этот код будет жить только в dev bundle)
-  });
 })();
+
+if (import.meta.hot) {
+  import.meta.hot.accept(["./markup", "./scripts", "./styles"], async ([nextMarkupModule, nextScriptsModule]) => {
+    const container = document.getElementById(CONTAINER_ID);
+
+    if (!container) {
+      return;
+    }
+
+    if (nextMarkupModule?.default) {
+      parts.length = 0;
+      parts.push(...nextMarkupModule.default);
+    }
+
+    if (nextScriptsModule?.default instanceof Map) {
+      initsMap.clear();
+      nextScriptsModule.default.forEach((value, key) => {
+        initsMap.set(key, value);
+      });
+    }
+
+    mount(container, {force: true});
+  });
+
+  import.meta.hot.dispose(() => {
+    teardownAssetRewrite?.();
+    teardownAssetRewrite = null;
+  });
+}

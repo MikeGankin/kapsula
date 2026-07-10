@@ -24,6 +24,7 @@ export function bindScreenActions({
     styleCardButtons,
   } = screenNodes;
   const initial = KAPSULA_ANIMATION.screenTransition.initial;
+
   const transitionToScreen = (fromKey, toKey) => transitionBetweenScreens({
     fromKey,
     hero,
@@ -34,33 +35,42 @@ export function bindScreenActions({
     toKey,
   });
 
-  startButton.addEventListener("click", () => {
-    if (hero.dataset.screen === "steps") return;
+  hero.addEventListener("click", (event) => {
+    const startButtonNode = event.target.closest(".kapsula-button--hero");
 
-    const timeline = transitionToScreen("hero", "steps");
+    if (startButtonNode) {
+      if (hero.dataset.screen === "steps") return;
 
-    if (timeline) {
-      timeline.to(stepsProgress, {
-        autoAlpha: timelineConfig.stepsProgress.autoAlpha,
-        y: timelineConfig.stepsProgress.y,
-        duration: timelineConfig.stepsProgress.duration,
-      }, timelineConfig.stepsProgress.at);
+      const timeline = transitionToScreen("hero", "steps");
+
+      if (timeline) {
+        timeline.to(stepsProgress, {
+          autoAlpha: timelineConfig.stepsProgress.autoAlpha,
+          y: timelineConfig.stepsProgress.y,
+          duration: timelineConfig.stepsProgress.duration,
+        }, timelineConfig.stepsProgress.at);
+      }
+
+      return;
     }
-  });
 
-  stepsButton.addEventListener("click", () => {
-    if (hero.dataset.screen === "styles") return;
+    const stepsButtonNode = event.target.closest(".kapsula-button--steps");
 
-    transitionToScreen("steps", "styles");
-  });
+    if (stepsButtonNode) {
+      if (hero.dataset.screen === "styles") return;
 
-  styleCardButtons.forEach((button) => {
-    button.addEventListener("click", (event) => {
+      transitionToScreen("steps", "styles");
+      return;
+    }
+
+    const styleButtonNode = event.target.closest(".kapsula-style-card .kapsula-button");
+
+    if (styleButtonNode) {
       event.preventDefault();
 
       if (hero.dataset.screen === "form") return;
 
-      const capsuleId = button.dataset.kapsulaCapsule;
+      const capsuleId = styleButtonNode.dataset.kapsulaCapsule;
 
       if (capsuleId && formExperience.setCapsule(capsuleId)) {
         saveSelectedCapsule(capsuleId);
@@ -69,12 +79,13 @@ export function bindScreenActions({
       }
 
       transitionToScreen("styles", "form");
-    });
-  });
+      return;
+    }
 
-  progressButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const targetStep = button.dataset.kapsulaProgressTarget;
+    const progressButtonNode = event.target.closest("[data-kapsula-progress-target]");
+
+    if (progressButtonNode) {
+      const targetStep = progressButtonNode.dataset.kapsulaProgressTarget;
       const targetScreen = STEP_TO_SCREEN[targetStep];
       const currentScreen = hero.dataset.screen;
 
@@ -83,6 +94,6 @@ export function bindScreenActions({
       }
 
       transitionToScreen(currentScreen, targetScreen);
-    });
+    }
   });
 }

@@ -21,18 +21,21 @@ function bindStyleCardLinks(styleCardButtons) {
   });
 }
 
-export function setupScreenFlow() {
-  const hero = document.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.hero);
-  if (!hero || hero.dataset.transitionBound === "1") return;
+export function setupScreenFlow(rootNode = document) {
+  const hero = rootNode?.matches?.(KAPSULA_ANIMATION.heroReveal.selectors.hero)
+    ? rootNode
+    : rootNode?.querySelector?.(KAPSULA_ANIMATION.heroReveal.selectors.hero) ?? document.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.hero);
+
+  if (!hero || hero.dataset.transitionBound === "1") {
+    return;
+  }
 
   const {initial, timeline: timelineConfig} = KAPSULA_ANIMATION.screenTransition;
   const screenNodes = getScreenNodes(hero);
 
-  if (!screenNodes) return;
-
-  const formExperience = createReactiveForm(screenNodes.formScreen, {
-    initialCapsuleId: readSelectedCapsule(),
-  });
+  if (!screenNodes) {
+    return;
+  }
 
   hero.dataset.transitionBound = "1";
 
@@ -41,17 +44,55 @@ export function setupScreenFlow() {
   hero.dataset.screen = "hero";
 
   const screenRegistry = buildScreenRegistry(screenNodes, timelineConfig);
+  const canInitForm = Boolean(
+    screenNodes.formScreen &&
+      screenNodes.formTitle &&
+      screenNodes.formSubtitle &&
+      screenNodes.formAside &&
+      screenNodes.formBody &&
+      screenRegistry.form,
+  );
+
+  let formExperience = {
+    getSnapshot() {
+      return {
+        capsuleId: readSelectedCapsule() ?? null,
+        capsule: null,
+        values: {},
+      };
+    },
+    setCapsule() {
+      return false;
+    },
+  };
+
+  if (canInitForm) {
+    try {
+      formExperience = createReactiveForm(screenNodes.formScreen, {
+        initialCapsuleId: readSelectedCapsule(),
+      });
+    } catch (error) {
+      console.error("Kapsula form init failed", error);
+    }
+  }
 
   bindStyleCardLinks(screenNodes.styleCardButtons);
-  const stylesGridNode = hero.querySelector(".kapsula-styles__grid");
-  const stylesPaginationNode = hero.querySelector("[data-kapsula-styles-pagination]");
-  const stylesCarousel = syncEmblaCarousel(stylesGridNode, {
-    align: "start",
-    containScroll: "trimSnaps",
-  });
-  bindEmblaDots(stylesPaginationNode, stylesCarousel, {
-    label: "Перейти к стилю",
-  });
+  let stylesCarousel = null;
+
+  try {
+    const stylesGridNode = hero.querySelector(".kapsula-styles__grid");
+    const stylesPaginationNode = hero.querySelector("[data-kapsula-styles-pagination]");
+
+    stylesCarousel = syncEmblaCarousel(stylesGridNode, {
+      align: "start",
+      containScroll: "trimSnaps",
+    });
+    bindEmblaDots(stylesPaginationNode, stylesCarousel, {
+      label: "Перейти к стилю",
+    });
+  } catch (error) {
+    console.error("Kapsula styles carousel init failed", error);
+  }
 
   const refreshStylesCarousel = () => {
     window.requestAnimationFrame(() => {
@@ -86,5 +127,7 @@ export function setupScreenFlow() {
     stepsProgress: screenNodes.stepsProgress,
   });
 
-  bindFormPopup(formExperience, hero);
+  if (canInitForm) {
+    bindFormPopup(formExperience, hero);
+  }
 }

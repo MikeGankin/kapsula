@@ -1,4 +1,4 @@
-{
+const formConfig = {
   "submitEndpoint": "/api/kapsula",
   "capsules": {
     "asian": {
@@ -783,4 +783,6 @@
       ]
     }
   }
-}
+};
+
+export default formConfig;

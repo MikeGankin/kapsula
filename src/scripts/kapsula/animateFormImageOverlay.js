@@ -11,12 +11,14 @@ const OVERLAY_IMAGE_ALTS = {
   "/asia-desktop/thailand.webp": "Завтрак у бассейна с видом на море и пальмы",
   "/asia-desktop/bali.webp": "Тропическое побережье с волнами, скалами и деревянной лестницей",
   "/asia-desktop/china.webp": "Песчаный пляж и пальмы у бирюзового моря, вид сверху",
+  "/asia-desktop/vietnam.webp": "Побережье Вьетнама с лодками, зеленью и спокойной водой",
   "/asia-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/asia-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/asia-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
   "/asia-mobile/thailand.webp": "Завтрак у бассейна с видом на море и пальмы",
   "/asia-mobile/bali.webp": "Тропическое побережье с волнами, скалами и деревянной лестницей",
   "/asia-mobile/china.webp": "Песчаный пляж и пальмы у бирюзового моря, вид сверху",
+  "/asia-mobile/vietnam.webp": "Побережье Вьетнама с лодками, зеленью и спокойной водой",
   "/asia-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
   "/asia-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
   "/asia-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
@@ -123,13 +125,32 @@ function getVisibleRange(index, total) {
       : {start: 0, end: 70};
   }
 
-  const ranges = [
-    {start: 75, end: 100},
-    {start: 50, end: 75},
-    {start: 0, end: 50},
-  ];
+  if (total === 3) {
+    const ranges = [
+      {start: 75, end: 100},
+      {start: 50, end: 75},
+      {start: 0, end: 50},
+    ];
 
-  return ranges[index] ?? {start: 0, end: 0};
+    return ranges[index] ?? {start: 0, end: 0};
+  }
+
+  if (total === 4) {
+    const ranges = [
+      {start: 75, end: 100},
+      {start: 50, end: 75},
+      {start: 25, end: 50},
+      {start: 0, end: 25},
+    ];
+
+    return ranges[index] ?? {start: 0, end: 0};
+  }
+
+  const width = 100 / total;
+  const start = Math.max(0, 100 - width * (index + 1));
+  const end = Math.min(100, start + width);
+
+  return {start, end};
 }
 
 function getSliceClip(index, total) {

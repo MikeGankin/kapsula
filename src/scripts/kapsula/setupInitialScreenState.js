@@ -1,6 +1,10 @@
 import {gsap} from "gsap";
 
 function hideScreen(screenNode) {
+  if (!screenNode) {
+    return;
+  }
+
   gsap.set(screenNode, {
     opacity: 0,
     visibility: "hidden",
@@ -30,17 +34,17 @@ export function setupInitialScreenState(screenNodes, initial) {
   hideScreen(stylesScreen);
   hideScreen(formScreen);
 
-  gsap.set([stepsTitle, ...stepsCards, stepsNote, stepsButton, ...stepsProgress], {
+  gsap.set([stepsTitle, ...stepsCards, stepsNote, stepsButton, ...stepsProgress].filter(Boolean), {
     autoAlpha: 0,
     y: initial.y,
   });
 
-  gsap.set([stylesTitle, ...styleCards], {
+  gsap.set([stylesTitle, ...styleCards].filter(Boolean), {
     autoAlpha: 0,
     y: initial.y,
   });
 
-  gsap.set([formTitle, formSubtitle, formAside, formBody], {
+  gsap.set([formTitle, formSubtitle, formAside, formBody].filter(Boolean), {
     autoAlpha: 0,
     y: initial.y,
   });

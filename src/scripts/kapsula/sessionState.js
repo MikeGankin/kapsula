@@ -1,6 +1,7 @@
 const SESSION_STORAGE_KEYS = {
   screen: "kapsula.currentScreen",
   capsule: "kapsula.selectedCapsule",
+  formValues: "kapsula.formValues",
 };
 const URL_SEARCH_KEYS = {
   screen: "screen",
@@ -88,4 +89,44 @@ export function saveSelectedCapsule(capsuleId) {
     screen: readCurrentScreen(),
     capsuleId,
   });
+}
+
+export function readSavedFormValues(capsuleId) {
+  if (!capsuleId) {
+    return null;
+  }
+
+  try {
+    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.formValues);
+
+    if (!rawValue) {
+      return null;
+    }
+
+    const parsedValue = JSON.parse(rawValue);
+
+    return parsedValue?.[capsuleId] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveFormValues(capsuleId, values) {
+  if (!capsuleId) {
+    return;
+  }
+
+  try {
+    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.formValues);
+    const parsedValue = rawValue ? JSON.parse(rawValue) : {};
+
+    parsedValue[capsuleId] = values;
+
+    window.sessionStorage.setItem(
+      SESSION_STORAGE_KEYS.formValues,
+      JSON.stringify(parsedValue),
+    );
+  } catch {
+    // Storage can be unavailable in restricted browser contexts.
+  }
 }

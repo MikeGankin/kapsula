@@ -18,6 +18,11 @@
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: cover;
+
+  @media (min-width: 993px) {
+    background-image: var(--kapsula-hero-backdrop-gradient),
+    url("/banner-desktop.webp");
+  }
 }
 
 .kapsula__veil {
@@ -67,7 +72,7 @@
 
 .kapsula__eyebrow {
   display: block;
-  width: min(220px, 52vw);
+  width: 220px;
   height: auto;
   margin: 0 auto;
 }

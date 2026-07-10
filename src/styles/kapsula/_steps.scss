@@ -8,6 +8,18 @@
   }
 }
 
+.kapsula-screen[aria-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.kapsula-screen[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .kapsula-screen--steps {
   position: absolute;
   inset: 0;
@@ -59,7 +71,7 @@
 
 .kapsula-step-card {
   display: grid;
-  align-content: space-between;
+  grid-template-rows: auto 1fr;
   gap: 24px;
   border: 1px solid var(--kapsula-white);
   border-radius: var(--kapsula-radius-md);
@@ -78,10 +90,15 @@
   font-family: var(--kapsula-heading-font), serif;
   font-size: var(--kapsula-font-size-2xl);
   line-height: var(--kapsula-line-height-tight);
+
+  @media (min-width: 993px) {
+    font-size: var(--kapsula-font-size-5xl);
+  }
 }
 
 .kapsula-step-card__text {
   margin: 0;
+  align-self: end;
   color: var(--kapsula-white);
   font-size: var(--kapsula-font-size-step);
   line-height: var(--kapsula-line-height-card);

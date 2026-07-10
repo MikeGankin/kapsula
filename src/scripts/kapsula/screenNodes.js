@@ -5,7 +5,6 @@ function hasRequiredNodes(nodes) {
     nodes.heroScreen &&
       nodes.stepsScreen &&
       nodes.stylesScreen &&
-      nodes.formScreen &&
       nodes.stepsTitle &&
       nodes.stepsCards.length &&
       nodes.stepsNote &&
@@ -14,10 +13,6 @@ function hasRequiredNodes(nodes) {
       nodes.stylesTitle &&
       nodes.styleCards.length &&
       nodes.styleCardButtons.length &&
-      nodes.formTitle &&
-      nodes.formSubtitle &&
-      nodes.formAside &&
-      nodes.formBody &&
       nodes.progressButtons.length &&
       nodes.startButton,
   );

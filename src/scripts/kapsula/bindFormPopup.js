@@ -1,6 +1,7 @@
 import * as z from "zod/mini";
 import {syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
+import {getFormSubmitEndpoint} from "./formSchema.js";
 
 const POPUP_ID = "coral-popup-kapsula";
 const POPUP_FIELD_ERRORS = {
@@ -78,6 +79,22 @@ function formatSubmittedAt(date) {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
+function buildManagerLeadPayload({snapshot, submittedAt, contact}) {
+  return {
+    format: "html",
+    plaintext: "Заявка Kapsula для менеджера",
+    lead: {
+      capsule: snapshot.capsuleId,
+      segment: "Elite",
+      submittedAt: formatSubmittedAt(submittedAt),
+      pagePath: window.location.pathname,
+      name: contact.name,
+      phone: contact.phone,
+      ...snapshot.values,
+    },
+  };
+}
+
 function getPopupFormPayload(popupFormNode) {
   return {
     name: popupFormNode.elements.namedItem("name")?.value ?? "",
@@ -117,6 +134,17 @@ function clearPopupFieldErrors(popupFormNode) {
   Object.keys(POPUP_FIELD_ERRORS).forEach((fieldName) => {
     setPopupFieldError(popupFormNode, fieldName);
   });
+}
+
+function setPopupSubmitPending(popupFormNode, isPending) {
+  const submitButton = popupFormNode.querySelector(".kapsula-popup-form__submit");
+
+  popupFormNode.dataset.pending = isPending ? "true" : "false";
+  popupFormNode.setAttribute("aria-busy", isPending ? "true" : "false");
+
+  if (submitButton instanceof HTMLButtonElement) {
+    submitButton.disabled = isPending;
+  }
 }
 
 function validatePopupForm(popupFormNode) {
@@ -171,6 +199,7 @@ export function bindFormPopup(formExperience, hero) {
     label: "Перейти к карточке",
   });
   let boundSubmitButton = null;
+  let isSubmitting = false;
 
   const handleOpenPopup = (event) => {
     event.preventDefault();
@@ -222,8 +251,12 @@ export function bindFormPopup(formExperience, hero) {
     }
   });
 
-  popupFormNode.addEventListener("submit", (event) => {
+  popupFormNode.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     const validationResult = validatePopupForm(popupFormNode);
 
@@ -233,19 +266,26 @@ export function bindFormPopup(formExperience, hero) {
 
     const snapshot = formExperience.getSnapshot();
     const submittedAt = new Date();
-    const payload = {
-      ...snapshot.values,
-      segment: "Elite",
-      submittedAt: formatSubmittedAt(submittedAt),
-      pagePath: window.location.pathname,
-      contact: {
-        name: validationResult.data.name,
-        phone: validationResult.data.phone,
-      },
-    };
+    const payload = buildManagerLeadPayload({
+      snapshot,
+      submittedAt,
+      contact: validationResult.data,
+    });
 
-    console.log("kapsula form object", payload);
-    setPopupState(popupNode, "success");
+    try {
+      isSubmitting = true;
+      setPopupSubmitPending(popupFormNode, true);
+      console.log("Kapsula manager lead payload", {
+        endpoint: getFormSubmitEndpoint(),
+        payload,
+      });
+      setPopupState(popupNode, "success");
+    } catch (error) {
+      console.error("Failed to prepare kapsula popup form payload", error);
+    } finally {
+      isSubmitting = false;
+      setPopupSubmitPending(popupFormNode, false);
+    }
   });
 
   homeButtonNode?.addEventListener("click", () => {

@@ -1,10 +1,12 @@
 import {gsap} from "gsap";
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
 
-export function animateHero() {
+export function animateHero(rootNode = document) {
   const {selectors, initial, timeline: timelineConfig} = KAPSULA_ANIMATION.heroReveal;
 
-  const hero = document.querySelector(selectors.hero);
+  const hero = rootNode?.matches?.(selectors.hero)
+    ? rootNode
+    : rootNode?.querySelector?.(selectors.hero) ?? document.querySelector(selectors.hero);
   if (!hero || hero.dataset.animated === "1") return;
 
   const content = hero.querySelector(selectors.content);

@@ -12,6 +12,18 @@ import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay} from "./animateFormImageOverlay.js";
 import {getResponsiveImageSources, syncResponsivePicture} from "./formResponsiveImages.js";
+import {readSavedFormValues, saveFormValues} from "./sessionState.js";
+
+function getPersistedOptionValues(capsule, values = {}) {
+  return capsule.sections.reduce((accumulator, section) => {
+    if (section.type === "textarea") {
+      return accumulator;
+    }
+
+    accumulator[section.id] = values[section.id] ?? (section.multiple ? [] : "");
+    return accumulator;
+  }, {});
+}
 
 function getSectionOverlaySources(section) {
   return Array.from(new Set(
@@ -56,30 +68,6 @@ function getFormSnapshot(capsuleMap, capsuleId, values) {
 }
 
 function getOverlayLayers(capsule, values, expandedState, activeSectionId, touchedSections) {
-  const activeSection = capsule.sections.find((section) => section.id === activeSectionId);
-
-  if (activeSection?.overlayPreviewOnEnter && expandedState[activeSection.id]) {
-    const selectedSources = getSelectedSectionOverlayImages(activeSection, values);
-    const availableSources = getSectionOverlaySources(activeSection);
-    const shouldShowPreview = !touchedSections[activeSection.id];
-    const previewSources = selectedSources.length > 0
-      ? selectedSources
-      : shouldShowPreview
-        ? availableSources
-        : [];
-
-    if (previewSources.length === 0) {
-      return [];
-    }
-
-    return [{
-      sectionId: activeSection.id,
-      animation: activeSection.overlayAnimation ?? "segments",
-      availableSources,
-      selectedSources: previewSources,
-    }];
-  }
-
   return capsule.sections.flatMap((section) => {
     const selectedSources = getSelectedSectionOverlayImages(section, values);
     const availableSources = getSectionOverlaySources(section);
@@ -109,8 +97,13 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   }
 
   const capsuleMap = buildCapsuleMap();
-  const selectedCapsule$ = new BehaviorSubject(getInitialCapsuleId(capsuleMap, initialCapsuleId));
-  const values$ = new BehaviorSubject({});
+  const initialResolvedCapsuleId = getInitialCapsuleId(capsuleMap, initialCapsuleId);
+  const initialCapsule = getCapsule(capsuleMap, initialResolvedCapsuleId);
+  const initialSavedValues = readSavedFormValues(initialResolvedCapsuleId);
+  const selectedCapsule$ = new BehaviorSubject(initialResolvedCapsuleId);
+  const values$ = new BehaviorSubject(
+    initialSavedValues ? buildInitialValues(initialCapsule.sections, initialSavedValues) : {},
+  );
   const expandedState$ = new BehaviorSubject({});
   const activeSectionId$ = new BehaviorSubject(null);
   const touchedSections$ = new BehaviorSubject({});
@@ -167,10 +160,17 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     }
 
     renderForm(formNode, capsule, nextValues, nextExpandedState, {forceFull: forceFullRender});
+    saveFormValues(capsuleId, getPersistedOptionValues(capsule, nextValues));
     animateFormImageOverlay(overlayImageNode, {
       layers: getOverlayLayers(capsule, nextValues, nextExpandedState, nextActiveSectionId, touchedSections),
     });
-    animateFormSections(formNode, nextExpandedState, previousExpandedState, nextValues, previousValues);
+    animateFormSections(
+      formNode,
+      nextExpandedState,
+      previousExpandedState,
+      nextValues,
+      previousValues,
+    );
     previousExpandedState = nextExpandedState;
     previousValues = nextValues;
     previousCapsuleId = capsuleId;
@@ -255,10 +255,13 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
         return true;
       }
 
+      const nextCapsule = getCapsule(capsuleMap, capsuleId);
+      const savedValues = readSavedFormValues(capsuleId);
+
       previousExpandedState = {};
       previousValues = {};
       expandedState$.next({});
-      values$.next({});
+      values$.next(savedValues ? buildInitialValues(nextCapsule.sections, savedValues) : {});
       touchedSections$.next({});
       activeSectionId$.next(null);
       selectedCapsule$.next(capsuleId);

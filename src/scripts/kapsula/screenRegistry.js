@@ -1,5 +1,5 @@
 export function buildScreenRegistry(nodes, timelineConfig) {
-  return {
+  const registry = {
     steps: {
       stepName: "steps",
       node: nodes.stepsScreen,
@@ -22,7 +22,10 @@ export function buildScreenRegistry(nodes, timelineConfig) {
         {node: nodes.styleCards, config: timelineConfig.styleCards},
       ],
     },
-    form: {
+  };
+
+  if (nodes.formScreen && nodes.formTitle && nodes.formSubtitle && nodes.formAside && nodes.formBody) {
+    registry.form = {
       stepName: "capsule",
       node: nodes.formScreen,
       elements: [nodes.formTitle, nodes.formSubtitle, nodes.formAside, nodes.formBody],
@@ -33,6 +36,8 @@ export function buildScreenRegistry(nodes, timelineConfig) {
         {node: nodes.formAside, config: timelineConfig.formAside},
         {node: nodes.formBody, config: timelineConfig.formBody},
       ],
-    },
-  };
+    };
+  }
+
+  return registry;
 }

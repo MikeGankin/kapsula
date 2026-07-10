@@ -1,4 +1,4 @@
-export async function setupLocalCdnAssetRewrite({
+export function setupLocalCdnAssetRewrite({
                                                   root, // HTMLElement
                                                   cdnBase = "https://localhost:3001",
                                                   enabled = true,
