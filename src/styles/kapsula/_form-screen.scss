@@ -8,12 +8,34 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   align-items: stretch;
+
+}
+
+.kapsula[data-screen="form"] .kapsula-screen--form {
+  @include media.mobile-only {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 100%;
+    grid-template-rows: auto auto;
+  }
+}
+
+.kapsula[data-screen="form"] .kapsula__inner {
+  @include media.mobile-only {
+    height: auto;
+    min-height: calc(100vh - var(--site-header-mobile-height));
+  }
 }
 
 .kapsula-form-screen {
   width: 100%;
   height: 100%;
   min-height: 0;
+
+  @include media.mobile-only {
+    height: auto;
+  }
 
   @include media.desktop {
     height: 100%;
@@ -37,6 +59,11 @@
   grid-template-rows: auto minmax(0, 1fr);
   align-items: stretch;
 
+  @include media.mobile-only {
+    height: auto;
+    grid-template-rows: auto auto;
+  }
+
   @include media.desktop {
     grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
     align-items: stretch;
@@ -50,6 +77,10 @@
   gap: 16px;
   grid-template-rows: auto minmax(0, 1fr) auto;
   align-content: stretch;
+
+  @include media.mobile-only {
+    grid-template-rows: repeat(3, auto);
+  }
 
   @include media.desktop {
     gap: 24px;
@@ -105,7 +136,7 @@
   position: relative;
   width: 100%;
   max-width: none;
-  height: 220px;
+  height: 200px;
   min-height: 0;
   overflow: clip;
 

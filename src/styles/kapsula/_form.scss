@@ -12,6 +12,10 @@
   overflow-y: scroll;
   @include mixins.custom-bar(4px);
 
+  @include media.mobile-only {
+    overflow-y: visible;
+  }
+
   @include media.desktop {
     @include mixins.custom-bar(8px)
   }
@@ -229,5 +233,3 @@
   cursor: not-allowed;
   pointer-events: none;
 }
-
-

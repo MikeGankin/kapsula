@@ -1,5 +1,5 @@
 {
-  "submitEndpoint": "/api/kapsula",
+  "submitEndpoint": "https://postman.trip-mate.ru/manager-lead-mail",
   "capsules": {
     "asian": {
       "title": "Азиатский стиль",
@@ -109,8 +109,8 @@
           "expanded": false,
           "options": [
             {
-              "value": "Эконом",
-              "label": "Эконом",
+              "value": "Бизнес",
+              "label": "Бизнес",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/flight.webp"
             },
             {
@@ -119,8 +119,8 @@
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/flight.webp"
             },
             {
-              "value": "Бизнес",
-              "label": "Бизнес",
+              "value": "Эконом",
+              "label": "Эконом",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/flight.webp"
             },
             {
@@ -143,12 +143,12 @@
             {
               "value": "Индивидуальный бизнес-трансфер",
               "label": "Индивидуальный бизнес-трансфер",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/transfer-2.webp"
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
               "label": "Индивидуальный ВИП-трансфер",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-desktop/transfer-2.webp"
             }
           ]
         },
@@ -243,8 +243,8 @@
     "oriental": {
       "title": "Восточный стиль",
       "subtitle": "Струящийся шелк, орнаменты и яркие краски",
-      "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-style.webp",
-      "imageMobileSrc": null,
+      "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-base.webp",
+      "imageMobileSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-base-mob.webp",
       "hotelIds": ["maxx-royal-bodrum", "ela-excellence-resort-belek", "lujo-art-joy-bodrum"],
       "imageAlt": "Девушка в платье с орнаментом у резной двери восточного дворика",
       "submitLabel": "Сформировать капсулу",
@@ -343,8 +343,8 @@
           "expanded": false,
           "options": [
             {
-              "value": "Эконом",
-              "label": "Эконом",
+              "value": "Бизнес",
+              "label": "Бизнес",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/flight.webp"
             },
             {
@@ -353,8 +353,8 @@
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/flight.webp"
             },
             {
-              "value": "Бизнес",
-              "label": "Бизнес",
+              "value": "Эконом",
+              "label": "Эконом",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/flight.webp"
             },
             {
@@ -377,24 +377,24 @@
             {
               "value": "Индивидуальный бизнес-трансфер",
               "label": "Индивидуальный бизнес-трансфер",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer-2.webp"
             },
             {
               "value": "Индивидуальный ВИП-трансфер",
               "label": "Индивидуальный ВИП-трансфер",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer-2.webp"
             },
             {
               "value": "Гидросамолет",
               "label": "Гидросамолет",
               "description": "Доступно только в отеле Lujo",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer-2.webp"
             },
             {
               "value": "Вертолет",
               "label": "Вертолет",
               "description": "Только для отелей сети MaxRoyal",
-              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer.webp"
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer-2.webp"
             }
           ]
         },
@@ -489,8 +489,8 @@
     "island": {
       "title": "Островной стиль",
       "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
-      "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-style.webp",
-      "imageMobileSrc": null,
+      "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-base.webp",
+      "imageMobileSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-base-mob.webp",
       "hotelIds": ["maxx-royal-bodrum", "ela-excellence-resort-belek", "lujo-art-joy-bodrum"],
       "imageAlt": "Девушка в белом образе на пляже у бирюзовой воды и пальм",
       "submitLabel": "Сформировать капсулу",
@@ -589,8 +589,8 @@
           "expanded": false,
           "options": [
             {
-              "value": "Эконом",
-              "label": "Эконом",
+              "value": "Бизнес",
+              "label": "Бизнес",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-desktop/flight.webp"
             },
             {
@@ -599,8 +599,8 @@
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-desktop/flight.webp"
             },
             {
-              "value": "Бизнес",
-              "label": "Бизнес",
+              "value": "Эконом",
+              "label": "Эконом",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-desktop/flight.webp"
             },
             {

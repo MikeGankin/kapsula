@@ -9,7 +9,6 @@ export async function sendKapsulaPopupForm(payload, endpoint, {signal} = {}) {
       "Accept": "application/json",
       "Content-Type": "application/json",
     },
-    credentials: "same-origin",
     body: JSON.stringify(payload),
     signal,
   });
@@ -20,9 +19,9 @@ export async function sendKapsulaPopupForm(payload, endpoint, {signal} = {}) {
 
   const contentType = response.headers.get("content-type") ?? "";
 
-  if (contentType.includes("application/json")) {
-    return response.json();
+  if (!contentType.includes("application/json")) {
+    return null;
   }
 
-  return null;
+  return response.json();
 }

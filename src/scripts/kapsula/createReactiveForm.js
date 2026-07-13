@@ -6,7 +6,6 @@ import {
   getCapsule,
   getInitialCapsuleId,
 } from "./formSchema.js";
-import {validateSchema} from "./formValidation.js";
 import {normalizeFormValuesUntilStable, toggleOptionValue} from "./formValues.js";
 import {renderForm} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
@@ -23,6 +22,16 @@ function getPersistedOptionValues(capsule, values = {}) {
     accumulator[section.id] = values[section.id] ?? (section.multiple ? [] : "");
     return accumulator;
   }, {});
+}
+
+function hasSelectionInFirstGroups(capsule, values, groupCount = 3) {
+  return capsule.sections
+    .slice(0, groupCount)
+    .every((section) => {
+      const value = values[section.id];
+
+      return Array.isArray(value) ? value.length > 0 : Boolean(value?.trim?.());
+    });
 }
 
 function getSectionOverlaySources(section) {
@@ -70,8 +79,8 @@ function getFormSnapshot(capsuleMap, capsuleId, values) {
   };
 }
 
-function getOverlayLayers(capsule, values) {
-  return capsule.sections.flatMap((section) => {
+function getOverlayLayers(capsule, values, activeSectionId = null) {
+  const layers = capsule.sections.flatMap((section) => {
     const selectedSources = getSelectedSectionOverlayImages(section, values);
     const availableSources = getSectionOverlaySources(section);
 
@@ -86,6 +95,15 @@ function getOverlayLayers(capsule, values) {
       selectedSources,
     }];
   });
+
+  if (!activeSectionId) {
+    return layers;
+  }
+
+  return [
+    ...layers.filter((layer) => layer.sectionId !== activeSectionId),
+    ...layers.filter((layer) => layer.sectionId === activeSectionId),
+  ];
 }
 
 function createFormState(capsuleMap, capsuleId, savedValues = null) {
@@ -190,7 +208,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     distinctUntilChanged((previous, current) => (
       previous.capsule === current.capsule && previous.values === current.values
     )),
-    map(({capsule, values}) => validateSchema(capsule, values).success),
+    map(({capsule, values}) => hasSelectionInFirstGroups(capsule, values)),
     distinctUntilChanged(),
   ).subscribe((isValid) => {
     if (submitButton) {
@@ -202,13 +220,16 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     map((state) => ({
       capsule: getCapsule(capsuleMap, state.capsuleId),
       values: state.values,
+      activeSectionId: state.activeSectionId,
     })),
     distinctUntilChanged((previous, current) => (
-      previous.capsule === current.capsule && previous.values === current.values
+      previous.capsule === current.capsule
+      && previous.values === current.values
+      && previous.activeSectionId === current.activeSectionId
     )),
-  ).subscribe(({capsule, values}) => {
+  ).subscribe(({capsule, values, activeSectionId}) => {
     animateFormImageOverlay(overlayImageNode, {
-      layers: getOverlayLayers(capsule, values),
+      layers: getOverlayLayers(capsule, values, activeSectionId),
     });
   }));
 
@@ -229,14 +250,19 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
 
     if (sectionTrigger) {
       const sectionId = sectionTrigger.dataset.sectionId;
-      updateState((state) => ({
-        ...state,
-        activeSectionId: sectionId,
-        expandedState: {
-          ...state.expandedState,
-          [sectionId]: !state.expandedState[sectionId],
-        },
-      }));
+      updateState((state) => {
+        const isOpening = !state.expandedState[sectionId];
+        const expandedState = Object.fromEntries(
+          Object.keys(state.expandedState)
+            .map((id) => [id, isOpening && id === sectionId]),
+        );
+
+        return {
+          ...state,
+          activeSectionId: sectionId,
+          expandedState,
+        };
+      });
       return;
     }
   }));
@@ -261,6 +287,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
 
         return {
           ...state,
+          activeSectionId: sectionId,
           values,
           touchedSections: {...state.touchedSections, [section.id]: true},
         };

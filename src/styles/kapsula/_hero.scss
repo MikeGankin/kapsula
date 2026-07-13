@@ -31,6 +31,14 @@
   background: var(--kapsula-hero-veil-gradient);
 }
 
+.kapsula[data-screen="form"] .kapsula__backdrop {
+  background: var(--kapsula-white);
+}
+
+.kapsula[data-screen="form"] .kapsula__veil {
+  background: transparent;
+}
+
 .kapsula[data-screen="steps"] .kapsula__veil,
 .kapsula[data-screen="styles"] .kapsula__veil {
   background: var(--kapsula-section-veil-gradient);
@@ -39,7 +47,12 @@
 .kapsula__inner {
   position: relative;
   z-index: var(--kapsula-z-base);
+  height: calc(100vh - var(--site-header-mobile-height));
   height: calc(100dvh - var(--site-header-mobile-height));
+
+  @supports (-webkit-touch-callout: none) {
+    height: calc(100vh - var(--site-header-mobile-height));
+  }
 }
 
 .kapsula-screen--hero {

@@ -1,3 +1,5 @@
+@use "media";
+
 .kapsula-style-card {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -10,9 +12,13 @@
 
 .kapsula-style-card__media {
   position: relative;
-  height: 250px;
+  height: 200px;
   overflow: hidden;
   background: var(--kapsula-style-card-media-bg);
+
+  @include media.desktop {
+    height: 250px;
+  }
 }
 
 .kapsula-style-card__media::after {
