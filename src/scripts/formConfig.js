@@ -393,7 +393,7 @@ const formConfig = {
             {
               "value": "Вертолет",
               "label": "Вертолет",
-              "description": "Только для отелей сети MaxRoyal",
+              "description": "Только для отелей сетей Maxx Royal и ELA Excellence в Турции",
               "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/transfer-2.webp"
             }
           ]
