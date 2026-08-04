@@ -7,7 +7,7 @@ import {getScreenNodes} from "./screenNodes.js";
 import {buildScreenRegistry} from "./screenRegistry.js";
 import {readCurrentScreen, readSelectedCapsule} from "./sessionState.js";
 import {setupInitialScreenState} from "./setupInitialScreenState.js";
-import {restoreScreen, setActiveProgressStep} from "./screenTransition.js";
+import {restoreScreen} from "./screenTransition.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 
@@ -40,7 +40,6 @@ export function setupScreenFlow(rootNode = document) {
   hero.dataset.transitionBound = "1";
 
   setupInitialScreenState(screenNodes, initial);
-  setActiveProgressStep(hero, "steps");
   hero.dataset.screen = "hero";
 
   const screenRegistry = buildScreenRegistry(screenNodes, timelineConfig);
@@ -115,7 +114,6 @@ export function setupScreenFlow(rootNode = document) {
   const unbindScreenActions = bindScreenActions({
     formExperience,
     hero,
-    progressButtons: screenNodes.progressButtons,
     screenRegistry,
     screenNodes,
     timelineConfig,
@@ -127,7 +125,6 @@ export function setupScreenFlow(rootNode = document) {
     initial,
     screenKey: readCurrentScreen(),
     screenRegistry,
-    stepsProgress: screenNodes.stepsProgress,
   });
 
   const unbindFormPopup = canInitForm

@@ -1,12 +1,18 @@
 import {defer, filter, from, merge, of, Subscription, switchMap} from "rxjs";
 import {hostReactAppReady, reactDomObserver} from "../utils/utils.js";
 import {animateHero} from "./kapsula/animateHero.js";
-import {setupHeaderUi} from "./kapsula/setupHeaderUi.js";
+import {cleanupHeaderUi, setupHeaderUi} from "./kapsula/setupHeaderUi.js";
 import {setupScreenFlow} from "./kapsula/setupScreenFlow.js";
 
 const DESKTOP_HEADER_HOST_SELECTOR = 'div[class*="HeaderMenuBar_container"] > div';
 const MOBILE_HEADER_HOST_SELECTOR = 'div[class*="HeaderMobile_rightGroup__"]';
 const ROOT_SELECTOR = "[data-kapsula-hero]";
+const TARGET_ROUTES = [
+  "/elite-service/constructor/",
+  "/monkey/",
+  "preview"
+];
+const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 let appSubscription = null;
 
 function createHostReady$() {
@@ -23,6 +29,51 @@ export default function kapsula() {
   const lifecycle = new Subscription();
   const domWatcher = reactDomObserver();
   const rootCleanups = new Map();
+  let headerSubscription = null;
+  let isHeaderRouteActive = false;
+
+  const disableHeaderUi = () => {
+    headerSubscription?.unsubscribe();
+    headerSubscription = null;
+    cleanupHeaderUi();
+    document.body?.removeAttribute(ROUTE_ATTRIBUTE);
+  };
+
+  const enableHeaderUi = () => {
+    document.body?.setAttribute(ROUTE_ATTRIBUTE, "");
+    setupHeaderUi();
+
+    if (headerSubscription) {
+      return;
+    }
+
+    headerSubscription = merge(
+      domWatcher.observeSelector$(DESKTOP_HEADER_HOST_SELECTOR),
+      domWatcher.observeSelector$(MOBILE_HEADER_HOST_SELECTOR),
+    ).pipe(
+      filter((event) => event.type === "initialize" || event.type === "add"),
+    ).subscribe({
+      next: () => setupHeaderUi(),
+      error: (error) => console.error("Kapsula header observer failed", error),
+    });
+  };
+
+  const handleRouteChange = ({path = ""} = {}) => {
+    const shouldActivateHeader = TARGET_ROUTES.some((route) => path.includes(route));
+
+    if (shouldActivateHeader === isHeaderRouteActive) {
+      return;
+    }
+
+    isHeaderRouteActive = shouldActivateHeader;
+
+    if (shouldActivateHeader) {
+      enableHeaderUi();
+      return;
+    }
+
+    disableHeaderUi();
+  };
 
   const destroyRoot = (rootNode) => {
     rootCleanups.get(rootNode)?.();
@@ -30,19 +81,26 @@ export default function kapsula() {
   };
 
   try {
-    setupHeaderUi();
+    handleRouteChange({path: window.location.pathname});
 
-    const headerEvents$ = merge(
-      domWatcher.observeSelector$(DESKTOP_HEADER_HOST_SELECTOR),
-      domWatcher.observeSelector$(MOBILE_HEADER_HOST_SELECTOR),
-    ).pipe(
-      filter((event) => event.type === "initialize" || event.type === "add"),
+    const hasRouteBus = (
+      typeof CoralRouteBus !== "undefined" &&
+      typeof CoralRouteBus.subscribe === "function"
     );
+    const routeSubscription = hasRouteBus
+      ? CoralRouteBus.subscribe(handleRouteChange)
+      : null;
 
-    lifecycle.add(headerEvents$.subscribe({
-      next: () => setupHeaderUi(),
-      error: (error) => console.error("Kapsula header observer failed", error),
-    }));
+    if (
+      typeof routeSubscription === "function" ||
+      typeof routeSubscription?.unsubscribe === "function"
+    ) {
+      lifecycle.add(routeSubscription);
+    } else if (!hasRouteBus) {
+      console.error("Kapsula header route bus is unavailable");
+    }
+
+    lifecycle.add(disableHeaderUi);
   } catch (error) {
     console.error("Kapsula header init failed", error);
   }

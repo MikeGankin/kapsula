@@ -9,11 +9,9 @@ function hasRequiredNodes(nodes) {
       nodes.stepsCards.length &&
       nodes.stepsNote &&
       nodes.stepsButton &&
-      nodes.stepsProgress.length &&
       nodes.stylesTitle &&
       nodes.styleCards.length &&
       nodes.styleCardButtons.length &&
-      nodes.progressButtons.length &&
       nodes.startButton,
   );
 }
@@ -29,7 +27,6 @@ export function getScreenNodes(hero) {
     stepsCards: hero.querySelectorAll(selectors.stepsCards),
     stepsNote: hero.querySelector(selectors.stepsNote),
     stepsButton: hero.querySelector(selectors.stepsButton),
-    stepsProgress: hero.querySelectorAll(selectors.stepsProgress),
     stylesTitle: hero.querySelector(selectors.stylesTitle),
     styleCards: hero.querySelectorAll(selectors.styleCards),
     styleCardButtons: hero.querySelectorAll(selectors.styleCardButtons),
@@ -37,7 +34,6 @@ export function getScreenNodes(hero) {
     formSubtitle: hero.querySelector(selectors.formSubtitle),
     formAside: hero.querySelector(selectors.formAside),
     formBody: hero.querySelector(selectors.formBody),
-    progressButtons: hero.querySelectorAll(selectors.progressButton),
     startButton: hero.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.startButton),
   };
 

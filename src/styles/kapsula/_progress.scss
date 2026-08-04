@@ -10,6 +10,10 @@
   z-index: auto;
   margin-bottom: 16px !important;
   --kapsula-progress-accent: var(--kapsula-white);
+
+  @include media.mobile-only {
+    display: none;
+  }
 }
 
 .kapsula-screen--styles .kapsula-progress {

@@ -35,6 +35,10 @@
 .kapsula-styles__grid > * {
   flex: 0 0 100%;
 
+  @include media.tablet {
+    flex-basis: calc((100% - var(--kapsula-card-grid-gap-styles)) / 2);
+  }
+
   @include media.desktop {
     flex: initial;
   }

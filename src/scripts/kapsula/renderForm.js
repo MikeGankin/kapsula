@@ -235,6 +235,13 @@ function createSectionNode(section, currentValue, values, isExpanded, index) {
             className: "kapsula-form-section__title",
             text: section.title,
           }),
+          section.required
+            ? createNode("span", {
+              className: "kapsula-form-section__required-marker",
+              attributes: {"aria-hidden": "true"},
+              text: "*",
+            })
+            : null,
         ],
       }),
       createNode("span", {
@@ -289,9 +296,44 @@ function ensureSectionSummary(sectionNode, section, currentValue, values) {
     return;
   }
 
+  summaryNode.classList.remove("is-invalid");
+  summaryNode.removeAttribute("role");
+
   if (summaryNode.textContent !== summaryValue) {
     summaryNode.textContent = summaryValue;
   }
+}
+
+export function renderFormValidationErrors(formNode, schema, issues = []) {
+  const invalidSectionIds = new Set(
+    issues
+      .map((issue) => issue.path?.[0])
+      .filter((sectionId) => typeof sectionId === "string"),
+  );
+
+  schema.sections.forEach((section) => {
+    const sectionNode = formNode.querySelector(`[data-kapsula-rendered-section="${section.id}"]`);
+    const metaNode = sectionNode?.querySelector("[data-kapsula-section-meta]");
+    let summaryNode = metaNode?.querySelector("[data-kapsula-section-summary]");
+
+    if (!invalidSectionIds.has(section.id)) {
+      if (summaryNode?.classList.contains("is-invalid")) {
+        summaryNode.remove();
+      }
+      return;
+    }
+
+    if (!summaryNode && metaNode) {
+      summaryNode = createSectionSummary(" ");
+      metaNode.prepend(summaryNode);
+    }
+
+    if (!summaryNode) return;
+
+    summaryNode.textContent = `Заполните раздел «${section.title}» — без него мы не сможем сформировать капсулу.`;
+    summaryNode.classList.add("is-invalid");
+    summaryNode.setAttribute("role", "alert");
+  });
 }
 
 function syncOptionNode(optionNode, section, option, selected) {

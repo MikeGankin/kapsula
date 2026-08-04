@@ -3,6 +3,7 @@ const SESSION_STORAGE_KEYS = {
   capsule: "kapsula.selectedCapsule",
   formValues: "kapsula.formValues",
   formValuesPrefix: "kapsula.formValues",
+  activeSectionPrefix: "kapsula.activeSection",
 };
 const URL_SEARCH_KEYS = {
   screen: "screen",
@@ -90,6 +91,22 @@ export function saveSelectedCapsule(capsuleId) {
     screen: readCurrentScreen(),
     capsuleId,
   });
+}
+
+export function readSavedActiveSection(capsuleId) {
+  if (!capsuleId) {
+    return null;
+  }
+
+  return readSessionValue(`${SESSION_STORAGE_KEYS.activeSectionPrefix}.${capsuleId}`);
+}
+
+export function saveActiveSection(capsuleId, sectionId) {
+  if (!capsuleId || !sectionId) {
+    return;
+  }
+
+  writeSessionValue(`${SESSION_STORAGE_KEYS.activeSectionPrefix}.${capsuleId}`, sectionId);
 }
 
 export function readSavedFormValues(capsuleId) {

@@ -1,5 +1,4 @@
 import {gsap} from "gsap";
-import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveCurrentScreen} from "./sessionState.js";
 import {getMotionDuration, getMotionOffset} from "./motionPreferences.js";
 
@@ -7,25 +6,6 @@ function emitScreenChange(hero, screenKey) {
   hero.dispatchEvent(new CustomEvent("kapsula:screen-change", {
     detail: {screenKey},
   }));
-}
-
-export function setActiveProgressStep(hero, stepName) {
-  const progressItems = hero.querySelectorAll(KAPSULA_ANIMATION.screenTransition.selectors.progressItem);
-
-  progressItems.forEach((item) => {
-    const isActive = item.dataset.kapsulaProgressItem === stepName;
-    const button = item.querySelector(KAPSULA_ANIMATION.screenTransition.selectors.progressButton);
-
-    item.classList.toggle("is-active", isActive);
-
-    if (!button) return;
-
-    if (isActive) {
-      button.setAttribute("aria-current", "step");
-    } else {
-      button.removeAttribute("aria-current");
-    }
-  });
 }
 
 export function setScreenState(screenNode, {visible, interactive}) {
@@ -43,7 +23,6 @@ export function restoreScreen({
   initial,
   screenKey,
   screenRegistry,
-  stepsProgress,
 }) {
   if (screenKey === "hero") {
     heroScreen.setAttribute("aria-hidden", "false");
@@ -66,12 +45,6 @@ export function restoreScreen({
       });
     });
 
-    gsap.set(stepsProgress, {
-      autoAlpha: 0,
-      y: getMotionOffset(initial.y),
-    });
-
-    setActiveProgressStep(hero, "steps");
     hero.dataset.screen = "hero";
     saveCurrentScreen("hero");
     emitScreenChange(hero, "hero");
@@ -104,12 +77,6 @@ export function restoreScreen({
     });
   });
 
-  gsap.set(stepsProgress, {
-    autoAlpha: 1,
-    y: 0,
-  });
-
-  setActiveProgressStep(hero, restoredScreen.stepName);
   hero.dataset.screen = screenKey;
   saveCurrentScreen(screenKey);
   emitScreenChange(hero, screenKey);
@@ -128,62 +95,53 @@ export function transitionBetweenScreens({
 }) {
   if (fromKey === toKey) return null;
 
-  const fromScreen = fromKey === "hero" ? heroScreen : screenRegistry[fromKey];
+  const fromScreen = fromKey === "hero" ? null : screenRegistry[fromKey];
+  const fromScreenNode = fromKey === "hero" ? heroScreen : fromScreen?.node;
   const toScreen = screenRegistry[toKey];
 
-  if (!toScreen) return null;
+  if (!fromScreenNode || !toScreen) return null;
 
-  if (fromKey === "hero") {
-    heroScreen.setAttribute("aria-hidden", "true");
-    heroScreen.inert = true;
-  } else {
-    setScreenState(fromScreen.node, {visible: false, interactive: false});
-  }
+  fromScreenNode.inert = true;
+  fromScreenNode.setAttribute("aria-hidden", "true");
+  fromScreenNode.style.pointerEvents = "none";
 
-  setScreenState(toScreen.node, {visible: true, interactive: true});
-  setActiveProgressStep(hero, toScreen.stepName);
+  toScreen.node.inert = true;
+  toScreen.node.setAttribute("aria-hidden", "true");
   hero.dataset.screen = toKey;
   saveCurrentScreen(toKey);
-  emitScreenChange(hero, toKey);
 
   const timeline = gsap.timeline({
     defaults: timelineConfig.defaults,
   });
-
-  timeline
-    .set(toScreen.node, {
-      visibility: "visible",
-      y: 0,
-    });
-
-  if (fromKey === "hero") {
-    timeline
-      .set(heroScreen, {
-        opacity: 0,
-        visibility: "hidden",
-        pointerEvents: "none",
-        y: 0,
-      });
-  } else {
-    timeline
-      .set(fromScreen.node, {
-        opacity: 0,
-        visibility: "hidden",
-        pointerEvents: "none",
-        y: 0,
-      });
-  }
 
   gsap.set(toScreen.elements, {
     autoAlpha: 0,
     y: getMotionOffset(initial.y),
   });
 
+  timeline.set(toScreen.node, {
+    opacity: 0,
+    visibility: "visible",
+    pointerEvents: "none",
+    y: 0,
+  });
+
+  emitScreenChange(hero, toKey);
+
+  const exitConfig = fromKey === "hero"
+    ? timelineConfig.heroScreen
+    : timelineConfig.exitScreen;
+
+  timeline.to(fromScreenNode, {
+    opacity: exitConfig.opacity,
+    duration: getMotionDuration(exitConfig.duration),
+    pointerEvents: "none",
+  }, 0);
+
   timeline.to(toScreen.node, {
     opacity: toScreen.reveal.opacity,
     duration: getMotionDuration(toScreen.reveal.duration),
-    pointerEvents: "auto",
-  }, toScreen.reveal.at);
+  }, getMotionDuration(exitConfig.duration) * 0.45);
 
   toScreen.animations.forEach(({node, config}) => {
     timeline.to(node, {
@@ -192,6 +150,11 @@ export function transitionBetweenScreens({
       duration: getMotionDuration(config.duration),
       ...(config.stagger ? {stagger: config.stagger} : {}),
     }, config.at);
+  });
+
+  timeline.call(() => {
+    setScreenState(fromScreenNode, {visible: false, interactive: false});
+    setScreenState(toScreen.node, {visible: true, interactive: true});
   });
 
   return timeline;

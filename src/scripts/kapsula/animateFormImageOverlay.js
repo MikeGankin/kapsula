@@ -223,7 +223,19 @@ function preloadSingleImage(imageSrc) {
   imageNode.decoding = "async";
 
   const preloadPromise = new Promise((resolve) => {
-    const finalize = () => resolve();
+    let isResolved = false;
+    const finalize = async () => {
+      if (isResolved) return;
+      isResolved = true;
+
+      try {
+        await imageNode.decode?.();
+      } catch {
+        // A completed load is enough when decode is unavailable or rejected.
+      }
+
+      resolve();
+    };
 
     if (imageNode.complete && imageNode.naturalWidth > 0) {
       finalize();
@@ -242,10 +254,35 @@ function preloadSingleImage(imageSrc) {
 
 function preloadImage(imageSrc) {
   const {desktopSrc, mobileSrc} = getResponsiveImageSources(imageSrc);
+  const isDesktop = window.matchMedia?.("(min-width: 993px)").matches;
+  const currentSrc = !isDesktop && mobileSrc ? mobileSrc : desktopSrc;
 
-  return Promise.all(
-    [desktopSrc, mobileSrc].filter(Boolean).map((src) => preloadSingleImage(src)),
-  );
+  return preloadSingleImage(currentSrc);
+}
+
+function waitForSegmentImage(segmentNode) {
+  const imageNode = segmentNode.querySelector(".kapsula-form-screen__overlay-image");
+
+  if (!(imageNode instanceof HTMLImageElement)) {
+    return Promise.resolve();
+  }
+
+  const decodeImage = async () => {
+    try {
+      await imageNode.decode?.();
+    } catch {
+      // Keep the animation available when decoding fails.
+    }
+  };
+
+  if (imageNode.complete) {
+    return decodeImage();
+  }
+
+  return new Promise((resolve) => {
+    imageNode.addEventListener("load", () => decodeImage().then(resolve), {once: true});
+    imageNode.addEventListener("error", resolve, {once: true});
+  });
 }
 
 function getOrCreateLayer(overlayNode, layerMap, sectionId) {
@@ -328,10 +365,12 @@ function animateSegmentClip(segmentNode, clipPath, {
   parallaxOffset,
   parallaxDirection,
   parallaxMultiplier,
+  animationRevision = null,
 }) {
-  const animationRevision = String(Number(segmentNode.dataset.animationRevision ?? 0) + 1);
+  const nextAnimationRevision = animationRevision
+    ?? String(Number(segmentNode.dataset.animationRevision ?? 0) + 1);
 
-  segmentNode.dataset.animationRevision = animationRevision;
+  segmentNode.dataset.animationRevision = nextAnimationRevision;
   segmentNode.dataset.isVisible = isVisible ? "1" : "0";
 
   if (typeof start === "number") {
@@ -351,7 +390,7 @@ function animateSegmentClip(segmentNode, clipPath, {
       .then(() => {
         if (
           segmentNode.dataset.isVisible !== "1"
-          || segmentNode.dataset.animationRevision !== animationRevision
+          || segmentNode.dataset.animationRevision !== nextAnimationRevision
         ) return;
         animateImageParallax(segmentNode, {
           offsetOverride: parallaxOffset,
@@ -360,6 +399,35 @@ function animateSegmentClip(segmentNode, clipPath, {
         });
       });
   }
+}
+
+function revealSegmentWhenReady(segmentNode, clipPath, options) {
+  const animationRevision = String(Number(segmentNode.dataset.animationRevision ?? 0) + 1);
+
+  segmentNode.dataset.animationRevision = animationRevision;
+  segmentNode.dataset.isVisible = "1";
+
+  if (typeof options.start === "number") {
+    segmentNode.dataset.clipStart = String(options.start);
+  }
+
+  gsap.killTweensOf(segmentNode);
+
+  Promise.all([
+    preloadImage(segmentNode.dataset.overlayImageSrc ?? ""),
+    waitForSegmentImage(segmentNode),
+  ]).then(() => {
+    if (
+      segmentNode.dataset.isVisible !== "1" ||
+      segmentNode.dataset.animationRevision !== animationRevision
+    ) return;
+
+    animateSegmentClip(segmentNode, clipPath, {
+      ...options,
+      isVisible: true,
+      animationRevision,
+    });
+  });
 }
 
 function animateLayerSegments(layerNode, {
@@ -410,8 +478,7 @@ function animateLayerSegments(layerNode, {
       });
     }
 
-    animateSegmentClip(segmentNode, targetClip, {
-      isVisible: true,
+    revealSegmentWhenReady(segmentNode, targetClip, {
       start,
       withParallax: shouldAnimateParallax({
         nextVisibleCount: nextSources.length,
@@ -467,8 +534,7 @@ function animateSingleLayerImage(layerNode, {
     });
   }
 
-  animateSegmentClip(segmentNode, getSliceClip(0, 1), {
-    isVisible: true,
+  revealSegmentWhenReady(segmentNode, getSliceClip(0, 1), {
     start: 0,
   });
 }

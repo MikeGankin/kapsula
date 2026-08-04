@@ -58,7 +58,6 @@ export const KAPSULA_ANIMATION = {
       stepsCards: ".kapsula-step-card",
       stepsNote: ".kapsula-steps__note",
       stepsButton: ".kapsula-button--steps",
-      stepsProgress: ".kapsula-progress",
       stylesTitle: '[data-kapsula-screen="styles"] .kapsula-copy__title',
       styleCards: ".kapsula-style-card",
       styleCardButtons: ".kapsula-style-card .kapsula-button",
@@ -66,8 +65,6 @@ export const KAPSULA_ANIMATION = {
       formSubtitle: '[data-kapsula-screen="form"] [data-kapsula-form-subtitle]',
       formAside: '[data-kapsula-screen="form"] .kapsula-form-screen__aside',
       formBody: '[data-kapsula-screen="form"] [data-kapsula-form]',
-      progressItem: "[data-kapsula-progress-item]",
-      progressButton: "[data-kapsula-progress-target]",
     },
     initial: {
       y: 24,
@@ -79,6 +76,10 @@ export const KAPSULA_ANIMATION = {
       heroScreen: {
         opacity: 0,
         duration: 0.45,
+      },
+      exitScreen: {
+        opacity: 0,
+        duration: 0.3,
       },
       stepsScreen: {
         opacity: 1,
@@ -105,12 +106,6 @@ export const KAPSULA_ANIMATION = {
         at: "-=0.2",
       },
       stepsButton: {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.45,
-        at: "-=0.18",
-      },
-      stepsProgress: {
         autoAlpha: 1,
         y: 0,
         duration: 0.45,

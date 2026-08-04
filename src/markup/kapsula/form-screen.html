@@ -1,7 +1,11 @@
 <section class="kapsula-screen kapsula-screen--form" data-kapsula-screen="form" aria-hidden="true" inert>
-    <include src="./kapsula/progress-inline.html"></include>
     <div class="kapsula-form-screen kapsula-form-screen--offset-top layout-container-limit center">
         <div class="kapsula-form-screen__layout">
+            <button class="kapsula-form-screen__back" type="button" data-kapsula-back-to-styles>
+                <span class="kapsula-form-screen__back-icon" aria-hidden="true"></span>
+                <span>Выбрать другой стиль</span>
+            </button>
+
             <div class="kapsula-form-screen__main">
                 <div class="kapsula-copy kapsula-copy--form">
                     <h2 class="kapsula-copy__title" data-kapsula-form-title>Азиатский стиль</h2>
@@ -9,7 +13,12 @@
                 </div>
 
                 <form class="kapsula-form" data-kapsula-form novalidate></form>
-                <button class="kapsula-button kapsula-form__trigger" type="button">Сформировать капсулу</button>
+                <div class="kapsula-form__submit">
+                    <p class="kapsula-form__required-note" aria-live="polite">
+                        *Обязательные разделы: страна, стиль отеля и тип номера.
+                    </p>
+                    <button class="kapsula-button kapsula-form__trigger" type="button">Сформировать капсулу</button>
+                </div>
             </div>
 
             <aside class="kapsula-form-screen__aside">

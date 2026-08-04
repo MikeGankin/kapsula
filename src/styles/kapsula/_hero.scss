@@ -50,8 +50,17 @@
   height: calc(100vh - var(--site-header-mobile-height));
   height: calc(100dvh - var(--site-header-mobile-height));
 
+  @include media.desktop {
+    height: calc(100vh - var(--kapsula-header-height));
+    height: calc(100dvh - var(--kapsula-header-height));
+  }
+
   @supports (-webkit-touch-callout: none) {
     height: calc(100vh - var(--site-header-mobile-height));
+
+    @include media.desktop {
+      height: calc(100vh - var(--kapsula-header-height));
+    }
   }
 }
 

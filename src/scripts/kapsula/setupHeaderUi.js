@@ -10,7 +10,13 @@ const INJECTED_LOGO_LINK_CLASS = "HeaderLogo_headerLogo__caiMB";
 const CTA_BUTTON_SELECTOR = ".kapsula-button--header";
 const SECONDARY_LOGO_SELECTOR = ".kapsula-header-logo";
 const DESKTOP_HEADER_QUERY = "(min-width: 993px)";
+const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 let isHeaderUiBound = false;
+let originalHeaderIconsPosition = null;
+
+function isTargetRouteActive() {
+  return document.body?.hasAttribute(ROUTE_ATTRIBUTE) === true;
+}
 
 function openJivoWidget() {
   if (typeof window.jivo_api?.open === "function") {
@@ -46,6 +52,10 @@ function ensureHeaderButton() {
 }
 
 function moveHeaderButton(desktopHost) {
+  if (!isTargetRouteActive()) {
+    return;
+  }
+
   const mobileHost = document.querySelector(MOBILE_HEADER_SELECTOR);
   const targetHost = window.matchMedia(DESKTOP_HEADER_QUERY).matches ? desktopHost : mobileHost;
 
@@ -60,12 +70,49 @@ function moveHeaderButton(desktopHost) {
   }
 }
 
+function handleDesktopMediaChange() {
+  if (!isTargetRouteActive()) {
+    return;
+  }
+
+  setupHeaderUi();
+}
+
+export function cleanupHeaderUi() {
+  const desktopMediaQuery = window.matchMedia(DESKTOP_HEADER_QUERY);
+
+  if (isHeaderUiBound) {
+    desktopMediaQuery.removeEventListener("change", handleDesktopMediaChange);
+    isHeaderUiBound = false;
+  }
+
+  document.querySelector(SECONDARY_LOGO_SELECTOR)?.remove();
+  document.querySelector(CTA_BUTTON_SELECTOR)?.remove();
+
+  const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
+
+  if (headerIcons && originalHeaderIconsPosition?.parent?.isConnected) {
+    const {parent, nextSibling} = originalHeaderIconsPosition;
+    parent.insertBefore(headerIcons, nextSibling?.parentElement === parent ? nextSibling : null);
+  }
+
+  originalHeaderIconsPosition = null;
+}
+
 export function setupHeaderUi() {
+  if (!isTargetRouteActive()) {
+    return;
+  }
+
   const desktopHost = document.querySelector(DESKTOP_HEADER_SELECTOR);
   const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
   const desktopMediaQuery = window.matchMedia(DESKTOP_HEADER_QUERY);
 
   if (desktopMediaQuery.matches && desktopHost && headerIcons && headerIcons.parentElement !== desktopHost) {
+    originalHeaderIconsPosition ??= {
+      parent: headerIcons.parentElement,
+      nextSibling: headerIcons.nextSibling,
+    };
     desktopHost.append(headerIcons);
   }
 
@@ -88,7 +135,7 @@ export function setupHeaderUi() {
   moveHeaderButton(desktopHost);
 
   if (!isHeaderUiBound) {
-    desktopMediaQuery.addEventListener("change", () => moveHeaderButton(document.querySelector(DESKTOP_HEADER_SELECTOR)));
+    desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
     isHeaderUiBound = true;
   }
 }

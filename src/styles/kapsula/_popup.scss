@@ -77,6 +77,23 @@
   text-align: center;
 }
 
+@include media.desktop {
+  .kapsula-copy--popup {
+    width: 100%;
+    margin: 0;
+    justify-items: start;
+  }
+
+  .kapsula-copy--popup .kapsula-copy__title {
+    margin: 0 0 12px;
+    text-align: left;
+  }
+
+  .kapsula-popup__text {
+    text-align: left;
+  }
+}
+
 .kapsula-popup__aside {
   display: grid;
   gap: 16px;
@@ -149,9 +166,41 @@
   position: relative;
   overflow: clip;
   border-radius: 8px;
-  min-height: 120px;
+  min-height: 200px;
   max-height: none;
   background: var(--kapsula-surface-muted);
+}
+
+.kapsula-popup-card--skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--kapsula-dark-007) 25%,
+    var(--kapsula-dark-01) 50%,
+    var(--kapsula-dark-007) 75%
+  );
+  background-size: 200% 100%;
+  animation: kapsula-popup-hotel-skeleton 1.2s ease-in-out infinite;
+}
+
+.kapsula-popup-card--skeleton::after {
+  display: none;
+}
+
+.kapsula-popup__hotels-error {
+  margin: 0;
+  color: var(--kapsula-dark-056);
+  font-size: var(--kapsula-font-size-sm);
+  line-height: var(--kapsula-line-height-body);
+}
+
+@keyframes kapsula-popup-hotel-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
 }
 
 .kapsula-popup-card::after {
@@ -164,8 +213,7 @@
 .kapsula-popup-card__image {
   display: block;
   width: 100%;
-  height: 120px;
-  max-height: 120px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -204,7 +252,6 @@
 
 .kapsula-popup-form {
   display: grid;
-  gap: 8px;
   align-content: start;
   width: 100%;
   margin-top: auto;
@@ -216,6 +263,103 @@
   margin: auto 0 0;
   border: 0;
   padding: 0;
+}
+
+.kapsula-popup-form__channels[hidden] {
+  display: none;
+}
+
+.kapsula-popup-form__contact-method {
+  display: grid;
+  min-width: 0;
+  margin: 0 0 24px;
+  border: 0;
+  padding: 0;
+}
+
+.kapsula-popup-form__contact-method-title {
+  margin: 0 0 16px 0;
+  padding: 0;
+  color: var(--kapsula-black);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-card);
+  text-align: center;
+
+  @include media.desktop {
+    text-align: left;
+  }
+}
+
+.kapsula-popup-form__contact-method-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+
+  @include media.desktop-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.kapsula-popup-form__contact-method-option {
+  position: relative;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--kapsula-black);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-tight);
+  cursor: pointer;
+  justify-self: center;
+
+  @include media.desktop {
+    justify-self: start;
+  }
+}
+
+.kapsula-popup-form__contact-method-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kapsula-popup-form__contact-method-control {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border: 2px solid var(--kapsula-black-015);
+  border-radius: var(--kapsula-radius-round);
+  background: var(--kapsula-white);
+}
+
+.kapsula-popup-form__contact-method-control::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: inherit;
+  background: var(--kapsula-gold);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.kapsula-popup-form__contact-method-input:checked + .kapsula-popup-form__contact-method-control {
+  border-color: var(--kapsula-gold);
+}
+
+.kapsula-popup-form__contact-method-input:checked + .kapsula-popup-form__contact-method-control::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.kapsula-popup-form__contact-method-input:focus-visible + .kapsula-popup-form__contact-method-control {
+  outline: 2px solid var(--kapsula-gold);
+  outline-offset: 3px;
 }
 
 .kapsula-popup-form__label {
@@ -257,6 +401,7 @@
   gap: 4px;
   align-self: start;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 .kapsula-popup-form__phone {

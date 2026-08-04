@@ -1,5 +1,6 @@
 @use "media";
 
+body[data-kapsula-constructor-route] {
 #quick-search-tab-area,
 #breadcrumb-widget,
 div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"] {
@@ -128,4 +129,5 @@ sup[class*="Badge_badge__FLhh1"] {
 .ant-avatar {
   color: #ffffff;
   background: #a88546;
+}
 }

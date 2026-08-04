@@ -1,18 +1,10 @@
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveSelectedCapsule} from "./sessionState.js";
 import {transitionBetweenScreens} from "./screenTransition.js";
-import {getMotionDuration} from "./motionPreferences.js";
-
-const STEP_TO_SCREEN = {
-  steps: "steps",
-  styles: "styles",
-  capsule: "form",
-};
 
 export function bindScreenActions({
   formExperience,
   hero,
-  progressButtons,
   screenRegistry,
   screenNodes,
   timelineConfig,
@@ -20,12 +12,12 @@ export function bindScreenActions({
   const {
     heroScreen,
     stepsButton,
-    stepsProgress,
     startButton,
     styleCardButtons,
   } = screenNodes;
   const initial = KAPSULA_ANIMATION.screenTransition.initial;
   let activeTimeline = null;
+  let pendingCapsuleId = null;
 
   const transitionToScreen = (fromKey, toKey) => {
     if (activeTimeline) {
@@ -54,22 +46,23 @@ export function bindScreenActions({
     return timeline;
   };
 
-  const handleClick = (event) => {
+  const handleClick = async (event) => {
     if (!(event.target instanceof Element)) return;
+    const backToStylesButtonNode = event.target.closest("[data-kapsula-back-to-styles]");
+
+    if (backToStylesButtonNode) {
+      if (hero.dataset.screen !== "form") return;
+
+      transitionToScreen("form", "styles");
+      return;
+    }
+
     const startButtonNode = event.target.closest(".kapsula-button--hero");
 
     if (startButtonNode) {
       if (hero.dataset.screen === "steps") return;
 
-      const timeline = transitionToScreen("hero", "steps");
-
-      if (timeline) {
-        timeline.to(stepsProgress, {
-          autoAlpha: timelineConfig.stepsProgress.autoAlpha,
-          y: timelineConfig.stepsProgress.y,
-          duration: getMotionDuration(timelineConfig.stepsProgress.duration),
-        }, timelineConfig.stepsProgress.at);
-      }
+      transitionToScreen("hero", "steps");
 
       return;
     }
@@ -88,38 +81,41 @@ export function bindScreenActions({
     if (styleButtonNode) {
       event.preventDefault();
 
-      if (hero.dataset.screen === "form") return;
+      if (hero.dataset.screen !== "styles") return;
 
       const capsuleId = styleButtonNode.dataset.kapsulaCapsule;
 
-      if (capsuleId && formExperience.setCapsule(capsuleId)) {
-        saveSelectedCapsule(capsuleId);
-      } else {
+      if (!capsuleId) {
         return;
       }
+
+      pendingCapsuleId = capsuleId;
+      const isPrepared = await formExperience.prepareCapsule?.(capsuleId) ?? true;
+
+      if (
+        !isPrepared ||
+        pendingCapsuleId !== capsuleId ||
+        hero.dataset.screen !== "styles"
+      ) {
+        return;
+      }
+
+      pendingCapsuleId = null;
+
+      if (!formExperience.setCapsule(capsuleId)) return;
+
+      saveSelectedCapsule(capsuleId);
 
       transitionToScreen("styles", "form");
       return;
     }
 
-    const progressButtonNode = event.target.closest("[data-kapsula-progress-target]");
-
-    if (progressButtonNode) {
-      const targetStep = progressButtonNode.dataset.kapsulaProgressTarget;
-      const targetScreen = STEP_TO_SCREEN[targetStep];
-      const currentScreen = hero.dataset.screen;
-
-      if (!targetScreen || !currentScreen || currentScreen === "hero" || currentScreen === targetScreen) {
-        return;
-      }
-
-      transitionToScreen(currentScreen, targetScreen);
-    }
   };
 
   hero.addEventListener("click", handleClick);
 
   return () => {
+    pendingCapsuleId = null;
     hero.removeEventListener("click", handleClick);
     activeTimeline?.kill();
     activeTimeline = null;

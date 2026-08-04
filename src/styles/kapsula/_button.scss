@@ -30,7 +30,7 @@
   margin: 0 auto;
 }
 
-.kapsula-button--header {
+body[data-kapsula-constructor-route] .kapsula-button--header {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -59,7 +59,7 @@
   }
 }
 
-.kapsula-button--header .kapsula-button__text {
+body[data-kapsula-constructor-route] .kapsula-button--header .kapsula-button__text {
   display: none;
 
   @include media.wide {
@@ -68,6 +68,6 @@
 }
 
 
-[class*="__jivoDesktopButton"] {
+body[data-kapsula-constructor-route] [class*="__jivoDesktopButton"] {
   display: none !important;
 }

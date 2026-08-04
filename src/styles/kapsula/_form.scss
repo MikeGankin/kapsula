@@ -9,7 +9,7 @@
 }
 
 .kapsula-form {
-  overflow-y: scroll;
+  overflow-y: auto;
   @include mixins.custom-bar(4px);
 
   @include media.mobile-only {
@@ -58,10 +58,12 @@
 .kapsula-form-section__trigger {
   width: 100%;
   min-width: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 16px;
+  row-gap: 4px;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   border: 0;
   background: transparent;
   padding: 0;
@@ -71,6 +73,8 @@
 }
 
 .kapsula-form-section__heading {
+  grid-column: 1;
+  grid-row: 1;
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
@@ -92,24 +96,26 @@
   line-height: var(--kapsula-line-height-title);
 }
 
+.kapsula-form-section__required-marker {
+  color: var(--kapsula-error);
+  font-size: var(--kapsula-font-size-form-section-title);
+  line-height: var(--kapsula-line-height-title);
+}
+
 .kapsula-form-section__meta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-  min-width: 0;
-  margin-left: auto;
+  display: contents;
 }
 
 .kapsula-form-section__summary {
-  display: inline-block;
-  max-width: 360px;
-  overflow: hidden;
+  grid-column: 1;
+  grid-row: 2;
+  display: block;
+  min-width: 0;
   color: var(--kapsula-dark-046);
-  font-size: var(--kapsula-font-size-form-section-summary);
+  font-size: 14px;
   line-height: var(--kapsula-line-height-title);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
   will-change: opacity;
 }
 
@@ -117,7 +123,13 @@
   display: none;
 }
 
+.kapsula-form-section__summary.is-invalid {
+  color: var(--kapsula-error);
+}
+
 .kapsula-form-section__chevron {
+  grid-column: 2;
+  grid-row: 1;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -219,9 +231,20 @@
   justify-content: flex-start;
 }
 
-.kapsula-form__trigger {
+.kapsula-form__submit {
   align-self: end;
+  display: grid;
+  gap: 8px;
+}
 
+.kapsula-form__required-note {
+  margin: 0;
+  color: var(--kapsula-dark-046);
+  font-size: 14px;
+  line-height: var(--kapsula-line-height-body);
+}
+
+.kapsula-form__trigger {
   @include media.desktop {
     width: fit-content;
   }

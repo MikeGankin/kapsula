@@ -1,6 +1,7 @@
 import * as z from "zod/mini";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
+import {createPopupHotelsLoader} from "./createPopupHotelsLoader.js";
 import {getFormSubmitEndpoint} from "./formSchema.js";
 import {sendKapsulaPopupForm} from "./sendKapsulaPopupForm.js";
 
@@ -21,6 +22,7 @@ const popupContactSchema = z.object({
       error: "Введите номер телефона",
     })
   ),
+  contactMethod: z.enum(["call", "max", "telegram", "whatsapp"]),
 });
 
 function openPopup(popupNode) {
@@ -83,14 +85,14 @@ function formatSubmittedAt(date) {
 function buildManagerLeadPayload({snapshot, submittedAt, contact}) {
   return {
     format: "html",
-    plaintext: "Заявка Kapsula для менеджера",
+    plaintext: "Заявка из конструктора капсулы отдыха",
     lead: {
       capsule: snapshot.capsuleId,
       segment: "Elite",
       submittedAt: formatSubmittedAt(submittedAt),
-      pagePath: window.location.pathname,
       name: contact.name,
-      phone: contact.phone,
+      phone: `+7 ${contact.phone}`,
+      contactMethod: contact.contactMethod,
       ...snapshot.values,
     },
   };
@@ -100,6 +102,7 @@ function getPopupFormPayload(popupFormNode) {
   return {
     name: popupFormNode.elements.namedItem("name")?.value ?? "",
     phone: popupFormNode.elements.namedItem("phone")?.value ?? "",
+    contactMethod: popupFormNode.elements.namedItem("contactMethod")?.value ?? "",
   };
 }
 
@@ -194,6 +197,8 @@ export function bindFormPopup(formExperience, hero) {
   const homeButtonNode = popupNode.querySelector("[data-kapsula-popup-home]");
   const popupCardsNode = popupNode.querySelector(".kapsula-popup__cards");
   const popupPaginationNode = popupNode.querySelector("[data-kapsula-popup-pagination]");
+  const hotelCardTemplateNode = popupNode.querySelector("[data-kapsula-hotel-card-template]");
+  const hotelsErrorNode = popupNode.querySelector("[data-kapsula-hotels-error]");
 
   if (!popupFormNode) {
     return;
@@ -208,11 +213,33 @@ export function bindFormPopup(formExperience, hero) {
   bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
     label: "Перейти к карточке",
   });
+  const popupHotelsLoader = createPopupHotelsLoader({
+    cardsNode: popupCardsNode,
+    errorNode: hotelsErrorNode,
+    templateNode: hotelCardTemplateNode,
+    onUpdate() {
+      popupCardsCarousel?.reInit();
+    },
+  });
   let boundSubmitButton = null;
   let isSubmitting = false;
+  let isFormValidationVisible = false;
 
   const handleOpenPopup = (event) => {
     event.preventDefault();
+    const validationResult = formExperience.validate?.();
+
+    if (validationResult && !validationResult.success) {
+      isFormValidationVisible = true;
+      formExperience.showValidationErrors?.(validationResult);
+      return;
+    }
+
+    isFormValidationVisible = false;
+    formExperience.showValidationErrors?.(validationResult);
+    const snapshot = formExperience.getSnapshot();
+
+    popupHotelsLoader.load(snapshot.values.countries);
     setPopupState(popupNode, "form");
     setPopupSubmitError(popupFormNode);
     openPopup(popupNode);
@@ -245,6 +272,24 @@ export function bindFormPopup(formExperience, hero) {
       subtree: true,
     });
   }
+
+  const handleFormChange = (event) => {
+    if (
+      !isFormValidationVisible ||
+      !(event.target instanceof Element) ||
+      !event.target.closest("[data-kapsula-form]")
+    ) {
+      return;
+    }
+
+    const validationResult = formExperience.validate?.();
+
+    formExperience.showValidationErrors?.(validationResult);
+
+    if (validationResult?.success) {
+      isFormValidationVisible = false;
+    }
+  };
 
   const handleInput = (event) => {
     if (!(event.target instanceof Element)) return;
@@ -310,6 +355,7 @@ export function bindFormPopup(formExperience, hero) {
   popupFormNode.addEventListener("input", handleInput);
   popupFormNode.addEventListener("submit", handleSubmit);
   homeButtonNode?.addEventListener("click", handleHome);
+  hero?.addEventListener("change", handleFormChange);
 
   return () => {
     buttonObserver.disconnect();
@@ -317,6 +363,8 @@ export function bindFormPopup(formExperience, hero) {
     popupFormNode.removeEventListener("input", handleInput);
     popupFormNode.removeEventListener("submit", handleSubmit);
     homeButtonNode?.removeEventListener("click", handleHome);
+    hero?.removeEventListener("change", handleFormChange);
+    popupHotelsLoader.destroy();
     destroyEmblaCarousel(popupCardsNode);
     delete popupNode.dataset.popupBound;
   };

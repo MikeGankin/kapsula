@@ -7,11 +7,21 @@ import {
   getInitialCapsuleId,
 } from "./formSchema.js";
 import {normalizeFormValuesUntilStable, toggleOptionValue} from "./formValues.js";
-import {renderForm} from "./renderForm.js";
+import {validateSchema} from "./formValidation.js";
+import {renderForm, renderFormValidationErrors} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay, destroyFormImageOverlay} from "./animateFormImageOverlay.js";
-import {getResponsiveImageSources, syncResponsivePicture} from "./formResponsiveImages.js";
-import {readSavedFormValues, saveFormValues} from "./sessionState.js";
+import {
+  getResponsiveImageSources,
+  preloadResponsiveImage,
+  syncResponsivePicture,
+} from "./formResponsiveImages.js";
+import {
+  readSavedActiveSection,
+  readSavedFormValues,
+  saveActiveSection,
+  saveFormValues,
+} from "./sessionState.js";
 
 function getPersistedOptionValues(capsule, values = {}) {
   return capsule.sections.reduce((accumulator, section) => {
@@ -22,16 +32,6 @@ function getPersistedOptionValues(capsule, values = {}) {
     accumulator[section.id] = values[section.id] ?? (section.multiple ? [] : "");
     return accumulator;
   }, {});
-}
-
-function hasSelectionInFirstGroups(capsule, values, groupCount = 3) {
-  return capsule.sections
-    .slice(0, groupCount)
-    .every((section) => {
-      const value = values[section.id];
-
-      return Array.isArray(value) ? value.length > 0 : Boolean(value?.trim?.());
-    });
 }
 
 function getSectionOverlaySources(section) {
@@ -112,7 +112,16 @@ function createFormState(capsuleMap, capsuleId, savedValues = null) {
     capsule.sections,
     buildInitialValues(capsule.sections, savedValues ?? {}),
   );
-  const expandedState = buildExpandedState(capsule.sections);
+  const savedActiveSectionId = readSavedActiveSection(capsuleId);
+  const hasSavedActiveSection = capsule.sections.some(
+    (section) => section.id === savedActiveSectionId,
+  );
+  const savedExpandedState = hasSavedActiveSection
+    ? Object.fromEntries(
+      capsule.sections.map((section) => [section.id, section.id === savedActiveSectionId]),
+    )
+    : {};
+  const expandedState = buildExpandedState(capsule.sections, savedExpandedState);
 
   return {
     capsuleId,
@@ -204,22 +213,6 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     map((state) => ({
       capsule: getCapsule(capsuleMap, state.capsuleId),
       values: state.values,
-    })),
-    distinctUntilChanged((previous, current) => (
-      previous.capsule === current.capsule && previous.values === current.values
-    )),
-    map(({capsule, values}) => hasSelectionInFirstGroups(capsule, values)),
-    distinctUntilChanged(),
-  ).subscribe((isValid) => {
-    if (submitButton) {
-      submitButton.disabled = !isValid;
-    }
-  }));
-
-  subscriptions.add(state$.pipe(
-    map((state) => ({
-      capsule: getCapsule(capsuleMap, state.capsuleId),
-      values: state.values,
       activeSectionId: state.activeSectionId,
     })),
     distinctUntilChanged((previous, current) => (
@@ -251,11 +244,17 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     if (sectionTrigger) {
       const sectionId = sectionTrigger.dataset.sectionId;
       updateState((state) => {
+        if (!sectionId || !(sectionId in state.expandedState)) {
+          return state;
+        }
+
         const isOpening = !state.expandedState[sectionId];
         const expandedState = Object.fromEntries(
           Object.keys(state.expandedState)
             .map((id) => [id, isOpening && id === sectionId]),
         );
+
+        saveActiveSection(state.capsuleId, sectionId);
 
         return {
           ...state,
@@ -318,6 +317,20 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
       const {capsuleId, values} = state$.value;
       return getFormSnapshot(capsuleMap, capsuleId, values);
     },
+    validate() {
+      const {capsuleId, values} = state$.value;
+      const snapshot = getFormSnapshot(capsuleMap, capsuleId, values);
+
+      return validateSchema(snapshot.capsule, snapshot.values);
+    },
+    showValidationErrors(validationResult) {
+      const capsule = getCapsule(capsuleMap, state$.value.capsuleId);
+      const issues = validationResult?.success
+        ? []
+        : validationResult?.error?.issues ?? [];
+
+      renderFormValidationErrors(formNode, capsule, issues);
+    },
     setCapsule(capsuleId) {
       if (!capsuleMap.has(capsuleId)) return false;
 
@@ -330,6 +343,17 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
       previousValues = {};
       state$.next(createFormState(capsuleMap, capsuleId, savedValues));
       return true;
+    },
+    prepareCapsule(capsuleId) {
+      if (!capsuleMap.has(capsuleId)) {
+        return Promise.resolve(false);
+      }
+
+      const capsule = getCapsule(capsuleMap, capsuleId);
+
+      return preloadResponsiveImage(
+        getResponsiveImageSources(capsule.imageSrc, capsule.imageMobileSrc),
+      ).then(() => true);
     },
     destroy() {
       subscriptions.unsubscribe();

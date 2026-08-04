@@ -47,6 +47,17 @@ div[class*="QSBlockMobile_qsBlockMobileContainer__"] {
   }
 }
 
+html:has(body[data-kapsula-constructor-route]) {
+  @include media.desktop {
+    overflow: hidden;
+  }
+}
+
+body[data-kapsula-constructor-route] {
+  @include media.desktop {
+    overflow: hidden;
+  }
+
 .basic-menu-item {
   @include media.desktop {
     font-weight: var(--kapsula-font-weight-regular);
@@ -138,4 +149,5 @@ jdiv[class*="iconWrap__"] {
 
 jdiv[class*="_mobileOffsetBottom"] {
   display: none;
+}
 }

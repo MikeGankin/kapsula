@@ -1,6 +1,7 @@
 const FORM_BASE_IMAGE_MOBILE_SOURCES = {
   // Add explicit mobile sources for base form images here when they are available.
 };
+const responsiveImageLoadCache = new Map();
 
 function deriveOverlayMobileSrc(imageSrc) {
   if (typeof imageSrc !== "string") {
@@ -22,6 +23,51 @@ export function getResponsiveImageSources(imageSrc, mobileSrcOverride = null) {
     desktopSrc: imageSrc,
     mobileSrc: derivedMobileSrc && derivedMobileSrc !== imageSrc ? derivedMobileSrc : null,
   };
+}
+
+function getCurrentResponsiveSrc({desktopSrc, mobileSrc}) {
+  const isDesktop = window.matchMedia?.("(min-width: 993px)").matches;
+
+  return !isDesktop && mobileSrc ? mobileSrc : desktopSrc;
+}
+
+export function preloadResponsiveImage(sources) {
+  const imageSrc = getCurrentResponsiveSrc(sources);
+
+  if (!imageSrc) {
+    return Promise.resolve();
+  }
+
+  const cachedPromise = responsiveImageLoadCache.get(imageSrc);
+
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  const imageNode = new Image();
+  imageNode.decoding = "async";
+
+  const loadPromise = new Promise((resolve) => {
+    const finalize = async () => {
+      try {
+        await imageNode.decode?.();
+      } catch {
+        // A load event is enough when decode is unavailable or rejected.
+      }
+      resolve();
+    };
+
+    imageNode.addEventListener("load", finalize, {once: true});
+    imageNode.addEventListener("error", resolve, {once: true});
+    imageNode.src = imageSrc;
+
+    if (imageNode.complete) {
+      finalize();
+    }
+  });
+
+  responsiveImageLoadCache.set(imageSrc, loadPromise);
+  return loadPromise;
 }
 
 function ensureDesktopSourceNode(pictureNode) {

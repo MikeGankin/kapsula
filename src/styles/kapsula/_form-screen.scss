@@ -40,38 +40,41 @@
   @include media.desktop {
     height: 100%;
     align-content: stretch;
-    padding-block: 48px !important;
   }
 }
 
 .kapsula-form-screen--offset-top {
   padding-top: 0;
-
-  @include media.desktop {
-    padding-top: 56px;
-  }
 }
 
 .kapsula-form-screen__layout {
   display: grid;
   gap: 16px;
   height: 100%;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "back"
+    "media"
+    "main";
+  grid-template-rows: repeat(3, auto);
   align-items: stretch;
 
   @include media.mobile-only {
     height: auto;
-    grid-template-rows: auto auto;
   }
 
   @include media.desktop {
     grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
+    grid-template-areas:
+      "back media"
+      "main media";
+    grid-template-rows: auto minmax(0, 1fr);
     align-items: stretch;
     height: 100%;
   }
 }
 
 .kapsula-form-screen__main {
+  grid-area: main;
   min-height: 0;
   display: grid;
   gap: 16px;
@@ -88,13 +91,41 @@
   }
 }
 
+.kapsula-form-screen__back {
+  grid-area: back;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  padding: 8px 0;
+  color: var(--kapsula-text-dark);
+  font: inherit;
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-tight);
+  text-align: left;
+  cursor: pointer;
+}
+
+.kapsula-form-screen__back-icon {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
 .kapsula-copy--form {
-  justify-items: center;
+  width: 100%;
+  margin: 0;
+  justify-self: stretch;
+  justify-items: start;
   gap: 8px;
 
   @include media.desktop {
     justify-items: start;
-    width: 100%;
   }
 }
 
@@ -102,7 +133,7 @@
   color: var(--kapsula-text-dark);
   font-size: var(--kapsula-font-size-form-title);
   text-shadow: var(--kapsula-shadow-none);
-  text-align: center;
+  text-align: left;
 
   @include media.desktop {
     text-align: left;
@@ -121,13 +152,12 @@
 }
 
 .kapsula-form-screen__aside {
+  grid-area: media;
   display: grid;
-  order: -1;
   max-width: none;
   min-height: 0;
 
   @include media.desktop {
-    order: 0;
     max-width: 560px;
   }
 }
@@ -140,9 +170,15 @@
   min-height: 0;
   overflow: clip;
 
+  @include media.tablet {
+    height: auto;
+    aspect-ratio: 792 / 440;
+  }
+
   @include media.desktop {
     max-width: 560px;
     height: 100%;
+    aspect-ratio: auto;
   }
 }
 
