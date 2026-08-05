@@ -2,14 +2,14 @@
 
 @font-face {
   font-family: "Trajan Pro 3";
-  src: url("https://font.static.useinsider.com/coraltravel/TrajanPro3Regular.ttf") format("truetype");
-  //src: url("https://b2ccdn.coral.ru/content/TrajanPro3Regular.woff2") format("truetype");
+  src: url("https://b2ccdn.coral.ru/content/TrajanPro3Regular.woff2") format("truetype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
-:root {
+:root,
+.kapsula {
   --kapsula-heading-font: "Trajan Pro 3", serif;
   --kapsula-body-font: inherit;
 
@@ -117,7 +117,7 @@
   --site-header-mobile-height: 60px;
 
   @include media.desktop {
-    --kapsula-header-height: 64px;
+    --kapsula-header-height: 56px;
     --kapsula-font-size-form-title: 32px;
     --kapsula-font-size-form-section-index: 24px;
     --kapsula-font-size-form-section-title: 20px;

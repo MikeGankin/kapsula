@@ -1,7 +1,10 @@
 function normalizeCountries(countries) {
-  if (!Array.isArray(countries)) return [];
+  const countryList = Array.isArray(countries) ? countries : [countries];
 
-  return countries.filter((country) => typeof country === "string" && country.trim());
+  return countryList
+    .filter((country) => typeof country === "string")
+    .map((country) => country.trim())
+    .filter(Boolean);
 }
 
 function normalizeHotel(hotel, country) {
@@ -10,7 +13,7 @@ function normalizeHotel(hotel, country) {
   const id = typeof hotel.id === "string" ? hotel.id.trim() : "";
   const name = typeof hotel.name === "string" ? hotel.name.trim() : "";
 
-  if (!id || !name) return null;
+  if (!id) return null;
 
   return {id, name, country};
 }

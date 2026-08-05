@@ -70,7 +70,7 @@ function setSectionState(nodes, isExpanded) {
   });
   setIfPresent(nodes.summary, getSummaryState(nodes.summary));
   setIfPresent(nodes.chevron, {
-    rotation: isExpanded ? 180 : 0,
+    rotation: isExpanded ? 0 : 180,
   });
 }
 
@@ -103,7 +103,7 @@ function animateSectionState(nodes, isExpanded) {
   }, 0.1);
 
   toIfPresent(timeline, nodes.chevron, {
-    rotation: isExpanded ? 180 : 0,
+    rotation: isExpanded ? 0 : 180,
     duration: getMotionDuration(0.28),
   }, 0);
 }

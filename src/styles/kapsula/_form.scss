@@ -9,6 +9,8 @@
 }
 
 .kapsula-form {
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   @include mixins.custom-bar(4px);
 
@@ -204,6 +206,7 @@
 }
 
 .kapsula-form-textarea {
+  box-sizing: border-box;
   width: 100%;
   min-height: 132px;
   border: 1px solid var(--kapsula-dark-024);

@@ -112,6 +112,14 @@
   text-align: center;
 }
 
+.kapsula-popup__aside[data-hotels-state="error"] {
+  .kapsula-popup__aside-title,
+  .kapsula-popup__cards,
+  .kapsula-popup__pagination {
+    display: none;
+  }
+}
+
 .kapsula-popup__cards {
   display: grid;
   gap: 0;

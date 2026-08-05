@@ -1,4 +1,4 @@
-import {fetchKapsulaHotel} from "./fetchKapsulaHotel.js";
+import {fetchKapsulaHotels} from "./fetchKapsulaHotel.js";
 import {getConfiguredHotelsByCountries} from "./kapsulaHotelsConfig.js";
 
 function createSkeletonNode(hotel) {
@@ -38,11 +38,6 @@ function createHotelCard(templateNode, hotel) {
   return cardNode;
 }
 
-function insertBeforeSkeletons(containerNode, cardNode) {
-  const firstSkeletonNode = containerNode.querySelector("[data-kapsula-hotel-skeleton]");
-  containerNode.insertBefore(cardNode, firstSkeletonNode);
-}
-
 export function createPopupHotelsLoader({
   cardsNode,
   errorNode,
@@ -58,6 +53,7 @@ export function createPopupHotelsLoader({
 
   let loadRevision = 0;
   let abortController = null;
+  const asideNode = errorNode?.closest?.(".kapsula-popup__aside");
 
   const syncCarousel = () => {
     window.requestAnimationFrame(() => onUpdate?.());
@@ -66,6 +62,10 @@ export function createPopupHotelsLoader({
   const showError = (visible) => {
     if (errorNode instanceof HTMLElement) {
       errorNode.hidden = !visible;
+    }
+
+    if (asideNode instanceof HTMLElement) {
+      asideNode.dataset.hotelsState = visible ? "error" : "content";
     }
   };
 
@@ -85,57 +85,40 @@ export function createPopupHotelsLoader({
     syncCarousel();
 
     if (configuredHotels.length === 0) {
+      console.warn("Kapsula hotels request skipped: no configured hotels", {countries});
       cardsNode.setAttribute("aria-busy", "false");
       showError(true);
       return Promise.resolve([]);
     }
 
-    let loadedCount = 0;
+    console.log("Kapsula hotel ids selected", configuredHotels.map(({id}) => id));
 
-    const requests = configuredHotels.map(async (configuredHotel) => {
-      try {
-        const hotel = await fetchKapsulaHotel(configuredHotel, {
-          signal: currentAbortController.signal,
-        });
-
-        if (currentRevision !== loadRevision) return null;
-
-        const skeletonNode = cardsNode.querySelector(
-          `[data-kapsula-hotel-skeleton="${configuredHotel.id}"]`,
-        );
-        const cardNode = createHotelCard(templateNode, hotel);
-
-        skeletonNode?.remove();
-
-        if (cardNode) {
-          insertBeforeSkeletons(cardsNode, cardNode);
-          loadedCount += 1;
-          syncCarousel();
-        }
-
-        return hotel;
-      } catch (error) {
-        if (currentRevision !== loadRevision || error?.name === "AbortError") {
-          return null;
-        }
-
-        cardsNode.querySelector(
-          `[data-kapsula-hotel-skeleton="${configuredHotel.id}"]`,
-        )?.remove();
-        console.warn(`Failed to load Kapsula hotel ${configuredHotel.id}`, error);
-        syncCarousel();
-        return null;
-      }
-    });
-
-    return Promise.all(requests).then((hotels) => {
+    return fetchKapsulaHotels(configuredHotels, {
+      signal: currentAbortController.signal,
+    }).then((hotels) => {
       if (currentRevision !== loadRevision) return [];
 
+      const cardNodes = hotels
+        .map((hotel) => createHotelCard(templateNode, hotel))
+        .filter(Boolean);
+
+      cardsNode.replaceChildren(...cardNodes);
       cardsNode.setAttribute("aria-busy", "false");
-      showError(loadedCount === 0);
+      showError(cardNodes.length === 0);
       syncCarousel();
 
-      return hotels.filter(Boolean);
+      return hotels;
+    }).catch((error) => {
+      if (currentRevision !== loadRevision || error?.name === "AbortError") {
+        return [];
+      }
+
+      cardsNode.replaceChildren();
+      cardsNode.setAttribute("aria-busy", "false");
+      showError(true);
+      console.warn("Failed to load Kapsula hotels", error);
+      syncCarousel();
+      return [];
     });
   };
 

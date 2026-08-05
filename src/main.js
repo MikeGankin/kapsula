@@ -8,6 +8,10 @@ const FLAG = "monkeyMounted";
 const CDN_BASE = "http://localhost:3001";
 let teardownAssetRewrite = null;
 
+if (import.meta.env.DEV) {
+  await import("./scripts/kapsula/hotelsConfig.dev.js");
+}
+
 function mount(container, {force = false} = {}) {
   if (!force && container.dataset[FLAG] === "1") return;
 

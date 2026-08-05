@@ -2,16 +2,73 @@
 
 .kapsula {
   position: relative;
+  min-height: calc(100vh - var(--site-header-mobile-height));
+  min-height: calc(100dvh - var(--site-header-mobile-height));
   overflow: hidden;
   color: var(--kapsula-white);
+  background: var(--kapsula-night);
   isolation: isolate;
+
+  @include media.desktop {
+    min-height: calc(100vh - var(--kapsula-header-height));
+    min-height: calc(100dvh - var(--kapsula-header-height));
+  }
+}
+
+.kapsula[data-screen="form"] {
+  background: var(--kapsula-white);
 }
 
 .kapsula__backdrop,
+.kapsula__background-video,
+.kapsula__video-shade,
 .kapsula__veil,
 .kapsula__inner {
   position: absolute;
   inset: 0;
+}
+
+.kapsula__video-shade {
+  background: var(--kapsula-hero-backdrop-gradient);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 400ms ease;
+}
+
+.kapsula__background-video[data-ready="true"] + .kapsula__video-shade {
+  @include media.desktop {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.kapsula[data-screen="form"] .kapsula__video-shade {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.kapsula__background-video {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 400ms ease;
+
+  @include media.desktop {
+    display: block;
+  }
+}
+
+.kapsula__background-video[data-ready="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.kapsula[data-screen="form"] .kapsula__background-video {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .kapsula__backdrop {

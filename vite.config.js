@@ -37,7 +37,7 @@ export default defineConfig(({command}) => {
         userscript: {
           icon: 'https://vitejs.dev/logo.svg',
           namespace: 'npm/vite-plugin-monkey',
-          match: ['https://www.coral.ru/*'],
+          match: ['https://www.coral.ru/monkey/*'],
         },
       }),
     ].filter(Boolean),

@@ -7,6 +7,7 @@ import {getScreenNodes} from "./screenNodes.js";
 import {buildScreenRegistry} from "./screenRegistry.js";
 import {readCurrentScreen, readSelectedCapsule} from "./sessionState.js";
 import {setupInitialScreenState} from "./setupInitialScreenState.js";
+import {setupBackgroundVideo} from "./setupBackgroundVideo.js";
 import {restoreScreen} from "./screenTransition.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
@@ -38,6 +39,8 @@ export function setupScreenFlow(rootNode = document) {
   }
 
   hero.dataset.transitionBound = "1";
+
+  const cleanupBackgroundVideo = setupBackgroundVideo(hero);
 
   setupInitialScreenState(screenNodes, initial);
   hero.dataset.screen = "hero";
@@ -135,6 +138,7 @@ export function setupScreenFlow(rootNode = document) {
     hero.removeEventListener("kapsula:screen-change", handleScreenChange);
     unbindScreenActions?.();
     unbindFormPopup?.();
+    cleanupBackgroundVideo?.();
     formExperience.destroy?.();
     destroyEmblaCarousel(stylesGridNode);
     delete hero.dataset.transitionBound;
