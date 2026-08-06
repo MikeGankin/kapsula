@@ -23,13 +23,12 @@ export function createEmblaCarousel(containerNode, userOptions = {}) {
   const viewportNode = ensureViewportNode(containerNode);
   containerNode.classList.add("kapsula-embla__container");
 
-  const options = {
-    align: "start",
-    containScroll: "trimSnaps",
-    container: containerNode,
-    slides: Array.from(containerNode.children),
-    ...userOptions,
-  };
+    const options = {
+        align: "start",
+        containScroll: "trimSnaps",
+        container: containerNode,
+        ...userOptions,
+    };
 
   const api = EmblaCarousel(viewportNode, options);
 

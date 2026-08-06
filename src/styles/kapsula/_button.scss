@@ -27,7 +27,9 @@
 }
 
 .kapsula-button--hero {
-  margin: 0 auto;
+  @include media.mobile-only {
+    margin: 0 auto;
+  }
 }
 
 body[data-kapsula-constructor-route] .kapsula-button--header {

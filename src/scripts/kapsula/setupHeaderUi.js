@@ -124,7 +124,7 @@ export function setupHeaderUi() {
         width: 168,
         height: 36,
         alt: 'logo',
-        src: 'https://b2ccdn.coral.ru/content/elite-service-logo.svg',
+        src: 'https://b2ccdn.coral.ru/content/new-elite-service-logo.svg',
         loading: "eager",
       },
     });

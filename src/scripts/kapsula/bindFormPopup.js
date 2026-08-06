@@ -85,7 +85,7 @@ function formatSubmittedAt(date) {
 function buildManagerLeadPayload({snapshot, submittedAt, contact}) {
   return {
     format: "html",
-    plaintext: "Заявка из конструктора капсулы отдыха",
+    plaintext: "КАПСУЛА",
     lead: {
       capsule: snapshot.capsuleId,
       segment: "Elite",

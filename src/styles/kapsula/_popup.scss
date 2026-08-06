@@ -652,3 +652,9 @@
     grid-template-columns: 96px minmax(0, 1fr);
   }
 }
+
+@include media.desktop {
+  #coral-popup-kapsula::part(popup-body) {
+    align-items: center;
+  }
+}

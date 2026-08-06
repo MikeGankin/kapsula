@@ -7,7 +7,7 @@
 // }
 
 .kapsula :is(.kapsula-form, .kapsula-steps__cards) {
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -151,3 +151,10 @@ jdiv[class*="_mobileOffsetBottom"] {
   display: none;
 }
 }
+
+div[class*="HeaderMenuBar_menu"],
+div[class*="HeaderTopBar_iconContainer__"],
+a[class*="LoginButton_loginButton__"] {
+  display: none !important;
+}
+

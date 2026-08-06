@@ -127,18 +127,26 @@
   z-index: var(--kapsula-z-base);
   display: grid;
   place-items: center;
+
+  @include media.desktop {
+    justify-content: start;
+  }
+  @media (min-width: 1201px) {
+    padding: 0 80px !important;
+  }
 }
 
 .kapsula-screen--hero .kapsula-copy__title {
   margin-bottom: 16px;
+  text-align: left;
 }
 
 .kapsula-screen--hero .kapsula-copy__subtitle {
   font-family: inherit;
   font-size: var(--kapsula-font-size-md);
   font-weight: var(--kapsula-font-weight-regular);
-  text-align: center;
-  margin: 0 auto;
+  text-align: left;
+  margin: 0;
 }
 
 .kapsula__content {
@@ -152,8 +160,20 @@
 }
 
 .kapsula__eyebrow {
-  display: block;
-  width: 220px;
-  height: auto;
-  margin: 0 auto;
+  width: fit-content;
+  align-items: center;
+  padding: 4px 10px;
+  background: #000000;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  letter-spacing: .3em;
+  font-weight: 400;
+  text-align: center;
+  line-height: 22px;
+
+
+  @include media.mobile-only {
+    margin: 0 auto;
+  }
 }

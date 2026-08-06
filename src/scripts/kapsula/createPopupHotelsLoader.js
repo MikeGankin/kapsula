@@ -22,6 +22,7 @@ function createHotelCard(templateNode, hotel) {
   if (!(cardNode instanceof HTMLElement)) return null;
 
   cardNode.dataset.kapsulaHotelId = hotel.id;
+  cardNode.href = hotel.url
 
   if (imageNode instanceof HTMLImageElement) {
     if (hotel.imageUrl) {
@@ -91,7 +92,6 @@ export function createPopupHotelsLoader({
       return Promise.resolve([]);
     }
 
-    console.log("Kapsula hotel ids selected", configuredHotels.map(({id}) => id));
 
     return fetchKapsulaHotels(configuredHotels, {
       signal: currentAbortController.signal,

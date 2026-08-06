@@ -3,20 +3,19 @@ import {createEmblaCarousel} from "./createEmblaCarousel.js";
 const carouselRegistry = new WeakMap();
 
 function resolveOptions(containerNode, userOptions) {
-  const baseOptions = typeof userOptions === "function"
-    ? userOptions(containerNode)
-    : userOptions;
+    const baseOptions = typeof userOptions === "function"
+        ? userOptions(containerNode)
+        : userOptions;
 
-  return {
-    breakpoints: {
-      "(min-width: 993px)": {
-        active: false,
-      },
-    },
-    ...baseOptions,
-    container: containerNode,
-    slides: Array.from(containerNode.children),
-  };
+    return {
+        breakpoints: {
+            "(min-width: 993px)": {
+                active: false,
+            },
+        },
+        ...baseOptions,
+        container: containerNode,
+    };
 }
 
 export function syncEmblaCarousel(containerNode, userOptions = {}) {
@@ -34,16 +33,14 @@ export function syncEmblaCarousel(containerNode, userOptions = {}) {
 
   const carousel = createEmblaCarousel(containerNode, options);
 
+
+
   if (!carousel) {
     return null;
   }
 
   carouselRegistry.set(containerNode, carousel);
   return carousel.api;
-}
-
-export function syncEmblaCarousels(containerNodes, userOptions = {}) {
-  return Array.from(containerNodes, (containerNode) => syncEmblaCarousel(containerNode, userOptions));
 }
 
 export function destroyEmblaCarousel(containerNode) {
