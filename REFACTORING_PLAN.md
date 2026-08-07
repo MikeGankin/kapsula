@@ -60,7 +60,7 @@
 |---|------|----------|
 | ~~1~~ | ~~`formConfig.js`, секция `transfer`~~ | ~~Битые пути `transfer-2.webp`~~ — **снято, не баг**: проверено `curl`, файлы есть на CDN (HTTP 200) во всех вариантах `asia`/`oriental` × `desktop`/`mobile`. Локальный `public/` просто не синхронизирован, но конфиг использует абсолютные CDN-URL. |
 | 2 | `animateFormImageOverlay.js` → `OVERLAY_IMAGE_ALTS` | Ключи — относительные пути (`/asia-desktop/thailand.webp`), а `overlayImageSrc` в конфиге — абсолютные CDN-URL. Совпадений нет никогда → у всех оверлеев alt «Фрагмент путешествия». |
-| 3 | `createPopupHotelsLoader.js` → `createHotelCard` | При провале `PriceSearchEncrypt` `hotel.url === ""`, но карточка всё равно рендерится как `<a href="">` → клик перезагружает текущую страницу. Нужен фолбэк/деградация до `<div>`. |
+| 3 | `createPopupHotelsLoader.js` → `createHotelCard` | При провале `PriceSearchEncrypt` `hotel.url === ""`, но карточка всё равно рендерится как `<a href="">` → клик перезагружает текущую страницу. Решение: не рендерить такие карточки. |
 | 4 | `bindFormPopup.js` → `validatePopupForm` | Ошибка по полю `contactMethod` не отображается (`POPUP_FIELD_ERRORS` знает только `name`/`phone`). Если радиокнопка не выбрана — сабмит молча ничего не делает. |
 | 5 | `bindScreenActions.js` → `transitionToScreen` | Если таймлайн не доиграл (`onComplete` не вызван — например, `kill()` из cleanup или прерывание), `activeTimeline` остаётся не-null и навигация между экранами залипает навсегда. Нужен `onInterrupt`/сброс. |
 | 6 | `fetchKapsulaHotel.js` → `normalizeHotelsResponse` | Фолбэк `responseHotels[index]` подставляет произвольный отель из ответа, если id не совпал → карточка с чужим названием/фото. |
@@ -109,7 +109,8 @@
 ### Этап 1. Хотфиксы P0 (0.5–1 день) — без изменения архитектуры
 - ~~Починить пути `transfer-2.webp`~~ — снято, ассеты на CDN присутствуют.
 - Перевести `OVERLAY_IMAGE_ALTS` на матчинг по «хвосту» пути (`/<style>-<device>/<file>.webp`) и добавить тест.
-- Карточка отеля без `url` → рендерить неинтерактивный контейнер.
+- Карточка отеля без `url` → не рендерить вовсе; если ссылок нет ни у одного отеля,
+  показывается тот же блок ошибки, что и при сбое основного запроса.
 - Показывать ошибку `contactMethod` в попапе.
 - `transitionToScreen`: сбрасывать `activeTimeline` в `onComplete` **и** `onInterrupt`, плюс в cleanup.
 - `normalizeHotelsResponse`: убрать фолбэк по индексу — только сопоставление по id.
@@ -203,7 +204,7 @@
 | Баг | SHA | Коммит | Проверка |
 |-----|-----|--------|----------|
 | №2 alt оверлеев | `63bfbc4` | `fix(kapsula): match overlay image alts by path suffix` | матчинг по последним 2 сегментам пути |
-| №3 пустой `href` | `b56fdae` | `fix(kapsula): render hotel card without link when url is missing` | + стиль `cursor: default` |
+| №3 пустой `href` | `e372654` | `fix(kapsula): skip hotel cards without link` | первый вариант (неинтерактивная карточка, `b56fdae`) отменён по фидбеку ревертом `5798ad3` |
 | №4 ошибка `contactMethod` | `92309cc` | `fix(kapsula): show contact method validation error` | схема zod проверена в node |
 | №5 залипание навигации | `9377774` | `fix(kapsula): reset screen timeline on interrupt` | `onInterrupt` при `kill()` подтверждён в gsap |
 | №6 чужой отель | `7f1fe8e` | `fix(kapsula): drop index fallback in hotels mapping` | только матчинг по id + warn |
