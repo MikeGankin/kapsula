@@ -1,3 +1,4 @@
+import {DESKTOP_MEDIA_QUERY} from "./constants.js";
 import {createEmblaCarousel} from "./createEmblaCarousel.js";
 
 const carouselRegistry = new WeakMap();
@@ -9,7 +10,7 @@ function resolveOptions(containerNode, userOptions) {
 
     return {
         breakpoints: {
-            "(min-width: 993px)": {
+            [DESKTOP_MEDIA_QUERY]: {
                 active: false,
             },
         },

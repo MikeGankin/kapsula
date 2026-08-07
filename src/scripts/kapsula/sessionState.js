@@ -1,14 +1,5 @@
-const SESSION_STORAGE_KEYS = {
-  screen: "kapsula.currentScreen",
-  capsule: "kapsula.selectedCapsule",
-  formValues: "kapsula.formValues",
-  formValuesPrefix: "kapsula.formValues",
-  activeSectionPrefix: "kapsula.activeSection",
-};
-const URL_SEARCH_KEYS = {
-  screen: "screen",
-  capsule: "capsule",
-};
+import {SESSION_STORAGE_KEYS, URL_SEARCH_KEYS} from "./constants.js";
+
 const RESTORABLE_SCREENS = new Set(["hero", "steps", "styles", "form"]);
 
 function readSessionValue(key) {
@@ -122,7 +113,7 @@ export function readSavedFormValues(capsuleId) {
       return JSON.parse(capsuleValue);
     }
 
-    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.formValues);
+    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.legacyFormValues);
 
     if (!rawValue) {
       return null;

@@ -1,4 +1,5 @@
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
+import {reachGoal} from "./analytics.js";
 import {bindScreenActions} from "./bindScreenActions.js";
 import {bindFormPopup} from "./bindFormPopup.js";
 import {buildCapsuleHref} from "./buildCapsuleHref.js";
@@ -111,13 +112,7 @@ export function setupScreenFlow(rootNode = document) {
   };
 
   const trackScreenShow = (screenKey) => {
-    const goal = SCREEN_SHOW_GOALS[screenKey];
-
-    if (!goal || typeof window.ym !== "function") {
-      return;
-    }
-
-    window.ym(96674199, "reachGoal", goal);
+    reachGoal(SCREEN_SHOW_GOALS[screenKey]);
   };
 
   const handleScreenChange = (event) => {

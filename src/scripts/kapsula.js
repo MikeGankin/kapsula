@@ -1,18 +1,18 @@
 import {defer, filter, from, merge, of, Subscription, switchMap} from "rxjs";
 import {hostReactAppReady, reactDomObserver} from "../utils/utils.js";
 import {animateHero} from "./kapsula/animateHero.js";
+import {HEADER_SELECTORS, KAPSULA_ROOT_SELECTOR, ROUTE_ATTRIBUTE} from "./kapsula/constants.js";
 import {cleanupHeaderUi, setupHeaderUi} from "./kapsula/setupHeaderUi.js";
 import {setupScreenFlow} from "./kapsula/setupScreenFlow.js";
 
-const DESKTOP_HEADER_HOST_SELECTOR = 'div[class*="HeaderMenuBar_container"] > div';
-const MOBILE_HEADER_HOST_SELECTOR = 'div[class*="HeaderMobile_rightGroup__"]';
-const ROOT_SELECTOR = "[data-kapsula-hero]";
+const DESKTOP_HEADER_HOST_SELECTOR = HEADER_SELECTORS.desktopHost;
+const MOBILE_HEADER_HOST_SELECTOR = HEADER_SELECTORS.mobileHost;
+const ROOT_SELECTOR = KAPSULA_ROOT_SELECTOR;
 const TARGET_ROUTES = [
   "/elite-service/constructor/",
   "/monkey/",
   "preview"
 ];
-const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 let appSubscription = null;
 
 function createHostReady$() {

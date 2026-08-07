@@ -1,12 +1,16 @@
 import {gsap} from "gsap";
-import {createResponsivePictureNode, getResponsiveImageSources} from "./formResponsiveImages.js";
+import {
+  createResponsivePictureNode,
+  getResponsiveImageSources,
+  preloadResponsiveImage,
+} from "./formResponsiveImages.js";
+import {prefersReducedMotion} from "./motionPreferences.js";
 
 const HIDDEN_CLIP = "inset(0 100% 0 0)";
 const DURATION = 1;
 const EASE = "power3.out";
 const PARALLAX_VALUES = [8, 11, 14];
 const SECOND_SEGMENT_PARALLAX_OFFSET = 8;
-const imageLoadCache = new Map();
 const OVERLAY_IMAGE_ALTS = {
   "/asia-desktop/thailand.webp": "Завтрак у бассейна с видом на море и пальмы",
   "/asia-desktop/bali.webp": "Тропическое побережье с волнами, скалами и деревянной лестницей",
@@ -240,56 +244,8 @@ function createSegment(imageSrc) {
   return segmentNode;
 }
 
-function preloadSingleImage(imageSrc) {
-  if (!imageSrc) {
-    return Promise.resolve();
-  }
-
-  const cachedPromise = imageLoadCache.get(imageSrc);
-
-  if (cachedPromise) {
-    return cachedPromise;
-  }
-
-  const imageNode = new Image();
-  imageNode.decoding = "async";
-
-  const preloadPromise = new Promise((resolve) => {
-    let isResolved = false;
-    const finalize = async () => {
-      if (isResolved) return;
-      isResolved = true;
-
-      try {
-        await imageNode.decode?.();
-      } catch {
-        // A completed load is enough when decode is unavailable or rejected.
-      }
-
-      resolve();
-    };
-
-    if (imageNode.complete && imageNode.naturalWidth > 0) {
-      finalize();
-      return;
-    }
-
-    imageNode.addEventListener("load", finalize, {once: true});
-    imageNode.addEventListener("error", finalize, {once: true});
-    imageNode.src = imageSrc;
-  });
-
-  imageLoadCache.set(imageSrc, preloadPromise);
-
-  return preloadPromise;
-}
-
 function preloadImage(imageSrc) {
-  const {desktopSrc, mobileSrc} = getResponsiveImageSources(imageSrc);
-  const isDesktop = window.matchMedia?.("(min-width: 993px)").matches;
-  const currentSrc = !isDesktop && mobileSrc ? mobileSrc : desktopSrc;
-
-  return preloadSingleImage(currentSrc);
+  return preloadResponsiveImage(getResponsiveImageSources(imageSrc));
 }
 
 function waitForSegmentImage(segmentNode) {
@@ -369,7 +325,7 @@ function animateLayerVisibility(layerNode, isVisible) {
 }
 
 function getAnimationDuration() {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 0 : DURATION;
+  return prefersReducedMotion() ? 0 : DURATION;
 }
 
 function animateImageParallax(segmentNode, {offsetOverride, direction = -1, multiplier = 1} = {}) {

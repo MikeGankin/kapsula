@@ -1,4 +1,5 @@
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
+import {reachGoal} from "./analytics.js";
 import {saveSelectedCapsule} from "./sessionState.js";
 import {transitionBetweenScreens} from "./screenTransition.js";
 
@@ -72,11 +73,7 @@ export function bindScreenActions(
     if (startButtonNode) {
       if (hero.dataset.screen === "steps") return;
 
-      window.ym?.(
-        96674199,
-        "reachGoal",
-        "capsule_1_screen_button_go"
-      );
+      reachGoal("capsule_1_screen_button_go");
 
       transitionToScreen("hero", "steps");
 
@@ -88,11 +85,7 @@ export function bindScreenActions(
     if (stepsButtonNode) {
       if (hero.dataset.screen === "styles") return;
 
-      window.ym?.(
-        96674199,
-        "reachGoal",
-        "capsule_2_screen_button_assemble"
-      );
+      reachGoal("capsule_2_screen_button_assemble");
 
       transitionToScreen("steps", "styles");
       return;
@@ -131,14 +124,9 @@ export function bindScreenActions(
       const metrikaStyle = METRIKA_STYLE_MAP[capsuleId];
 
       if (metrikaStyle) {
-        window.ym?.(
-          96674199,
-          "reachGoal",
-          "capsule_3_screen_button_select_and_assemble",
-          {
-            style: metrikaStyle,
-          }
-        );
+        reachGoal("capsule_3_screen_button_select_and_assemble", {
+          style: metrikaStyle,
+        });
       }
       
       transitionToScreen("styles", "form");

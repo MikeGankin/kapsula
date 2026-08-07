@@ -1,16 +1,17 @@
+import {reachGoal} from "./analytics.js";
+import {DESKTOP_MEDIA_QUERY, HEADER_SELECTORS, ROUTE_ATTRIBUTE} from "./constants.js";
 import {createCallToActionButton} from "./createCallToActionButton.js";
 import {createHeaderLogo} from "./createHeaderLogo.js";
+import {getMediaQuery, isDesktopViewport} from "./mediaQuery.js";
 
-const DESKTOP_HEADER_SELECTOR = 'div[class*="HeaderMenuBar_container"] > div';
-const HEADER_ICONS_SELECTOR = 'div[class*="HeaderTopBar_iconContainer__"]';
-const MOBILE_HEADER_SELECTOR = 'div[class*="HeaderMobile_rightGroup__"]';
-const JIVO_WIDGET_TOGGLE_SELECTOR = 'jdiv[class*="iconWrap__"]';
+const DESKTOP_HEADER_SELECTOR = HEADER_SELECTORS.desktopHost;
+const HEADER_ICONS_SELECTOR = HEADER_SELECTORS.icons;
+const MOBILE_HEADER_SELECTOR = HEADER_SELECTORS.mobileHost;
+const JIVO_WIDGET_TOGGLE_SELECTOR = HEADER_SELECTORS.jivoToggle;
 const INJECTED_LOGO_CLASS = "HeaderLogo_container__MHYx4";
 const INJECTED_LOGO_LINK_CLASS = "HeaderLogo_headerLogo__caiMB";
 const CTA_BUTTON_SELECTOR = ".kapsula-button--header";
 const SECONDARY_LOGO_SELECTOR = ".kapsula-header-logo";
-const DESKTOP_HEADER_QUERY = "(min-width: 993px)";
-const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 let isHeaderUiBound = false;
 let originalHeaderIconsPosition = null;
 
@@ -21,13 +22,8 @@ function isTargetRouteActive() {
 function openJivoWidget() {
   if (typeof window.jivo_api?.open === "function") {
     window.jivo_api.open();
+    reachGoal("capsule_jivo");
 
-    window.ym?.(
-      96674199,
-      "reachGoal",
-      "capsule_jivo"
-    );
-    
     return;
   }
 
@@ -64,7 +60,7 @@ function moveHeaderButton(desktopHost) {
   }
 
   const mobileHost = document.querySelector(MOBILE_HEADER_SELECTOR);
-  const targetHost = window.matchMedia(DESKTOP_HEADER_QUERY).matches ? desktopHost : mobileHost;
+  const targetHost = isDesktopViewport() ? desktopHost : mobileHost;
 
   if (!targetHost) {
     return;
@@ -86,10 +82,10 @@ function handleDesktopMediaChange() {
 }
 
 export function cleanupHeaderUi() {
-  const desktopMediaQuery = window.matchMedia(DESKTOP_HEADER_QUERY);
+  const desktopMediaQuery = getMediaQuery(DESKTOP_MEDIA_QUERY);
 
   if (isHeaderUiBound) {
-    desktopMediaQuery.removeEventListener("change", handleDesktopMediaChange);
+    desktopMediaQuery?.removeEventListener("change", handleDesktopMediaChange);
     isHeaderUiBound = false;
   }
 
@@ -113,9 +109,10 @@ export function setupHeaderUi() {
 
   const desktopHost = document.querySelector(DESKTOP_HEADER_SELECTOR);
   const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
-  const desktopMediaQuery = window.matchMedia(DESKTOP_HEADER_QUERY);
+  const desktopMediaQuery = getMediaQuery(DESKTOP_MEDIA_QUERY);
+  const isDesktop = isDesktopViewport();
 
-  if (desktopMediaQuery.matches && desktopHost && headerIcons && headerIcons.parentElement !== desktopHost) {
+  if (isDesktop && desktopHost && headerIcons && headerIcons.parentElement !== desktopHost) {
     originalHeaderIconsPosition ??= {
       parent: headerIcons.parentElement,
       nextSibling: headerIcons.nextSibling,
@@ -123,7 +120,7 @@ export function setupHeaderUi() {
     desktopHost.append(headerIcons);
   }
 
-  if (desktopMediaQuery.matches && desktopHost && !document.querySelector(SECONDARY_LOGO_SELECTOR)) {
+  if (isDesktop && desktopHost && !document.querySelector(SECONDARY_LOGO_SELECTOR)) {
     const secondaryLogo = createHeaderLogo({
       containerClassName: INJECTED_LOGO_CLASS,
       linkClassName: INJECTED_LOGO_LINK_CLASS,
@@ -141,7 +138,7 @@ export function setupHeaderUi() {
 
   moveHeaderButton(desktopHost);
 
-  if (!isHeaderUiBound) {
+  if (!isHeaderUiBound && desktopMediaQuery) {
     desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
     isHeaderUiBound = true;
   }

@@ -1,7 +1,10 @@
+import {preloadImageSrc} from "./imagePreloader.js";
+import {isDesktopViewport} from "./mediaQuery.js";
+import {DESKTOP_MEDIA_QUERY} from "./constants.js";
+
 const FORM_BASE_IMAGE_MOBILE_SOURCES = {
   // Add explicit mobile sources for base form images here when they are available.
 };
-const responsiveImageLoadCache = new Map();
 
 function deriveOverlayMobileSrc(imageSrc) {
   if (typeof imageSrc !== "string") {
@@ -25,49 +28,12 @@ export function getResponsiveImageSources(imageSrc, mobileSrcOverride = null) {
   };
 }
 
-function getCurrentResponsiveSrc({desktopSrc, mobileSrc}) {
-  const isDesktop = window.matchMedia?.("(min-width: 993px)").matches;
-
-  return !isDesktop && mobileSrc ? mobileSrc : desktopSrc;
+export function getCurrentResponsiveSrc({desktopSrc, mobileSrc}) {
+  return !isDesktopViewport() && mobileSrc ? mobileSrc : desktopSrc;
 }
 
 export function preloadResponsiveImage(sources) {
-  const imageSrc = getCurrentResponsiveSrc(sources);
-
-  if (!imageSrc) {
-    return Promise.resolve();
-  }
-
-  const cachedPromise = responsiveImageLoadCache.get(imageSrc);
-
-  if (cachedPromise) {
-    return cachedPromise;
-  }
-
-  const imageNode = new Image();
-  imageNode.decoding = "async";
-
-  const loadPromise = new Promise((resolve) => {
-    const finalize = async () => {
-      try {
-        await imageNode.decode?.();
-      } catch {
-        // A load event is enough when decode is unavailable or rejected.
-      }
-      resolve();
-    };
-
-    imageNode.addEventListener("load", finalize, {once: true});
-    imageNode.addEventListener("error", resolve, {once: true});
-    imageNode.src = imageSrc;
-
-    if (imageNode.complete) {
-      finalize();
-    }
-  });
-
-  responsiveImageLoadCache.set(imageSrc, loadPromise);
-  return loadPromise;
+  return preloadImageSrc(getCurrentResponsiveSrc(sources));
 }
 
 function ensureDesktopSourceNode(pictureNode) {
@@ -79,7 +45,7 @@ function ensureDesktopSourceNode(pictureNode) {
 
   sourceNode = document.createElement("source");
   sourceNode.dataset.kapsulaDesktopSource = "";
-  sourceNode.media = "(min-width: 993px)";
+  sourceNode.media = DESKTOP_MEDIA_QUERY;
   pictureNode.prepend(sourceNode);
 
   return sourceNode;

@@ -1,11 +1,10 @@
-const DESKTOP_MEDIA_QUERY = "(min-width: 993px)";
+import {isDesktopViewport, observeDesktopViewport} from "./mediaQuery.js";
 
 export function setupBackgroundVideo(rootNode) {
   const videoNode = rootNode?.querySelector?.("[data-kapsula-background-video]");
 
   if (!(videoNode instanceof HTMLVideoElement)) return null;
 
-  const desktopMedia = window.matchMedia(DESKTOP_MEDIA_QUERY);
   const videoSrc = videoNode.dataset.src;
 
   const handleCanPlay = () => {
@@ -28,7 +27,7 @@ export function setupBackgroundVideo(rootNode) {
   };
 
   const syncVideo = () => {
-    if (desktopMedia.matches) {
+    if (isDesktopViewport()) {
       if (!videoNode.src && videoSrc) {
         videoNode.src = videoSrc;
         videoNode.load();
@@ -49,13 +48,13 @@ export function setupBackgroundVideo(rootNode) {
 
   videoNode.addEventListener("canplay", handleCanPlay);
   rootNode.addEventListener("kapsula:screen-change", handleScreenChange);
-  desktopMedia.addEventListener("change", syncVideo);
+  const unobserveDesktopViewport = observeDesktopViewport(syncVideo);
   syncVideo();
 
   return () => {
     videoNode.removeEventListener("canplay", handleCanPlay);
     rootNode.removeEventListener("kapsula:screen-change", handleScreenChange);
-    desktopMedia.removeEventListener("change", syncVideo);
+    unobserveDesktopViewport();
     videoNode.pause();
     delete videoNode.dataset.ready;
     videoNode.removeAttribute("src");
