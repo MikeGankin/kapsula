@@ -5,7 +5,12 @@ const REDIRECT_HOTELS_ENDPOINT =
     "/endpoints/PackageTourHotelProduct/PriceSearchEncrypt";
 
 const KAPSULA_HOTELS_CACHE_PREFIX =
-    "kapsula:hotels:v4:";
+    "kapsula:hotels:v5:";
+
+// Подписанные redirect-URL живут недолго, поэтому кеш обязан протухать,
+// иначе в рамках сессии карточки уводят на «мёртвые» ссылки.
+const KAPSULA_HOTELS_CACHE_TTL_MS =
+    15 * 60 * 1000;
 
 const SEARCH_LINK_QUERY = {
     p: 1,
@@ -44,17 +49,38 @@ function getHotelsCacheKey(configuredHotels) {
 }
 
 function readCachedHotels(configuredHotels) {
+    const cacheKey =
+        getHotelsCacheKey(
+            configuredHotels,
+        );
+
     try {
         const cachedValue =
             window.sessionStorage.getItem(
-                getHotelsCacheKey(configuredHotels),
+                cacheKey,
             );
 
-        const cachedHotels = cachedValue
+        const cachedEntry = cachedValue
             ? JSON.parse(cachedValue)
             : null;
 
+        const cachedHotels =
+            cachedEntry?.hotels ?? null;
+
         if (!Array.isArray(cachedHotels)) {
+            return null;
+        }
+
+        const isExpired =
+            typeof cachedEntry.savedAt !== "number" ||
+            Date.now() - cachedEntry.savedAt >
+            KAPSULA_HOTELS_CACHE_TTL_MS;
+
+        if (isExpired) {
+            window.sessionStorage.removeItem(
+                cacheKey,
+            );
+
             return null;
         }
 
@@ -94,7 +120,10 @@ function cacheHotels(
             getHotelsCacheKey(
                 configuredHotels,
             ),
-            JSON.stringify(hotels),
+            JSON.stringify({
+                savedAt: Date.now(),
+                hotels,
+            }),
         );
     } catch (error) {
         console.warn(
