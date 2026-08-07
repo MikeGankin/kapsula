@@ -214,5 +214,23 @@
 `bindScreenActions.js`, `fetchKapsulaHotel.js`, `popup.html` (+ regen `markup/index.js`), `_popup.scss`.
 Сборщик не затрагивался.
 
+### Этап 2 — единые источники правды ✅ завершён
+
+| Шаг | SHA | Что сделано |
+|-----|-----|-------------|
+| 2.1 конфиг | `444fc29` | `formConfig.js` удалён, остался `formConfig.json`. **Важно:** файлы уже разошлись — в JSON `hotel-style` и `room-type` стояли `required:false`, хотя разметка и JS считают их обязательными. JSON перегенерирован из актуального JS. |
+| 2.2–2.4 константы | `2ada885` | `constants.js`, `analytics.js`, `mediaQuery.js`, `imagePreloader.js` |
+| 2.5 zod | `bb6b954` | схема попапа переведена с `zod/mini` на `zod`, поведение сверено 1:1 |
+| 2.6 мёртвый код | `a07afb1` | `progress-inline.html`, `_progress.scss`, `hotelIds`, 3 зависимости |
+
+**Устранённые дубли (проверено `grep`, везде 0 вхождений вне новых модулей):**
+`window.ym` ×4 → `reachGoal()`; `window.matchMedia` ×6 → `mediaQuery.js`;
+`(min-width: 993px)` в JS ×6 → `DESKTOP_MEDIA_QUERY`; id счётчика ×4 → `METRIKA_COUNTER_ID`;
+селекторы хедера ×2 файла → `HEADER_SELECTORS`; два кеша прелоада → один `imagePreloader`.
+
+Побочные улучшения: `reachGoal` не падает без `ym` и логирует сбой; `observeDesktopViewport`
+возвращает функцию отписки (раньше слушатель в `setupBackgroundVideo` снимался вручную);
+в `sessionState` разведены `legacyFormValues` и `formValuesPrefix`.
+
 ### Следующий шаг
-Этап 2 — единые источники правды (`formConfig.json`, `constants.js`, `analytics.js`, `mediaQuery.js`).
+Этап 3 — разбор «толстых» модулей (`bindFormPopup`, `animateFormImageOverlay`, `fetchKapsulaHotel`).
