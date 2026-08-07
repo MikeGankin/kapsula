@@ -1,4 +1,4 @@
-import {z} from "zod";
+import * as z from "zod/mini";
 import {reachGoal} from "./analytics.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
@@ -14,10 +14,15 @@ const POPUP_FIELD_ERRORS = {
 };
 
 const popupContactSchema = z.object({
-  name: z.string().trim().min(2, "Введите имя"),
-  phone: z.string().trim().refine(
-    (value) => value.replace(/\D/g, "").length === 10,
-    {error: "Введите номер телефона"},
+  name: z.string().check(
+    z.trim(),
+    z.minLength(2, "Введите имя"),
+  ),
+  phone: z.string().check(
+    z.trim(),
+    z.refine((value) => value.replace(/\D/g, "").length === 10, {
+      error: "Введите номер телефона",
+    }),
   ),
   contactMethod: z.enum(["call", "max", "telegram", "whatsapp"], {
     error: "Выберите способ связи",

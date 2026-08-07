@@ -1,20 +1,17 @@
-import {z} from "zod";
+import * as z from "zod/mini";
 
 const capsuleSchemaCache = new WeakMap();
 
 function buildSectionSchema(section) {
   if (section.multiple) {
-    const schema = z.array(z.string());
-    return section.required ? schema.min(1) : schema;
+    return section.required
+      ? z.array(z.string()).check(z.minLength(1))
+      : z.array(z.string());
   }
 
-  if (section.type === "textarea") {
-    const schema = z.string().trim();
-    return section.required ? schema.min(1) : schema;
-  }
-
-  const schema = z.string().trim();
-  return section.required ? schema.min(1) : schema;
+  return section.required
+    ? z.string().check(z.trim(), z.minLength(1))
+    : z.string().check(z.trim());
 }
 
 function buildCapsuleSchema(schema) {
