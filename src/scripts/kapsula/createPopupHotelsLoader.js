@@ -1,4 +1,4 @@
-import {fetchKapsulaHotels} from "./fetchKapsulaHotel.js";
+import {fetchKapsulaHotels} from "./hotels/fetchKapsulaHotels.js";
 import {getConfiguredHotelsByCountries} from "./kapsulaHotelsConfig.js";
 
 function createSkeletonNode(hotel) {
