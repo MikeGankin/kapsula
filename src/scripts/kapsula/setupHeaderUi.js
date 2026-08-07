@@ -21,6 +21,13 @@ function isTargetRouteActive() {
 function openJivoWidget() {
   if (typeof window.jivo_api?.open === "function") {
     window.jivo_api.open();
+
+    window.ym?.(
+      96674199,
+      "reachGoal",
+      "capsule_jivo"
+    );
+    
     return;
   }
 

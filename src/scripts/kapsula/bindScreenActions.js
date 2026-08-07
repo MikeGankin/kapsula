@@ -2,18 +2,22 @@ import {KAPSULA_ANIMATION} from "./animationConfig.js";
 import {saveSelectedCapsule} from "./sessionState.js";
 import {transitionBetweenScreens} from "./screenTransition.js";
 
-export function bindScreenActions({
-  formExperience,
-  hero,
-  screenRegistry,
-  screenNodes,
-  timelineConfig,
-}) {
+const METRIKA_STYLE_MAP = {
+  asian: "asia",
+  oriental: "east",
+  island: "island",
+};
+
+export function bindScreenActions(
+  {
+    formExperience,
+    hero,
+    screenRegistry,
+    screenNodes,
+    timelineConfig,
+  }) {
   const {
     heroScreen,
-    stepsButton,
-    startButton,
-    styleCardButtons,
   } = screenNodes;
   const initial = KAPSULA_ANIMATION.screenTransition.initial;
   let activeTimeline = null;
@@ -62,6 +66,12 @@ export function bindScreenActions({
     if (startButtonNode) {
       if (hero.dataset.screen === "steps") return;
 
+      window.ym?.(
+        96674199,
+        "reachGoal",
+        "capsule_1_screen_button_go"
+      );
+
       transitionToScreen("hero", "steps");
 
       return;
@@ -71,6 +81,12 @@ export function bindScreenActions({
 
     if (stepsButtonNode) {
       if (hero.dataset.screen === "styles") return;
+
+      window.ym?.(
+        96674199,
+        "reachGoal",
+        "capsule_2_screen_button_assemble"
+      );
 
       transitionToScreen("steps", "styles");
       return;
@@ -106,8 +122,20 @@ export function bindScreenActions({
 
       saveSelectedCapsule(capsuleId);
 
+      const metrikaStyle = METRIKA_STYLE_MAP[capsuleId];
+
+      if (metrikaStyle) {
+        window.ym?.(
+          96674199,
+          "reachGoal",
+          "capsule_3_screen_button_select_and_assemble",
+          {
+            style: metrikaStyle,
+          }
+        );
+      }
+      
       transitionToScreen("styles", "form");
-      return;
     }
 
   };

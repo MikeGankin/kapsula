@@ -227,6 +227,13 @@ export function bindFormPopup(formExperience, hero) {
 
   const handleOpenPopup = (event) => {
     event.preventDefault();
+
+    window.ym?.(
+      96674199,
+      "reachGoal",
+      "capsule_4_screen_form_a_capsule"
+    );
+
     const validationResult = formExperience.validate?.();
 
     if (validationResult && !validationResult.success) {
@@ -336,6 +343,11 @@ export function bindFormPopup(formExperience, hero) {
       setPopupSubmitPending(popupFormNode, true);
       await sendKapsulaPopupForm(payload, getFormSubmitEndpoint());
       setPopupState(popupNode, "success");
+      window.ym?.(
+        96674199,
+        "reachGoal",
+        "capsule_pop_up_final_show"
+      );
     } catch (error) {
       console.error("Failed to submit kapsula popup form", error);
       setPopupSubmitError(

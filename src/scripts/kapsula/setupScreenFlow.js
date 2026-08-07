@@ -12,6 +12,13 @@ import {restoreScreen} from "./screenTransition.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 
+const SCREEN_SHOW_GOALS = {
+  hero: "capsule_1_screen_show",
+  steps: "capsule_2_screen_show",
+  styles: "capsule_3_screen_show",
+  form: "capsule_4_screen_show",
+};
+
 function bindStyleCardLinks(styleCardButtons) {
   styleCardButtons.forEach((button) => {
     const capsuleId = button.dataset.kapsulaCapsule;
@@ -48,11 +55,11 @@ export function setupScreenFlow(rootNode = document) {
   const screenRegistry = buildScreenRegistry(screenNodes, timelineConfig);
   const canInitForm = Boolean(
     screenNodes.formScreen &&
-      screenNodes.formTitle &&
-      screenNodes.formSubtitle &&
-      screenNodes.formAside &&
-      screenNodes.formBody &&
-      screenRegistry.form,
+    screenNodes.formTitle &&
+    screenNodes.formSubtitle &&
+    screenNodes.formAside &&
+    screenNodes.formBody &&
+    screenRegistry.form,
   );
 
   let formExperience = {
@@ -103,8 +110,22 @@ export function setupScreenFlow(rootNode = document) {
     });
   };
 
+  const trackScreenShow = (screenKey) => {
+    const goal = SCREEN_SHOW_GOALS[screenKey];
+
+    if (!goal || typeof window.ym !== "function") {
+      return;
+    }
+
+    window.ym(96674199, "reachGoal", goal);
+  };
+
   const handleScreenChange = (event) => {
-    if (event.detail?.screenKey === "styles") {
+    const screenKey = event.detail?.screenKey;
+
+    trackScreenShow(screenKey);
+
+    if (screenKey === "styles") {
       refreshStylesCarousel();
     }
   };
@@ -122,13 +143,19 @@ export function setupScreenFlow(rootNode = document) {
     timelineConfig,
   });
 
-  restoreScreen({
+  const restoredScreen = readCurrentScreen();
+
+  const didRestoreScreen = restoreScreen({
     hero,
     heroScreen: screenNodes.heroScreen,
     initial,
-    screenKey: readCurrentScreen(),
+    screenKey: restoredScreen,
     screenRegistry,
   });
+
+  if (!didRestoreScreen) {
+    trackScreenShow("hero");
+  }
 
   const unbindFormPopup = canInitForm
     ? bindFormPopup(formExperience, hero)

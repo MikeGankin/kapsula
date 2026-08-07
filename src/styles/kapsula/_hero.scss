@@ -138,14 +138,19 @@
 
 .kapsula-screen--hero .kapsula-copy__title {
   margin-bottom: 16px;
-  text-align: left;
+
+  @include media.desktop {
+    text-align: left;
+  }
 }
 
 .kapsula-screen--hero .kapsula-copy__subtitle {
   font-family: inherit;
   font-size: var(--kapsula-font-size-md);
   font-weight: var(--kapsula-font-weight-regular);
-  text-align: left;
+  @include media.desktop {
+    text-align: left;
+  }
   margin: 0;
 }
 
