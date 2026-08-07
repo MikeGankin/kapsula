@@ -40,11 +40,17 @@ export function bindScreenActions(
 
     if (timeline) {
       activeTimeline = timeline;
-      timeline.eventCallback("onComplete", () => {
+
+      // Таймлайн может не доиграть до конца (kill из cleanup, прерывание),
+      // тогда onComplete не вызовется и навигация залипнет навсегда.
+      const releaseTimeline = () => {
         if (activeTimeline === timeline) {
           activeTimeline = null;
         }
-      });
+      };
+
+      timeline.eventCallback("onComplete", releaseTimeline);
+      timeline.eventCallback("onInterrupt", releaseTimeline);
     }
 
     return timeline;
@@ -145,7 +151,8 @@ export function bindScreenActions(
   return () => {
     pendingCapsuleId = null;
     hero.removeEventListener("click", handleClick);
-    activeTimeline?.kill();
+    const timelineToKill = activeTimeline;
     activeTimeline = null;
+    timelineToKill?.kill();
   };
 }
