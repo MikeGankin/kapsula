@@ -197,12 +197,21 @@
 
 ## 5. Журнал выполнения
 
-### Этап 1 — хотфиксы P0 (по одному коммиту на баг)
-| Баг | Коммит | Статус |
-|-----|--------|--------|
-| №2 alt оверлеев | `fix(kapsula): match overlay image alts by path suffix` | ⏳ |
-| №3 пустой `href` | `fix(kapsula): render hotel card without link when url is missing` | ⏳ |
-| №4 ошибка `contactMethod` | `fix(kapsula): show contact method validation error` | ⏳ |
-| №5 залипание навигации | `fix(kapsula): reset screen timeline on interrupt` | ⏳ |
-| №6 чужой отель | `fix(kapsula): drop index fallback in hotels mapping` | ⏳ |
-| №7 протухший кеш | `fix(kapsula): add ttl and version to hotels cache` | ⏳ |
+### Этап 1 — хотфиксы P0 ✅ завершён
+Каждый фикс — отдельный коммит, откатывается независимо через `git revert <sha>`.
+
+| Баг | SHA | Коммит | Проверка |
+|-----|-----|--------|----------|
+| №2 alt оверлеев | `63bfbc4` | `fix(kapsula): match overlay image alts by path suffix` | матчинг по последним 2 сегментам пути |
+| №3 пустой `href` | `b56fdae` | `fix(kapsula): render hotel card without link when url is missing` | + стиль `cursor: default` |
+| №4 ошибка `contactMethod` | `92309cc` | `fix(kapsula): show contact method validation error` | схема zod проверена в node |
+| №5 залипание навигации | `9377774` | `fix(kapsula): reset screen timeline on interrupt` | `onInterrupt` при `kill()` подтверждён в gsap |
+| №6 чужой отель | `7f1fe8e` | `fix(kapsula): drop index fallback in hotels mapping` | только матчинг по id + warn |
+| №7 протухший кеш | `0139456` | `fix(kapsula): add ttl and version to hotels cache` | fresh/expired/legacy проверены |
+
+Затронутые файлы: `animateFormImageOverlay.js`, `createPopupHotelsLoader.js`, `bindFormPopup.js`,
+`bindScreenActions.js`, `fetchKapsulaHotel.js`, `popup.html` (+ regen `markup/index.js`), `_popup.scss`.
+Сборщик не затрагивался.
+
+### Следующий шаг
+Этап 2 — единые источники правды (`formConfig.json`, `constants.js`, `analytics.js`, `mediaQuery.js`).
