@@ -88,8 +88,40 @@ const OVERLAY_IMAGE_ALTS = {
   "/island-mobile/city.webp": "Городской ритм островного направления с набережной и огнями",
 };
 
+const OVERLAY_ALT_FALLBACK = "Фрагмент путешествия";
+
+/**
+ * Ключи OVERLAY_IMAGE_ALTS заданы относительными путями вида
+ * "/asia-desktop/thailand.webp", тогда как overlayImageSrc в конфиге —
+ * абсолютные CDN-URL. Сопоставляем по последним двум сегментам пути,
+ * чтобы alt работал для обоих форматов.
+ */
+function getOverlayAltKey(imageSrc) {
+  if (typeof imageSrc !== "string" || !imageSrc) {
+    return "";
+  }
+
+  const pathname = imageSrc.startsWith("http")
+    ? (() => {
+      try {
+        return new URL(imageSrc).pathname;
+      } catch {
+        return imageSrc;
+      }
+    })()
+    : imageSrc;
+
+  const segments = pathname.split("/").filter(Boolean);
+
+  return segments.length >= 2
+    ? `/${segments.slice(-2).join("/")}`
+    : pathname;
+}
+
 function getOverlayImageAlt(imageSrc) {
-  return OVERLAY_IMAGE_ALTS[imageSrc] ?? "Фрагмент путешествия";
+  return OVERLAY_IMAGE_ALTS[getOverlayAltKey(imageSrc)]
+    ?? OVERLAY_IMAGE_ALTS[imageSrc]
+    ?? OVERLAY_ALT_FALLBACK;
 }
 
 function getParallaxOffset(imageSrc) {
