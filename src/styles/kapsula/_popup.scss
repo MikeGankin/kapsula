@@ -179,10 +179,6 @@
   background: var(--kapsula-surface-muted);
 }
 
-.kapsula-popup-card[data-kapsula-hotel-linkless] {
-  cursor: default;
-}
-
 .kapsula-popup-card--skeleton {
   background: linear-gradient(
     90deg,

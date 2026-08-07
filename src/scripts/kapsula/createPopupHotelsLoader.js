@@ -10,26 +10,6 @@ function createSkeletonNode(hotel) {
   return skeletonNode;
 }
 
-/**
- * Ссылка на отель приходит из отдельного redirect-запроса и может отсутствовать.
- * Пустой href у <a> ведёт на текущую страницу и перезагружает её по клику,
- * поэтому в таком случае снимаем интерактивность, оставляя карточку как контент.
- */
-function applyHotelCardLink(cardNode, url) {
-  if (url) {
-    cardNode.setAttribute("href", url);
-    cardNode.removeAttribute("aria-disabled");
-    delete cardNode.dataset.kapsulaHotelLinkless;
-    return;
-  }
-
-  cardNode.removeAttribute("href");
-  cardNode.removeAttribute("target");
-  cardNode.removeAttribute("rel");
-  cardNode.setAttribute("role", "group");
-  cardNode.dataset.kapsulaHotelLinkless = "";
-}
-
 function createHotelCard(templateNode, hotel) {
   if (!(templateNode instanceof HTMLTemplateElement)) return null;
 
@@ -42,7 +22,7 @@ function createHotelCard(templateNode, hotel) {
   if (!(cardNode instanceof HTMLElement)) return null;
 
   cardNode.dataset.kapsulaHotelId = hotel.id;
-  applyHotelCardLink(cardNode, hotel.url);
+  cardNode.href = hotel.url
 
   if (imageNode instanceof HTMLImageElement) {
     if (hotel.imageUrl) {
