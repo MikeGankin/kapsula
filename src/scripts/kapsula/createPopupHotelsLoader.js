@@ -10,6 +10,15 @@ function createSkeletonNode(hotel) {
   return skeletonNode;
 }
 
+/**
+ * Ссылка приходит из отдельного redirect-запроса и может отсутствовать.
+ * Карточка без ссылки бесполезна (пустой href перезагружает страницу),
+ * поэтому такие отели не рендерим — как и при ошибке основного запроса.
+ */
+function hasHotelLink(hotel) {
+  return Boolean(hotel?.url);
+}
+
 function createHotelCard(templateNode, hotel) {
   if (!(templateNode instanceof HTMLTemplateElement)) return null;
 
@@ -98,7 +107,16 @@ export function createPopupHotelsLoader({
     }).then((hotels) => {
       if (currentRevision !== loadRevision) return [];
 
-      const cardNodes = hotels
+      const linkedHotels = hotels.filter(hasHotelLink);
+
+      if (linkedHotels.length !== hotels.length) {
+        console.warn(
+          "Kapsula hotels without link are skipped",
+          hotels.filter((hotel) => !hasHotelLink(hotel)).map(({id}) => id),
+        );
+      }
+
+      const cardNodes = linkedHotels
         .map((hotel) => createHotelCard(templateNode, hotel))
         .filter(Boolean);
 
