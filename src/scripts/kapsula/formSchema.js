@@ -1,4 +1,4 @@
-import formConfig from "../formConfig.js";
+import formConfig from "../formConfig.json";
 
 export function getFormConfig() {
   return formConfig;

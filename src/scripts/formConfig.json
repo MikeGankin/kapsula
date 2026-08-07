@@ -6,7 +6,11 @@
       "subtitle": "Мягкий лен, бамбук и туман над рисовыми полями",
       "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-base.webp",
       "imageMobileSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/asia-base-mob.webp",
-      "hotelIds": ["maxx-royal-bodrum", "ela-excellence-resort-belek", "lujo-art-joy-bodrum"],
+      "hotelIds": [
+        "maxx-royal-bodrum",
+        "ela-excellence-resort-belek",
+        "lujo-art-joy-bodrum"
+      ],
       "imageAlt": "Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей",
       "submitLabel": "Сформировать капсулу",
       "sections": [
@@ -44,7 +48,7 @@
           "id": "hotel-style",
           "title": "Стиль отеля",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
@@ -73,7 +77,7 @@
           "id": "room-type",
           "title": "Тип номера",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
@@ -245,7 +249,11 @@
       "subtitle": "Струящийся шелк, орнаменты и яркие краски",
       "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-base.webp",
       "imageMobileSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-base-mob.webp",
-      "hotelIds": ["maxx-royal-bodrum", "ela-excellence-resort-belek", "lujo-art-joy-bodrum"],
+      "hotelIds": [
+        "maxx-royal-bodrum",
+        "ela-excellence-resort-belek",
+        "lujo-art-joy-bodrum"
+      ],
       "imageAlt": "Девушка в платье с орнаментом у резной двери восточного дворика",
       "submitLabel": "Сформировать капсулу",
       "sections": [
@@ -278,7 +286,7 @@
           "id": "hotel-style",
           "title": "Стиль отеля",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
@@ -307,7 +315,7 @@
           "id": "room-type",
           "title": "Тип номера",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
@@ -491,7 +499,11 @@
       "subtitle": "Белый хлопок, тропические цветы и лазурь океана",
       "imageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-base.webp",
       "imageMobileSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/island-base-mob.webp",
-      "hotelIds": ["maxx-royal-bodrum", "ela-excellence-resort-belek", "lujo-art-joy-bodrum"],
+      "hotelIds": [
+        "maxx-royal-bodrum",
+        "ela-excellence-resort-belek",
+        "lujo-art-joy-bodrum"
+      ],
       "imageAlt": "Девушка в белом образе на пляже у бирюзовой воды и пальм",
       "submitLabel": "Сформировать капсулу",
       "sections": [
@@ -524,7 +536,7 @@
           "id": "hotel-style",
           "title": "Стиль отеля",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
@@ -553,7 +565,7 @@
           "id": "room-type",
           "title": "Тип номера",
           "type": "cards",
-          "required": false,
+          "required": true,
           "multiple": true,
           "overlayPreviewOnEnter": true,
           "expanded": false,
