@@ -232,5 +232,27 @@
 возвращает функцию отписки (раньше слушатель в `setupBackgroundVideo` снимался вручную);
 в `sessionState` разведены `legacyFormValues` и `formValuesPrefix`.
 
+### Этап 3 — разбор «толстых» модулей ✅ завершён
+
+| Шаг | SHA | Было → стало | Проверка эквивалентности |
+|-----|-----|--------------|--------------------------|
+| 3.1 отели | `eca43c8` | `fetchKapsulaHotel.js` 612 строк → `hotels/` 339 в 5 модулях | все формы ответа API распознаются, маппинг по id и payload совпадают |
+| 3.2 попап | `aaa8004` | `bindFormPopup.js` 383 → 205 строк + `popup/` 158 | маска телефона прогнана на 7 вариантах ввода |
+| 3.3 оверлей | `b3d19b3` | `animateFormImageOverlay.js` 596 → 380 строк + `overlay/` 188 | геометрия клипов: 36 комбинаций `index/total` совпадают 1:1 |
+
+**Структура после разбора:**
+- `hotels/`: `hotelsApi` (запросы) · `hotelsSearchPayload` (payload) · `hotelsNormalize` (маппинг) ·
+  `hotelsCache` (sessionStorage + TTL) · `fetchKapsulaHotels` (оркестрация);
+- `popup/`: `popupContactForm` (схема, маска, ошибки полей, pending) · `popupLeadPayload` (payload лида);
+- `overlay/`: `overlayAlts` (данные + подбор alt) · `overlayGeometry` (чистые функции клипов и параллакса).
+
+**Попутно закрыт P1 №9:** `MutationObserver` по всему `hero` (`childList` + `subtree`), который висел
+только ради ре-биндинга кнопки сабмита и срабатывал на каждом ре-рендере формы, заменён делегированием
+клика. Ранние выходы `bindFormPopup` теперь возвращают cleanup-функцию вместо `undefined` (часть P1 №10).
+
+Прочее: каскады `if` заменены таблицами (формы ответа API, раскладки клипов), продублированный `fetch`
+сведён к `postJson`, ветки скрытия/подготовки сегментов — к `hideSegment`/`prepareSegments`/`animateLayer`.
+
 ### Следующий шаг
-Этап 3 — разбор «толстых» модулей (`bindFormPopup`, `animateFormImageOverlay`, `fetchKapsulaHotel`).
+Этап 4 — жизненный цикл и надёжность (cleanup-контракт, глобалы `setupHeaderUi`, `syncEmblaDots`,
+flush персиста, диагностика). Самый большой оставшийся файл — `renderForm.js` (436 строк), он в Этапе 5.
