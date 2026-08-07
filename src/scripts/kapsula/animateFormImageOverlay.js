@@ -5,209 +5,28 @@ import {
   preloadResponsiveImage,
 } from "./formResponsiveImages.js";
 import {prefersReducedMotion} from "./motionPreferences.js";
+import {getOverlayImageAlt} from "./overlay/overlayAlts.js";
+import {
+  getCollapsedClipFromStart,
+  getCollapsedSliceClip,
+  getParallaxOffset,
+  getSegmentParallaxOffset,
+  getSliceClip,
+  getVisibleRange,
+  HIDDEN_CLIP,
+  shouldAnimateParallax,
+} from "./overlay/overlayGeometry.js";
 
-const HIDDEN_CLIP = "inset(0 100% 0 0)";
 const DURATION = 1;
 const EASE = "power3.out";
-const PARALLAX_VALUES = [8, 11, 14];
-const SECOND_SEGMENT_PARALLAX_OFFSET = 8;
-const OVERLAY_IMAGE_ALTS = {
-  "/asia-desktop/thailand.webp": "Завтрак у бассейна с видом на море и пальмы",
-  "/asia-desktop/bali.webp": "Тропическое побережье с волнами, скалами и деревянной лестницей",
-  "/asia-desktop/china.webp": "Песчаный пляж и пальмы у бирюзового моря, вид сверху",
-  "/asia-desktop/vietnam.webp": "Побережье Вьетнама с лодками, зеленью и спокойной водой",
-  "/asia-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/asia-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/asia-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/asia-mobile/thailand.webp": "Завтрак у бассейна с видом на море и пальмы",
-  "/asia-mobile/bali.webp": "Тропическое побережье с волнами, скалами и деревянной лестницей",
-  "/asia-mobile/china.webp": "Песчаный пляж и пальмы у бирюзового моря, вид сверху",
-  "/asia-mobile/vietnam.webp": "Побережье Вьетнама с лодками, зеленью и спокойной водой",
-  "/asia-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/asia-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/asia-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/oriental-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/oriental-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/oriental-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/oriental-desktop/turkey.webp": "Пляжный курорт с бассейном и террасами у моря в Турции",
-  "/oriental-desktop/egypt.webp": "Курорт у побережья Красного моря с песчаным берегом и пальмами в Египте",
-  "/oriental-desktop/uae.webp": "Современный курорт у побережья с мариной и архитектурой ОАЭ",
-  "/oriental-desktop/suite.webp": "Светлый люкс с зоной отдыха и панорамными окнами курортного отеля",
-  "/oriental-desktop/family.webp": "Просторный семейный номер курортного отеля с большой кроватью и мягкой зоной",
-  "/oriental-desktop/villa.webp": "Уединенная вилла с личной террасой и бассейном среди курортного сада",
-  "/oriental-desktop/flight.webp": "Салон самолета с креслами разных классов обслуживания",
-  "/oriental-desktop/transfer.webp": "Премиальный трансфер к отелю на фоне курортной инфраструктуры",
-  "/oriental-desktop/food.webp": "Сервировка завтрака и блюда курортного ресторана у воды",
-  "/oriental-desktop/sea.webp": "Яхта и морское побережье для отдыха на воде",
-  "/oriental-desktop/spa.webp": "Спа-пространство с массажем и расслабляющей атмосферой",
-  "/oriental-desktop/nature.webp": "Живописная природная локация для экскурсий и прогулок",
-  "/oriental-desktop/city.webp": "Оживленный городской курортный район с вечерними огнями",
-  "/oriental-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/oriental-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/oriental-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/oriental-mobile/turkey.webp": "Пляжный курорт с бассейном и террасами у моря в Турции",
-  "/oriental-mobile/egypt.webp": "Курорт у побережья Красного моря с песчаным берегом и пальмами в Египте",
-  "/oriental-mobile/uae.webp": "Современный курорт у побережья с мариной и архитектурой ОАЭ",
-  "/oriental-mobile/suite.webp": "Светлый люкс с зоной отдыха и панорамными окнами курортного отеля",
-  "/oriental-mobile/family.webp": "Просторный семейный номер курортного отеля с большой кроватью и мягкой зоной",
-  "/oriental-mobile/villa.webp": "Уединенная вилла с личной террасой и бассейном среди курортного сада",
-  "/oriental-mobile/flight.webp": "Салон самолета с креслами разных классов обслуживания",
-  "/oriental-mobile/transfer.webp": "Премиальный трансфер к отелю на фоне курортной инфраструктуры",
-  "/oriental-mobile/food.webp": "Сервировка завтрака и блюда курортного ресторана у воды",
-  "/oriental-mobile/sea.webp": "Яхта и морское побережье для отдыха на воде",
-  "/oriental-mobile/spa.webp": "Спа-пространство с массажем и расслабляющей атмосферой",
-  "/oriental-mobile/nature.webp": "Живописная природная локация для экскурсий и прогулок",
-  "/oriental-mobile/city.webp": "Оживленный городской курортный район с вечерними огнями",
-  "/island-desktop/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/island-desktop/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/island-desktop/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/island-desktop/maldives.webp": "Виллы над водой и лагуна с бирюзовой водой на Мальдивах",
-  "/island-desktop/seychelles.webp": "Тропический пляж с гранитными валунами и пальмами на Сейшелах",
-  "/island-desktop/mauritius.webp": "Побережье с белым песком и курортными отелями на Маврикии",
-  "/island-desktop/suite.webp": "Светлый люкс курортного островного отеля с мягкой зоной отдыха",
-  "/island-desktop/family.webp": "Просторный семейный номер островного отеля с двумя зонами отдыха",
-  "/island-desktop/villa.webp": "Островная вилла с приватным бассейном и выходом к пляжу",
-  "/island-desktop/flight.webp": "Салон самолета для дальнего перелета на островной курорт",
-  "/island-desktop/transfer.webp": "Трансфер к островному отелю на фоне моря и причала",
-  "/island-desktop/food.webp": "Блюда и сервировка в ресторане островного курорта",
-  "/island-desktop/sea.webp": "Лодка у лазурной воды для морских впечатлений и снорклинга",
-  "/island-desktop/spa.webp": "Островное спа с массажем и видом на тропическую природу",
-  "/island-desktop/nature.webp": "Тропическая природная локация для прогулок и экскурсий",
-  "/island-desktop/city.webp": "Городской ритм островного направления с набережной и огнями",
-  "/island-mobile/minimal.webp": "Минималистичный курортный интерьер с бассейном у моря",
-  "/island-mobile/boho.webp": "Курортная вилла в стиле бохо с природными материалами и зеленью",
-  "/island-mobile/high-tech.webp": "Современная вилла в стиле хай-тек на склоне у моря",
-  "/island-mobile/maldives.webp": "Виллы над водой и лагуна с бирюзовой водой на Мальдивах",
-  "/island-mobile/seychelles.webp": "Тропический пляж с гранитными валунами и пальмами на Сейшелах",
-  "/island-mobile/mauritius.webp": "Побережье с белым песком и курортными отелями на Маврикии",
-  "/island-mobile/suite.webp": "Светлый люкс курортного островного отеля с мягкой зоной отдыха",
-  "/island-mobile/family.webp": "Просторный семейный номер островного отеля с двумя зонами отдыха",
-  "/island-mobile/villa.webp": "Островная вилла с приватным бассейном и выходом к пляжу",
-  "/island-mobile/flight.webp": "Салон самолета для дальнего перелета на островной курорт",
-  "/island-mobile/transfer.webp": "Трансфер к островному отелю на фоне моря и причала",
-  "/island-mobile/food.webp": "Блюда и сервировка в ресторане островного курорта",
-  "/island-mobile/sea.webp": "Лодка у лазурной воды для морских впечатлений и снорклинга",
-  "/island-mobile/spa.webp": "Островное спа с массажем и видом на тропическую природу",
-  "/island-mobile/nature.webp": "Тропическая природная локация для прогулок и экскурсий",
-  "/island-mobile/city.webp": "Городской ритм островного направления с набережной и огнями",
-};
+const IMAGE_SELECTOR = ".kapsula-form-screen__overlay-image";
 
-const OVERLAY_ALT_FALLBACK = "Фрагмент путешествия";
-
-/**
- * Ключи OVERLAY_IMAGE_ALTS заданы относительными путями вида
- * "/asia-desktop/thailand.webp", тогда как overlayImageSrc в конфиге —
- * абсолютные CDN-URL. Сопоставляем по последним двум сегментам пути,
- * чтобы alt работал для обоих форматов.
- */
-function getOverlayAltKey(imageSrc) {
-  if (typeof imageSrc !== "string" || !imageSrc) {
-    return "";
-  }
-
-  const pathname = imageSrc.startsWith("http")
-    ? (() => {
-      try {
-        return new URL(imageSrc).pathname;
-      } catch {
-        return imageSrc;
-      }
-    })()
-    : imageSrc;
-
-  const segments = pathname.split("/").filter(Boolean);
-
-  return segments.length >= 2
-    ? `/${segments.slice(-2).join("/")}`
-    : pathname;
+function getAnimationDuration() {
+  return prefersReducedMotion() ? 0 : DURATION;
 }
 
-function getOverlayImageAlt(imageSrc) {
-  return OVERLAY_IMAGE_ALTS[getOverlayAltKey(imageSrc)]
-    ?? OVERLAY_IMAGE_ALTS[imageSrc]
-    ?? OVERLAY_ALT_FALLBACK;
-}
-
-function getParallaxOffset(imageSrc) {
-  const charSum = Array.from(imageSrc).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-
-  return PARALLAX_VALUES[charSum % PARALLAX_VALUES.length];
-}
-
-function shouldAnimateParallax({nextVisibleCount, wasVisible}) {
-  return nextVisibleCount > 1 && !wasVisible;
-}
-
-function getSegmentParallaxOffset({previousVisibleCount, nextVisibleCount}) {
-  if (previousVisibleCount === 1 && nextVisibleCount === 2) {
-    return SECOND_SEGMENT_PARALLAX_OFFSET;
-  }
-
-  return undefined;
-}
-
-function formatPercent(value) {
-  return Number(value.toFixed(4));
-}
-
-function getVisibleRange(index, total) {
-  if (total === 1) {
-    return {start: 0, end: 100};
-  }
-
-  if (total === 2) {
-    return index === 0
-      ? {start: 70, end: 100}
-      : {start: 0, end: 70};
-  }
-
-  if (total === 3) {
-    const ranges = [
-      {start: 75, end: 100},
-      {start: 50, end: 75},
-      {start: 0, end: 50},
-    ];
-
-    return ranges[index] ?? {start: 0, end: 0};
-  }
-
-  if (total === 4) {
-    const ranges = [
-      {start: 75, end: 100},
-      {start: 50, end: 75},
-      {start: 25, end: 50},
-      {start: 0, end: 25},
-    ];
-
-    return ranges[index] ?? {start: 0, end: 0};
-  }
-
-  const width = 100 / total;
-  const start = Math.max(0, 100 - width * (index + 1));
-  const end = Math.min(100, start + width);
-
-  return {start, end};
-}
-
-function getSliceClip(index, total) {
-  const {start, end} = getVisibleRange(index, total);
-  const left = formatPercent(start);
-  const right = formatPercent(100 - end);
-
-  return `inset(0 ${right}% 0 ${left}%)`;
-}
-
-function getCollapsedSliceClip(index, total) {
-  const {start} = getVisibleRange(index, total);
-  const left = formatPercent(start);
-
-  return `inset(0 ${100 - left}% 0 ${left}%)`;
-}
-
-function getCollapsedCurrentClip(segmentNode) {
-  const left = Number(segmentNode.dataset.clipStart ?? 0);
-
-  return `inset(0 ${100 - left}% 0 ${left}%)`;
+function preloadImage(imageSrc) {
+  return preloadResponsiveImage(getResponsiveImageSources(imageSrc));
 }
 
 function createLayer(sectionId) {
@@ -218,9 +37,7 @@ function createLayer(sectionId) {
   layerNode.dataset.overlayAnimation = "segments";
   layerNode.dataset.isVisible = "0";
 
-  gsap.set(layerNode, {
-    autoAlpha: 0,
-  });
+  gsap.set(layerNode, {autoAlpha: 0});
 
   return layerNode;
 }
@@ -244,12 +61,8 @@ function createSegment(imageSrc) {
   return segmentNode;
 }
 
-function preloadImage(imageSrc) {
-  return preloadResponsiveImage(getResponsiveImageSources(imageSrc));
-}
-
 function waitForSegmentImage(segmentNode) {
-  const imageNode = segmentNode.querySelector(".kapsula-form-screen__overlay-image");
+  const imageNode = segmentNode.querySelector(IMAGE_SELECTOR);
 
   if (!(imageNode instanceof HTMLImageElement)) {
     return Promise.resolve();
@@ -259,7 +72,7 @@ function waitForSegmentImage(segmentNode) {
     try {
       await imageNode.decode?.();
     } catch {
-      // Keep the animation available when decoding fails.
+      // Анимация должна остаться доступной, даже если декодирование не удалось.
     }
   };
 
@@ -297,13 +110,19 @@ function getOrCreateSegment(layerNode, segmentMap, imageSrc) {
 
   const segmentNode = createSegment(imageSrc);
 
-  gsap.set(segmentNode, {
-    clipPath: HIDDEN_CLIP,
-  });
+  gsap.set(segmentNode, {clipPath: HIDDEN_CLIP});
   layerNode.append(segmentNode);
   segmentMap.set(imageSrc, segmentNode);
 
   return segmentNode;
+}
+
+function createSegmentMap(layerNode) {
+  return new Map(
+    Array.from(layerNode.children).map(
+      (segmentNode) => [segmentNode.dataset.overlayImageSrc, segmentNode],
+    ),
+  );
 }
 
 function animateLayerVisibility(layerNode, isVisible) {
@@ -311,9 +130,7 @@ function animateLayerVisibility(layerNode, isVisible) {
   gsap.killTweensOf(layerNode);
 
   if (isVisible) {
-    gsap.set(layerNode, {
-      autoAlpha: 1,
-    });
+    gsap.set(layerNode, {autoAlpha: 1});
     return;
   }
 
@@ -324,26 +141,27 @@ function animateLayerVisibility(layerNode, isVisible) {
   });
 }
 
-function getAnimationDuration() {
-  return prefersReducedMotion() ? 0 : DURATION;
-}
-
 function animateImageParallax(segmentNode, {offsetOverride, direction = -1, multiplier = 1} = {}) {
-  const imageNode = segmentNode.querySelector(".kapsula-form-screen__overlay-image");
+  const imageNode = segmentNode.querySelector(IMAGE_SELECTOR);
 
   if (!imageNode) return;
 
-  const baseOffset = offsetOverride ?? getParallaxOffset(segmentNode.dataset.overlayImageSrc ?? "");
-  const offset = direction * baseOffset * multiplier;
+  const baseOffset = offsetOverride
+    ?? getParallaxOffset(segmentNode.dataset.overlayImageSrc ?? "");
 
   gsap.killTweensOf(imageNode);
   gsap.fromTo(imageNode, {
-    x: offset,
+    x: direction * baseOffset * multiplier,
   }, {
     x: 0,
     duration: getAnimationDuration(),
     ease: EASE,
   });
+}
+
+function isSegmentAnimationActual(segmentNode, animationRevision) {
+  return segmentNode.dataset.isVisible === "1"
+    && segmentNode.dataset.animationRevision === animationRevision;
 }
 
 function animateSegmentClip(segmentNode, clipPath, {
@@ -366,31 +184,29 @@ function animateSegmentClip(segmentNode, clipPath, {
   }
 
   gsap.killTweensOf(segmentNode);
-
   gsap.to(segmentNode, {
     clipPath,
     duration: getAnimationDuration(),
     ease: EASE,
   });
 
-  if (withParallax) {
-    preloadImage(segmentNode.dataset.overlayImageSrc ?? "")
-      .then(() => {
-        if (
-          segmentNode.dataset.isVisible !== "1"
-          || segmentNode.dataset.animationRevision !== nextAnimationRevision
-        ) return;
-        animateImageParallax(segmentNode, {
-          offsetOverride: parallaxOffset,
-          direction: parallaxDirection,
-          multiplier: parallaxMultiplier,
-        });
-      });
-  }
+  if (!withParallax) return;
+
+  preloadImage(segmentNode.dataset.overlayImageSrc ?? "").then(() => {
+    if (!isSegmentAnimationActual(segmentNode, nextAnimationRevision)) return;
+
+    animateImageParallax(segmentNode, {
+      offsetOverride: parallaxOffset,
+      direction: parallaxDirection,
+      multiplier: parallaxMultiplier,
+    });
+  });
 }
 
 function revealSegmentWhenReady(segmentNode, clipPath, options) {
-  const animationRevision = String(Number(segmentNode.dataset.animationRevision ?? 0) + 1);
+  const animationRevision = String(
+    Number(segmentNode.dataset.animationRevision ?? 0) + 1,
+  );
 
   segmentNode.dataset.animationRevision = animationRevision;
   segmentNode.dataset.isVisible = "1";
@@ -405,10 +221,7 @@ function revealSegmentWhenReady(segmentNode, clipPath, options) {
     preloadImage(segmentNode.dataset.overlayImageSrc ?? ""),
     waitForSegmentImage(segmentNode),
   ]).then(() => {
-    if (
-      segmentNode.dataset.isVisible !== "1" ||
-      segmentNode.dataset.animationRevision !== animationRevision
-    ) return;
+    if (!isSegmentAnimationActual(segmentNode, animationRevision)) return;
 
     animateSegmentClip(segmentNode, clipPath, {
       ...options,
@@ -418,45 +231,52 @@ function revealSegmentWhenReady(segmentNode, clipPath, options) {
   });
 }
 
+function hideSegment(segmentNode, animationOptions = {}) {
+  const clipPath = segmentNode.dataset.isVisible === "1"
+    ? getCollapsedClipFromStart(segmentNode.dataset.clipStart)
+    : HIDDEN_CLIP;
+
+  animateSegmentClip(segmentNode, clipPath, {
+    isVisible: false,
+    ...animationOptions,
+  });
+}
+
+function prepareSegments(layerNode, segmentMap, sources) {
+  sources.forEach((imageSrc) => {
+    getOrCreateSegment(layerNode, segmentMap, imageSrc);
+    preloadImage(imageSrc);
+  });
+}
+
+function toSourceList(sources) {
+  return Array.isArray(sources) ? sources.filter(Boolean) : [];
+}
+
 function animateLayerSegments(layerNode, {
   availableSources = [],
   selectedSources = [],
   parallaxDirection = -1,
   parallaxMultiplier = 1,
 } = {}) {
-  const preparedSources = Array.isArray(availableSources) ? availableSources.filter(Boolean) : [];
-  const nextSources = Array.isArray(selectedSources) ? selectedSources.filter(Boolean) : [];
-  const segmentMap = new Map(
-    Array.from(layerNode.children).map((segmentNode) => [segmentNode.dataset.overlayImageSrc, segmentNode]),
-  );
+  const nextSources = toSourceList(selectedSources);
+  const segmentMap = createSegmentMap(layerNode);
   const previousVisibleCount = Array.from(segmentMap.values()).filter(
     (segmentNode) => segmentNode.dataset.isVisible === "1",
   ).length;
 
-  preparedSources.forEach((imageSrc) => {
-    getOrCreateSegment(layerNode, segmentMap, imageSrc);
-    preloadImage(imageSrc);
-  });
+  prepareSegments(layerNode, segmentMap, toSourceList(availableSources));
 
   const nextSourceSet = new Set(nextSources);
 
   segmentMap.forEach((segmentNode, imageSrc) => {
     if (nextSourceSet.has(imageSrc)) return;
 
-    const clipPath = segmentNode.dataset.isVisible === "1"
-      ? getCollapsedCurrentClip(segmentNode)
-      : HIDDEN_CLIP;
-
-    animateSegmentClip(segmentNode, clipPath, {
-      isVisible: false,
-      parallaxDirection,
-      parallaxMultiplier,
-    });
+    hideSegment(segmentNode, {parallaxDirection, parallaxMultiplier});
   });
 
   nextSources.forEach((imageSrc, index) => {
     const segmentNode = getOrCreateSegment(layerNode, segmentMap, imageSrc);
-    const targetClip = getSliceClip(index, nextSources.length);
     const {start} = getVisibleRange(index, nextSources.length);
     const wasVisible = segmentNode.dataset.isVisible === "1";
 
@@ -466,7 +286,7 @@ function animateLayerSegments(layerNode, {
       });
     }
 
-    revealSegmentWhenReady(segmentNode, targetClip, {
+    revealSegmentWhenReady(segmentNode, getSliceClip(index, nextSources.length), {
       start,
       withParallax: shouldAnimateParallax({
         nextVisibleCount: nextSources.length,
@@ -486,44 +306,37 @@ function animateSingleLayerImage(layerNode, {
   availableSources = [],
   selectedSources = [],
 } = {}) {
-  const preparedSources = Array.isArray(availableSources) ? availableSources.filter(Boolean) : [];
-  const nextImageSrc = selectedSources.find(Boolean) ?? preparedSources[0] ?? null;
-  const segmentMap = new Map(
-    Array.from(layerNode.children).map((segmentNode) => [segmentNode.dataset.overlayImageSrc, segmentNode]),
-  );
+  const preparedSources = toSourceList(availableSources);
+  const nextImageSrc = toSourceList(selectedSources)[0] ?? preparedSources[0] ?? null;
+  const segmentMap = createSegmentMap(layerNode);
 
-  preparedSources.forEach((imageSrc) => {
-    getOrCreateSegment(layerNode, segmentMap, imageSrc);
-    preloadImage(imageSrc);
-  });
+  prepareSegments(layerNode, segmentMap, preparedSources);
 
   segmentMap.forEach((segmentNode, imageSrc) => {
     if (imageSrc === nextImageSrc) return;
 
-    const clipPath = segmentNode.dataset.isVisible === "1"
-      ? getCollapsedCurrentClip(segmentNode)
-      : HIDDEN_CLIP;
-
-    animateSegmentClip(segmentNode, clipPath, {
-      isVisible: false,
-    });
+    hideSegment(segmentNode);
   });
 
-  if (!nextImageSrc) {
-    return;
-  }
+  if (!nextImageSrc) return;
 
   const segmentNode = getOrCreateSegment(layerNode, segmentMap, nextImageSrc);
-  const wasVisible = segmentNode.dataset.isVisible === "1";
 
-  if (!wasVisible) {
-    gsap.set(segmentNode, {
-      clipPath: HIDDEN_CLIP,
-    });
+  if (segmentNode.dataset.isVisible !== "1") {
+    gsap.set(segmentNode, {clipPath: HIDDEN_CLIP});
   }
 
-  revealSegmentWhenReady(segmentNode, getSliceClip(0, 1), {
-    start: 0,
+  revealSegmentWhenReady(segmentNode, getSliceClip(0, 1), {start: 0});
+}
+
+function animateLayer(layerNode, layer) {
+  const animate = layer.animation === "single"
+    ? animateSingleLayerImage
+    : animateLayerSegments;
+
+  animate(layerNode, {
+    availableSources: layer.availableSources,
+    selectedSources: layer.selectedSources,
   });
 }
 
@@ -532,7 +345,9 @@ export function animateFormImageOverlay(overlayNode, {layers = []} = {}) {
 
   const normalizedLayers = Array.isArray(layers) ? layers : [];
   const layerMap = new Map(
-    Array.from(overlayNode.children).map((layerNode) => [layerNode.dataset.overlaySectionId, layerNode]),
+    Array.from(overlayNode.children).map(
+      (layerNode) => [layerNode.dataset.overlaySectionId, layerNode],
+    ),
   );
   const visibleLayerIds = new Set(normalizedLayers.map((layer) => layer.sectionId));
 
@@ -542,35 +357,17 @@ export function animateFormImageOverlay(overlayNode, {layers = []} = {}) {
     layerNode.dataset.overlayAnimation = layer.animation ?? "segments";
     layerNode.style.zIndex = String(index + 1);
     animateLayerVisibility(layerNode, true);
-    if (layer.animation === "single") {
-      animateSingleLayerImage(layerNode, {
-        availableSources: layer.availableSources,
-        selectedSources: layer.selectedSources,
-      });
-      return;
-    }
-
-    animateLayerSegments(layerNode, {
-      availableSources: layer.availableSources,
-      selectedSources: layer.selectedSources,
-    });
+    animateLayer(layerNode, layer);
   });
 
   layerMap.forEach((layerNode, sectionId) => {
     if (visibleLayerIds.has(sectionId)) return;
 
-    if (layerNode.dataset.overlayAnimation === "single") {
-      animateSingleLayerImage(layerNode, {
-        availableSources: [],
-        selectedSources: [],
-      });
-    } else {
-      animateLayerSegments(layerNode, {
-        availableSources: [],
-        selectedSources: [],
-      });
-    }
-
+    animateLayer(layerNode, {
+      animation: layerNode.dataset.overlayAnimation,
+      availableSources: [],
+      selectedSources: [],
+    });
     animateLayerVisibility(layerNode, false);
   });
 }
@@ -578,7 +375,6 @@ export function animateFormImageOverlay(overlayNode, {layers = []} = {}) {
 export function destroyFormImageOverlay(overlayNode) {
   if (!overlayNode) return;
 
-  const animatedNodes = [overlayNode, ...overlayNode.querySelectorAll("*")];
-  gsap.killTweensOf(animatedNodes);
+  gsap.killTweensOf([overlayNode, ...overlayNode.querySelectorAll("*")]);
   overlayNode.replaceChildren();
 }
