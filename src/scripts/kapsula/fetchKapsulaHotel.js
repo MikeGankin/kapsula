@@ -375,18 +375,22 @@ function normalizeHotelsResponse(
             ),
         );
 
+    // Сопоставляем строго по id: фолбэк по индексу подставлял в карточку
+    // произвольный отель из ответа с чужим названием и фотографией.
     return configuredHotels.map(
-        (
-            configuredHotel,
-            index,
-        ) => {
+        (configuredHotel) => {
             const responseHotel =
                 responseHotelsById.get(
                     String(
                         configuredHotel.id,
                     ),
-                ) ??
-                responseHotels[index];
+                ) ?? null;
+
+            if (!responseHotel) {
+                console.warn(
+                    `Kapsula hotel ${configuredHotel.id} is missing in the search response`,
+                );
+            }
 
             return normalizeHotel(
                 responseHotel,
