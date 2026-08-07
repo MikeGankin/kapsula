@@ -9,6 +9,7 @@ const POPUP_ID = "coral-popup-kapsula";
 const POPUP_FIELD_ERRORS = {
   name: "Введите имя",
   phone: "Введите номер телефона",
+  contactMethod: "Выберите способ связи",
 };
 
 const popupContactSchema = z.object({
@@ -22,7 +23,9 @@ const popupContactSchema = z.object({
       error: "Введите номер телефона",
     })
   ),
-  contactMethod: z.enum(["call", "max", "telegram", "whatsapp"]),
+  contactMethod: z.enum(["call", "max", "telegram", "whatsapp"], {
+    error: "Выберите способ связи",
+  }),
 });
 
 function openPopup(popupNode) {
@@ -110,12 +113,19 @@ function getPopupFieldErrorNode(popupFormNode, fieldName) {
   return popupFormNode.querySelector(`[data-field-error="${fieldName}"]`);
 }
 
+function getPopupFieldWrapper(popupFormNode, fieldNode) {
+  if (fieldNode instanceof HTMLInputElement) {
+    return fieldNode.closest(".kapsula-popup-form__field");
+  }
+
+  // Радиогруппа возвращается как RadioNodeList, поэтому берём общий fieldset.
+  return popupFormNode.querySelector(".kapsula-popup-form__contact-method");
+}
+
 function setPopupFieldError(popupFormNode, fieldName, message = "") {
   const fieldNode = popupFormNode.elements.namedItem(fieldName);
   const errorNode = getPopupFieldErrorNode(popupFormNode, fieldName);
-  const fieldWrapper = fieldNode instanceof HTMLInputElement
-    ? fieldNode.closest(".kapsula-popup-form__field")
-    : null;
+  const fieldWrapper = getPopupFieldWrapper(popupFormNode, fieldNode);
 
   if (fieldWrapper instanceof HTMLElement) {
     if (message) {
@@ -360,11 +370,20 @@ export function bindFormPopup(formExperience, hero) {
     }
   };
 
+  const handlePopupFieldChange = (event) => {
+    if (!(event.target instanceof HTMLInputElement)) return;
+
+    if (event.target.name in POPUP_FIELD_ERRORS) {
+      setPopupFieldError(popupFormNode, event.target.name);
+    }
+  };
+
   const handleHome = () => {
     window.location.assign(window.location.pathname);
   };
 
   popupFormNode.addEventListener("input", handleInput);
+  popupFormNode.addEventListener("change", handlePopupFieldChange);
   popupFormNode.addEventListener("submit", handleSubmit);
   homeButtonNode?.addEventListener("click", handleHome);
   hero?.addEventListener("change", handleFormChange);
@@ -373,6 +392,7 @@ export function bindFormPopup(formExperience, hero) {
     buttonObserver.disconnect();
     boundSubmitButton?.removeEventListener("click", handleOpenPopup);
     popupFormNode.removeEventListener("input", handleInput);
+    popupFormNode.removeEventListener("change", handlePopupFieldChange);
     popupFormNode.removeEventListener("submit", handleSubmit);
     homeButtonNode?.removeEventListener("click", handleHome);
     hero?.removeEventListener("change", handleFormChange);

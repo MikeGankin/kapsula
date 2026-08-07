@@ -472,6 +472,14 @@
   border-color: var(--kapsula-error);
 }
 
+.kapsula-popup-form__contact-method[data-invalid="true"] .kapsula-popup-form__contact-method-control {
+  border-color: var(--kapsula-error);
+}
+
+.kapsula-popup-form__contact-method .kapsula-popup-form__error {
+  margin-top: 8px;
+}
+
 .kapsula-popup-form__error {
   min-height: 12px;
   color: var(--kapsula-error);
