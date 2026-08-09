@@ -226,16 +226,42 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     });
   }));
 
+  const persistFormValues = () => {
+    const {capsuleId, values} = state$.value;
+    const capsule = getCapsule(capsuleMap, capsuleId);
+
+    saveFormValues(capsuleId, getPersistedOptionValues(capsule, values));
+  };
+
   subscriptions.add(state$.pipe(
     map((state) => ({capsuleId: state.capsuleId, values: state.values})),
     distinctUntilChanged((previous, current) => (
       previous.capsuleId === current.capsuleId && previous.values === current.values
     )),
     debounceTime(150),
-  ).subscribe(({capsuleId, values}) => {
-    const capsule = getCapsule(capsuleMap, capsuleId);
-    saveFormValues(capsuleId, getPersistedOptionValues(capsule, values));
-  }));
+  ).subscribe(persistFormValues));
+
+  // Debounce в 150 мс теряет последние правки, если пользователь уходит
+  // со страницы сразу после изменения. Дописываем актуальное состояние
+  // синхронно: pagehide покрывает закрытие и переход, visibilitychange —
+  // сворачивание вкладки на мобильных, где pagehide может не сработать.
+  const handlePageHide = () => {
+    persistFormValues();
+  };
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      persistFormValues();
+    }
+  };
+
+  window.addEventListener("pagehide", handlePageHide);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  subscriptions.add(() => {
+    window.removeEventListener("pagehide", handlePageHide);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+  });
 
   subscriptions.add(fromEvent(formNode, "click").subscribe((event) => {
     if (!(event.target instanceof Element)) return;
