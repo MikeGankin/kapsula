@@ -253,6 +253,51 @@
 Прочее: каскады `if` заменены таблицами (формы ответа API, раскладки клипов), продублированный `fetch`
 сведён к `postJson`, ветки скрытия/подготовки сегментов — к `hideSegment`/`prepareSegments`/`animateLayer`.
 
+### Этап 4 — жизненный цикл и надёжность ✅ завершён
+
+| Шаг | Баг | Что сделано |
+|-----|-----|-------------|
+| 4.1 диагностика | P1 №16 | `logger.js` (`logWarning` — только в dev или при `kapsula.debug=1`, `logError` — всегда). `getScreenNodes` вместо молчаливого `null` печатает список отсутствующих узлов с селекторами. `console.*` в `kapsula.js`, `setupScreenFlow.js`, `bindFormPopup.js` переведены на logger. |
+| 4.2 точки Embla | P1 №17 | `bindEmblaDots` возвращает unbind со снятием `off("select")`/`off("reInit")`; подключён в `setupScreenFlow` и `bindFormPopup`. |
+| 4.3 cleanup-контракт | P1 №10 | `setupScreenFlow` возвращает функцию на **всех** ветках (`NOOP_CLEANUP`). Важно: при отсутствии узлов `transitionBound` больше не выставляется — повторный монтаж может сработать. |
+| 4.4 глобалы хедера | P1 №12 | `setupHeaderUi`/`cleanupHeaderUi` + модульные `isHeaderUiBound`/`originalHeaderIconsPosition` заменены фабрикой `createHeaderUi()` с внутренним состоянием. Позиция иконок хранится маркером `<span data-kapsula-icons-anchor>` в DOM хоста вместо ссылки на `parent` — переживает ре-рендер React. |
+| 4.5 flush персиста | P1 №18 | `persistFormValues` вынесен отдельно и вызывается на `pagehide` и `visibilitychange` (при `hidden`) синхронно, минуя `debounceTime(150)`. Слушатели снимаются через `subscriptions.add`. |
+
+**Проверка в браузере** (Playwright CLI, `npm run test:serve`):
+переходы hero → steps → styles → form отрабатывают, форма рендерит 8 секций;
+выбор опции и немедленный `visibilitychange` пишет значение в sessionStorage
+(`{"countries":["Таиланд"]}`) без ожидания debounce; 5 последовательных `reInit`
+карусели не плодят точки (3 → 3). В консоли остались только артефакты
+локального окружения (CORS на шрифт с `b2ccdn.coral.ru`).
+
+**Побочно:** заведён тестовый стенд `tests/` (`host.html` + `serve.mjs`, скрипт `npm run test:serve`)
+и правила в `.clinerules/playwright.md`. Стенд отдаёт блок по пути `/elite-service/constructor/`
+и подкладывает заглушку `CoralRouteBus` — без этого точка входа не активируется.
+Грабли: `String.replace` со строкой замены трактует `$&`/`` $` ``/`$'`, из-за чего минифицированный
+бандл искажался и падал с `SyntaxError` — замена выполняется только функцией.
+
+### Этап 5 — рендер формы ✅ завершён
+
+| Шаг | Баг | Что сделано |
+|-----|-----|-------------|
+| 5.1 порядок опций | P1 №8 | `syncOptionsNode` вместо безусловного `append` (всегда перемещение узла) вставляет через `insertBefore` только там, где порядок разошёлся с нужным: `optionsNode.children[index] !== optionNode`. |
+| 5.2 summary vs ошибка | P1 №13 | Ошибка вынесена в отдельный узел `[data-kapsula-section-error]` со своей строкой грида (`grid-row: 3`) и `role="alert"`. `renderFormValidationErrors` больше не трогает summary, `ensureSectionSummary` — не сбрасывает `is-invalid`. Класс `.is-invalid` у summary упразднён. |
+| 5.3 анимация секций | — | `animateFormSections` пропускает секции, у которых не изменились ни `expanded`, ни значение: раньше по каждой прогонялся `gsap.set` по пяти узлам на каждом рендере. |
+| 5.4 версия схемы | P1 №15 | Ключи значений и активной секции переехали на `kapsula.v2.*` (`SESSION_SCHEMA_VERSION` в `constants.js`). Старые ключи читаются один раз для миграции. `buildInitialValues` дополнительно отсеивает опции, которых больше нет в конфиге — раньше удалённая из `formConfig.json` опция оставалась в состоянии и попадала в summary и в лид. |
+
+**Проверка в браузере** (Playwright CLI): 26 узлов опций переживают клик без пересоздания
+и с сохранением порядка (`preserved: 26, orderKept: true`); при показе ошибок валидации summary
+первой секции («Таиланд») остаётся на месте — раньше затирался; заполнение проблемной секции
+скрывает её ошибку, не трогая соседние; в sessionStorage только `kapsula.v2.formValues.asian`.
+Вёрстка проверена скриншотом на 1440×900: summary и сообщение об ошибке занимают разные строки
+и не накладываются.
+
+**Замечание по ходу:** `createNode` принимает `hidden` только внутри `attributes` — переданный
+на верхнем уровне флаг молча игнорировался, узлы ошибок создавались видимыми. Поймано прогоном
+в браузере (`allHidden: false`), исправлено.
+
 ### Следующий шаг
-Этап 4 — жизненный цикл и надёжность (cleanup-контракт, глобалы `setupHeaderUi`, `syncEmblaDots`,
-flush персиста, диагностика). Самый большой оставшийся файл — `renderForm.js` (436 строк), он в Этапе 5.
+Этап 6 (опциональный) — типы и качество: `src/types/kapsula.d.ts` с доменными моделями,
+точечный `// @ts-check`, zod-схема самого `formConfig` с валидацией в dev.
+Из P1 остаются незакрытыми №11 (`restoreScreen` минует `getMotionOffset`), №14 (`preventDefault`
+на карточке стиля ломает открытие в новой вкладке) и №19 (видео под формой при `?screen=form`).
