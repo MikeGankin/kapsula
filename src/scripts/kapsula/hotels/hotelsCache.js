@@ -1,3 +1,5 @@
+import {logWarning} from "../logger.js";
+
 const CACHE_PREFIX = "kapsula:hotels:v5:";
 
 // Подписанные redirect-URL живут недолго, поэтому кеш обязан протухать,
@@ -39,7 +41,7 @@ export function readCachedHotels(configuredHotels) {
 
     return orderedHotels.every(Boolean) ? orderedHotels : null;
   } catch (error) {
-    console.warn("Failed to read Kapsula hotels cache", error);
+    logWarning("не удалось прочитать кеш отелей", error);
 
     return null;
   }
@@ -52,6 +54,6 @@ export function cacheHotels(configuredHotels, hotels) {
       JSON.stringify({savedAt: Date.now(), hotels}),
     );
   } catch (error) {
-    console.warn("Failed to cache Kapsula hotels", error);
+    logWarning("не удалось записать кеш отелей", error);
   }
 }

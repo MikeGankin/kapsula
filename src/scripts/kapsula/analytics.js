@@ -1,4 +1,5 @@
 import {METRIKA_COUNTER_ID} from "./constants.js";
+import {logWarning} from "./logger.js";
 
 /**
  * Тонкая обёртка над Яндекс.Метрикой: счётчик задаётся в одном месте,
@@ -17,6 +18,6 @@ export function reachGoal(goal, params) {
 
     window.ym(METRIKA_COUNTER_ID, "reachGoal", goal);
   } catch (error) {
-    console.warn("Kapsula analytics goal failed", goal, error);
+    logWarning(`цель «${goal}» не отправлена`, error);
   }
 }

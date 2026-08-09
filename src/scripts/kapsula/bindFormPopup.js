@@ -3,6 +3,7 @@ import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 import {createPopupHotelsLoader} from "./createPopupHotelsLoader.js";
 import {getFormSubmitEndpoint} from "./formSchema.js";
+import {logDebug, logError} from "./logger.js";
 import {sendKapsulaPopupForm} from "./sendKapsulaPopupForm.js";
 import {
   clearPopupFieldErrors,
@@ -57,7 +58,7 @@ export function bindFormPopup(formExperience, hero) {
     align: "start",
     containScroll: "trimSnaps",
   });
-  bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
+  const unbindPopupDots = bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
     label: "Перейти к карточке",
   });
 
@@ -165,14 +166,20 @@ export function bindFormPopup(formExperience, hero) {
       contact: validationResult.data,
     });
 
+    // Тело запроса ровно в том виде, в каком уходит менеджеру на почту.
+    logDebug("payload заявки (уходит на почту)", payload);
+
     try {
       isSubmitting = true;
       setPopupSubmitPending(popupFormNode, true);
-      await sendKapsulaPopupForm(payload, getFormSubmitEndpoint());
+      const submitResponse = await sendKapsulaPopupForm(payload, getFormSubmitEndpoint());
+
+      logDebug("ответ на отправку заявки", submitResponse);
+
       setPopupState(popupNode, "success");
       reachGoal("capsule_pop_up_final_show");
     } catch (error) {
-      console.error("Failed to submit kapsula popup form", error);
+      logError("отправка формы попапа не удалась", error);
       setPopupSubmitError(popupFormNode, SUBMIT_ERROR_MESSAGE);
     } finally {
       isSubmitting = false;
@@ -199,6 +206,7 @@ export function bindFormPopup(formExperience, hero) {
     hero?.removeEventListener("click", handleHeroClick);
     hero?.removeEventListener("change", handleHeroChange);
     popupHotelsLoader.destroy();
+    unbindPopupDots();
     destroyEmblaCarousel(popupCardsNode);
     delete popupNode.dataset.popupBound;
   };
