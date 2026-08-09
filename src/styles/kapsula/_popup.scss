@@ -194,6 +194,22 @@
   display: none;
 }
 
+/*
+ * Заглушка на случай, если фото отеля не пришло в ответе или не загрузилось.
+ * Статичный градиент в тех же токенах, что и скелетон, но без анимации —
+ * это конечное состояние карточки, а не индикатор загрузки.
+ */
+.kapsula-popup-card[data-hotel-image="fallback"] {
+  background:
+    linear-gradient(
+      135deg,
+      var(--kapsula-dark-01) 0%,
+      var(--kapsula-dark-007) 50%,
+      var(--kapsula-dark-01) 100%
+    ),
+    var(--kapsula-surface-muted);
+}
+
 .kapsula-popup__hotels-error {
   margin: 0;
   color: var(--kapsula-dark-056);

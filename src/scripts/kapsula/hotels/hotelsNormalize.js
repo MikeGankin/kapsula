@@ -1,3 +1,5 @@
+import {logWarning} from "../logger.js";
+
 const RESPONSE_HOTELS_PATHS = [
   (data) => (Array.isArray(data) ? data : null),
   (data) => data?.result?.products,
@@ -31,19 +33,43 @@ function getHotelId(product) {
   );
 }
 
-function getHotelImageUrl(hotel) {
-  const imageSize = hotel?.images?.[0]?.sizes?.[0];
+/**
+ * Основной путь к фото — `hotel.images[0].sizes[0].url` (формат PriceSearchList).
+ * Остальные варианты оставлены как запасные: структура ответа исторически
+ * отличается между окружениями. Среди `sizes` берём самый крупный вариант,
+ * если у размеров указана ширина, — карточка растягивается на всю ширину.
+ */
+function getSizeUrl(size) {
+  if (typeof size === "string") return size;
 
-  if (typeof imageSize === "string") {
-    return imageSize;
+  return size?.url ?? size?.src ?? "";
+}
+
+function getLargestSizeUrl(sizes) {
+  if (!Array.isArray(sizes) || sizes.length === 0) return "";
+
+  const withWidth = sizes.filter((size) => typeof size?.width === "number");
+
+  if (withWidth.length > 0) {
+    const largest = withWidth.reduce(
+      (best, size) => (size.width > best.width ? size : best),
+    );
+
+    return getSizeUrl(largest);
   }
 
+  return getSizeUrl(sizes[0]);
+}
+
+function getHotelImageUrl(hotel) {
+  const fromImages = getLargestSizeUrl(hotel?.images?.[0]?.sizes);
+
   return String(
-    imageSize?.url
-    ?? imageSize?.src
-    ?? hotel?.imageUrl
-    ?? hotel?.image?.url
-    ?? "",
+    fromImages
+    || getSizeUrl(hotel?.images?.[0])
+    || hotel?.imageUrl
+    || hotel?.image?.url
+    || "",
   );
 }
 
@@ -79,8 +105,8 @@ export function normalizeHotelsResponse(responseData, configuredHotels) {
     const responseHotel = responseHotelsById.get(String(configuredHotel.id)) ?? null;
 
     if (!responseHotel) {
-      console.warn(
-        `Kapsula hotel ${configuredHotel.id} is missing in the search response`,
+      logWarning(
+        `отель ${configuredHotel.id} отсутствует в ответе поиска`,
       );
     }
 

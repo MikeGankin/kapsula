@@ -1,5 +1,6 @@
 import {fetchKapsulaHotels} from "./hotels/fetchKapsulaHotels.js";
 import {getConfiguredHotelsByCountries} from "./kapsulaHotelsConfig.js";
+import {logWarning} from "./logger.js";
 
 function createSkeletonNode(hotel) {
   const skeletonNode = document.createElement("article");
@@ -31,14 +32,22 @@ function createHotelCard(templateNode, hotel) {
   if (!(cardNode instanceof HTMLElement)) return null;
 
   cardNode.dataset.kapsulaHotelId = hotel.id;
-  cardNode.href = hotel.url
+  cardNode.href = hotel.url;
 
   if (imageNode instanceof HTMLImageElement) {
     if (hotel.imageUrl) {
       imageNode.src = hotel.imageUrl;
       imageNode.alt = hotel.name;
+
+      // Ссылка на фото может быть битой или отдать 404 уже после рендера —
+      // тогда убираем картинку и оставляем фоновую заглушку карточки.
+      imageNode.addEventListener("error", () => {
+        imageNode.remove();
+        cardNode.dataset.hotelImage = "fallback";
+      }, {once: true});
     } else {
       imageNode.remove();
+      cardNode.dataset.hotelImage = "fallback";
     }
   }
 
@@ -95,7 +104,7 @@ export function createPopupHotelsLoader({
     syncCarousel();
 
     if (configuredHotels.length === 0) {
-      console.warn("Kapsula hotels request skipped: no configured hotels", {countries});
+      logWarning("запрос отелей пропущен: для стран нет конфигурации", {countries});
       cardsNode.setAttribute("aria-busy", "false");
       showError(true);
       return Promise.resolve([]);
@@ -110,8 +119,8 @@ export function createPopupHotelsLoader({
       const linkedHotels = hotels.filter(hasHotelLink);
 
       if (linkedHotels.length !== hotels.length) {
-        console.warn(
-          "Kapsula hotels without link are skipped",
+        logWarning(
+          "отели без ссылки не показаны",
           hotels.filter((hotel) => !hasHotelLink(hotel)).map(({id}) => id),
         );
       }
@@ -134,7 +143,7 @@ export function createPopupHotelsLoader({
       cardsNode.replaceChildren();
       cardsNode.setAttribute("aria-busy", "false");
       showError(true);
-      console.warn("Failed to load Kapsula hotels", error);
+      logWarning("не удалось загрузить отели", error);
       syncCarousel();
       return [];
     });
