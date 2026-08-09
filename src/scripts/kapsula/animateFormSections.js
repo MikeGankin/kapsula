@@ -121,16 +121,22 @@ export function animateFormSections(
 
     if (!sectionId) return;
 
-    const nodes = getSectionState(sectionNode);
     const isExpanded = Boolean(expandedState[sectionId]);
     const wasExpanded = Boolean(previousExpandedState[sectionId]);
     const valueChanged = !areSectionValuesEqual(values[sectionId], previousValues[sectionId]);
 
+    // Секция, у которой не изменились ни раскрытость, ни значение, не требует
+    // никаких действий: раньше по ней всё равно прогонялся gsap.set по пяти
+    // узлам на каждом рендере формы.
+    if (isExpanded === wasExpanded && !valueChanged) {
+      return;
+    }
+
+    const nodes = getSectionState(sectionNode);
+
     if (isExpanded === wasExpanded) {
       setSectionState(nodes, isExpanded);
-      if (valueChanged) {
-        animateSummaryReveal(nodes.summary);
-      }
+      animateSummaryReveal(nodes.summary);
       return;
     }
 

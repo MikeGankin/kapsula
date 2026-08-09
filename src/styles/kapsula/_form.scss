@@ -62,7 +62,7 @@
   min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   column-gap: 16px;
   row-gap: 4px;
   align-items: center;
@@ -125,8 +125,25 @@
   display: none;
 }
 
-.kapsula-form-section__summary.is-invalid {
+/*
+ * Ошибка живёт в отдельном узле и занимает свою строку грида,
+ * поэтому больше не конфликтует с summary: раньше они делили один элемент
+ * и затирали друг друга при ре-рендере.
+ */
+.kapsula-form-section__error {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: block;
+  min-width: 0;
   color: var(--kapsula-error);
+  font-size: 14px;
+  line-height: var(--kapsula-line-height-title);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.kapsula-form-section__error[hidden] {
+  display: none;
 }
 
 .kapsula-form-section__chevron {

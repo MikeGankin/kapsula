@@ -126,6 +126,44 @@ function createSectionSummary(summaryValue) {
   });
 }
 
+/**
+ * Отдельный узел под сообщение об ошибке.
+ *
+ * Раньше ошибка и summary делили один элемент: ре-рендер стирал ошибку,
+ * а исправление ошибки не возвращало summary до следующего изменения значений.
+ */
+function createSectionError() {
+  return createNode("span", {
+    className: "kapsula-form-section__error",
+    dataset: {kapsulaSectionError: ""},
+    attributes: {role: "alert", hidden: true},
+  });
+}
+
+function setSectionError(sectionNode, message = "") {
+  const metaNode = sectionNode?.querySelector("[data-kapsula-section-meta]");
+  if (!metaNode) return;
+
+  let errorNode = metaNode.querySelector("[data-kapsula-section-error]");
+
+  if (!message) {
+    errorNode?.setAttribute("hidden", "");
+    if (errorNode) errorNode.textContent = "";
+    return;
+  }
+
+  if (!errorNode) {
+    errorNode = createSectionError();
+    metaNode.append(errorNode);
+  }
+
+  if (errorNode.textContent !== message) {
+    errorNode.textContent = message;
+  }
+
+  errorNode.removeAttribute("hidden");
+}
+
 function createChevronNode() {
   const pathNode = document.createElementNS(SVG_NAMESPACE, "path");
   pathNode.setAttribute("d", "M12.4258 6.59961L6.42578 0.599609L0.42578 6.59961");
@@ -247,7 +285,11 @@ function createSectionNode(section, currentValue, values, isExpanded, index) {
       createNode("span", {
         className: "kapsula-form-section__meta",
         dataset: {kapsulaSectionMeta: ""},
-        children: [createSectionSummary(summaryValue), createChevronNode()],
+        children: [
+          createSectionSummary(summaryValue),
+          createChevronNode(),
+          createSectionError(),
+        ],
       }),
     ],
   });
@@ -296,9 +338,6 @@ function ensureSectionSummary(sectionNode, section, currentValue, values) {
     return;
   }
 
-  summaryNode.classList.remove("is-invalid");
-  summaryNode.removeAttribute("role");
-
   if (summaryNode.textContent !== summaryValue) {
     summaryNode.textContent = summaryValue;
   }
@@ -313,26 +352,15 @@ export function renderFormValidationErrors(formNode, schema, issues = []) {
 
   schema.sections.forEach((section) => {
     const sectionNode = formNode.querySelector(`[data-kapsula-rendered-section="${section.id}"]`);
-    const metaNode = sectionNode?.querySelector("[data-kapsula-section-meta]");
-    let summaryNode = metaNode?.querySelector("[data-kapsula-section-summary]");
 
-    if (!invalidSectionIds.has(section.id)) {
-      if (summaryNode?.classList.contains("is-invalid")) {
-        summaryNode.remove();
-      }
-      return;
-    }
+    if (!sectionNode) return;
 
-    if (!summaryNode && metaNode) {
-      summaryNode = createSectionSummary(" ");
-      metaNode.prepend(summaryNode);
-    }
-
-    if (!summaryNode) return;
-
-    summaryNode.textContent = `Заполните раздел «${section.title}» — без него мы не сможем сформировать капсулу.`;
-    summaryNode.classList.add("is-invalid");
-    summaryNode.setAttribute("role", "alert");
+    setSectionError(
+      sectionNode,
+      invalidSectionIds.has(section.id)
+        ? `Заполните раздел «${section.title}» — без него мы не сможем сформировать капсулу.`
+        : "",
+    );
   });
 }
 
@@ -355,13 +383,20 @@ function syncOptionsNode(optionsNode, section, currentValue, values) {
       .map((node) => [node.dataset.optionValue, node]),
   );
 
-  getVisibleOptions(section, values).forEach((option) => {
+  // `append` существующего узла — это всегда перемещение в DOM: лишний reflow,
+  // потеря фокуса и сброс CSS-переходов. Поэтому вставляем узел только там,
+  // где порядок действительно разошёлся с нужным.
+  getVisibleOptions(section, values).forEach((option, index) => {
     const selected = isSelected(section, currentValue, option.value);
     const optionNode = existingOptions.get(option.value)
       ?? createOptionNode(section, option, selected);
 
     syncOptionNode(optionNode, section, option, selected);
-    optionsNode.append(optionNode);
+
+    if (optionsNode.children[index] !== optionNode) {
+      optionsNode.insertBefore(optionNode, optionsNode.children[index] ?? null);
+    }
+
     existingOptions.delete(option.value);
   });
 
