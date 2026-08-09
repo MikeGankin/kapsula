@@ -34,6 +34,25 @@ export function getCapsule(capsuleMap, capsuleId) {
   return capsule;
 }
 
+/**
+ * Отбрасывает значения, которых больше нет в конфиге.
+ *
+ * Секции отсеиваются самим `reduce` (ключи берутся из схемы), а вот опции
+ * раньше проходили как есть: сохранённая в сессии опция, удалённая из
+ * `formConfig.json`, оставалась в состоянии и попадала в summary и в лид.
+ */
+function keepKnownOptionValues(section, savedValue) {
+  const knownValues = new Set((section.options ?? []).map((option) => option.value));
+
+  if (section.multiple) {
+    return Array.isArray(savedValue)
+      ? savedValue.filter((value) => knownValues.has(value))
+      : [];
+  }
+
+  return knownValues.has(savedValue) ? savedValue : "";
+}
+
 export function buildInitialValues(sections, currentValues = {}) {
   return sections.reduce((accumulator, section) => {
     if (section.type === "textarea") {
@@ -41,7 +60,12 @@ export function buildInitialValues(sections, currentValues = {}) {
       return accumulator;
     }
 
-    accumulator[section.id] = currentValues[section.id] ?? (section.multiple ? [] : "");
+    const savedValue = currentValues[section.id];
+
+    accumulator[section.id] = savedValue === undefined
+      ? (section.multiple ? [] : "")
+      : keepKnownOptionValues(section, savedValue);
+
     return accumulator;
   }, {});
 }

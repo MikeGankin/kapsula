@@ -19,12 +19,22 @@ export const HEADER_SELECTORS = {
 export const KAPSULA_ROOT_SELECTOR = "[data-kapsula-hero]";
 export const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 
+/**
+ * Версия схемы сохранённого состояния.
+ *
+ * Ключи без версии остались от прежнего формата: значения оттуда применялись
+ * к изменившемуся конфигу, из-за чего в форму попадали секции и опции,
+ * которых в ней больше нет. Поднимайте версию при любом несовместимом
+ * изменении структуры `formConfig.json`.
+ */
+export const SESSION_SCHEMA_VERSION = "v2";
+
 export const SESSION_STORAGE_KEYS = {
   screen: "kapsula.currentScreen",
   capsule: "kapsula.selectedCapsule",
   legacyFormValues: "kapsula.formValues",
-  formValuesPrefix: "kapsula.formValues",
-  activeSectionPrefix: "kapsula.activeSection",
+  formValuesPrefix: `kapsula.${SESSION_SCHEMA_VERSION}.formValues`,
+  activeSectionPrefix: `kapsula.${SESSION_SCHEMA_VERSION}.activeSection`,
 };
 
 export const URL_SEARCH_KEYS = {

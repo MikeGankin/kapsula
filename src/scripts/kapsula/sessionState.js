@@ -100,6 +100,25 @@ export function saveActiveSection(capsuleId, sectionId) {
   writeSessionValue(`${SESSION_STORAGE_KEYS.activeSectionPrefix}.${capsuleId}`, sectionId);
 }
 
+/**
+ * Значения от предыдущей версии схемы: и «плоский» ключ `kapsula.formValues`
+ * с картой всех капсул, и разбитый по капсулам `kapsula.formValues.<id>`.
+ * Читаем их один раз, чтобы пользователь не потерял заполненную форму,
+ * но не сохраняем обратно — дальше живёт только актуальная версия.
+ */
+function readLegacyFormValues(capsuleId) {
+  const legacyCapsuleKey = `${SESSION_STORAGE_KEYS.legacyFormValues}.${capsuleId}`;
+  const legacyCapsuleValue = readSessionValue(legacyCapsuleKey);
+
+  if (legacyCapsuleValue) {
+    return JSON.parse(legacyCapsuleValue);
+  }
+
+  const rawValue = readSessionValue(SESSION_STORAGE_KEYS.legacyFormValues);
+
+  return rawValue ? JSON.parse(rawValue)?.[capsuleId] ?? null : null;
+}
+
 export function readSavedFormValues(capsuleId) {
   if (!capsuleId) {
     return null;
@@ -107,24 +126,16 @@ export function readSavedFormValues(capsuleId) {
 
   try {
     const capsuleStorageKey = `${SESSION_STORAGE_KEYS.formValuesPrefix}.${capsuleId}`;
-    const capsuleValue = window.sessionStorage.getItem(capsuleStorageKey);
+    const capsuleValue = readSessionValue(capsuleStorageKey);
 
     if (capsuleValue) {
       return JSON.parse(capsuleValue);
     }
 
-    const rawValue = window.sessionStorage.getItem(SESSION_STORAGE_KEYS.legacyFormValues);
-
-    if (!rawValue) {
-      return null;
-    }
-
-    const parsedValue = JSON.parse(rawValue);
-
-    const legacyValues = parsedValue?.[capsuleId] ?? null;
+    const legacyValues = readLegacyFormValues(capsuleId);
 
     if (legacyValues) {
-      window.sessionStorage.setItem(capsuleStorageKey, JSON.stringify(legacyValues));
+      writeSessionValue(capsuleStorageKey, JSON.stringify(legacyValues));
     }
 
     return legacyValues;
