@@ -12,8 +12,8 @@ const INJECTED_LOGO_CLASS = "HeaderLogo_container__MHYx4";
 const INJECTED_LOGO_LINK_CLASS = "HeaderLogo_headerLogo__caiMB";
 const CTA_BUTTON_SELECTOR = ".kapsula-button--header";
 const SECONDARY_LOGO_SELECTOR = ".kapsula-header-logo";
-let isHeaderUiBound = false;
-let originalHeaderIconsPosition = null;
+const ICONS_ANCHOR_ATTRIBUTE = "data-kapsula-icons-anchor";
+const ICONS_ANCHOR_SELECTOR = `[${ICONS_ANCHOR_ATTRIBUTE}]`;
 
 function isTargetRouteActive() {
   return document.body?.hasAttribute(ROUTE_ATTRIBUTE) === true;
@@ -73,73 +73,102 @@ function moveHeaderButton(desktopHost) {
   }
 }
 
-function handleDesktopMediaChange() {
-  if (!isTargetRouteActive()) {
+/**
+ * Плейсхолдер на месте иконок хедера.
+ *
+ * Раньше исходная позиция хранилась ссылкой на `parent` + `nextSibling`, но
+ * после ре-рендера React эти узлы отсоединяются (`isConnected === false`),
+ * и иконки навсегда оставались в нашем контейнере. Маркер живёт в DOM хоста
+ * и переживает ре-рендер вместе с ним.
+ */
+function createIconsAnchor() {
+  const anchor = document.createElement("span");
+  anchor.setAttribute(ICONS_ANCHOR_ATTRIBUTE, "");
+  anchor.hidden = true;
+
+  return anchor;
+}
+
+function rememberIconsPosition(headerIcons) {
+  if (document.querySelector(ICONS_ANCHOR_SELECTOR)) {
     return;
   }
 
-  setupHeaderUi();
+  headerIcons.parentElement?.insertBefore(createIconsAnchor(), headerIcons);
 }
 
-export function cleanupHeaderUi() {
-  const desktopMediaQuery = getMediaQuery(DESKTOP_MEDIA_QUERY);
-
-  if (isHeaderUiBound) {
-    desktopMediaQuery?.removeEventListener("change", handleDesktopMediaChange);
-    isHeaderUiBound = false;
-  }
-
-  document.querySelector(SECONDARY_LOGO_SELECTOR)?.remove();
-  document.querySelector(CTA_BUTTON_SELECTOR)?.remove();
-
+function restoreIconsPosition() {
   const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
+  const anchor = document.querySelector(ICONS_ANCHOR_SELECTOR);
 
-  if (headerIcons && originalHeaderIconsPosition?.parent?.isConnected) {
-    const {parent, nextSibling} = originalHeaderIconsPosition;
-    parent.insertBefore(headerIcons, nextSibling?.parentElement === parent ? nextSibling : null);
-  }
-
-  originalHeaderIconsPosition = null;
-}
-
-export function setupHeaderUi() {
-  if (!isTargetRouteActive()) {
+  if (headerIcons && anchor?.isConnected) {
+    anchor.replaceWith(headerIcons);
     return;
   }
 
-  const desktopHost = document.querySelector(DESKTOP_HEADER_SELECTOR);
-  const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
+  anchor?.remove();
+}
+
+export function createHeaderUi() {
   const desktopMediaQuery = getMediaQuery(DESKTOP_MEDIA_QUERY);
-  const isDesktop = isDesktopViewport();
+  let isMediaQueryBound = false;
 
-  if (isDesktop && desktopHost && headerIcons && headerIcons.parentElement !== desktopHost) {
-    originalHeaderIconsPosition ??= {
-      parent: headerIcons.parentElement,
-      nextSibling: headerIcons.nextSibling,
-    };
-    desktopHost.append(headerIcons);
+  const handleDesktopMediaChange = () => {
+    if (!isTargetRouteActive()) {
+      return;
+    }
+
+    setup();
+  };
+
+  function setup() {
+    if (!isTargetRouteActive()) {
+      return;
+    }
+
+    const desktopHost = document.querySelector(DESKTOP_HEADER_SELECTOR);
+    const headerIcons = document.querySelector(HEADER_ICONS_SELECTOR);
+    const isDesktop = isDesktopViewport();
+
+    if (isDesktop && desktopHost && headerIcons && headerIcons.parentElement !== desktopHost) {
+      rememberIconsPosition(headerIcons);
+      desktopHost.append(headerIcons);
+    }
+
+    if (isDesktop && desktopHost && !document.querySelector(SECONDARY_LOGO_SELECTOR)) {
+      const secondaryLogo = createHeaderLogo({
+        containerClassName: INJECTED_LOGO_CLASS,
+        linkClassName: INJECTED_LOGO_LINK_CLASS,
+        image: {
+          width: 168,
+          height: 36,
+          alt: 'logo',
+          src: 'https://b2ccdn.coral.ru/content/new-elite-service-logo.svg',
+          loading: "eager",
+        },
+      });
+
+      desktopHost.prepend(secondaryLogo);
+    }
+
+    moveHeaderButton(desktopHost);
+
+    if (!isMediaQueryBound && desktopMediaQuery) {
+      desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
+      isMediaQueryBound = true;
+    }
   }
 
-  if (isDesktop && desktopHost && !document.querySelector(SECONDARY_LOGO_SELECTOR)) {
-    const secondaryLogo = createHeaderLogo({
-      containerClassName: INJECTED_LOGO_CLASS,
-      linkClassName: INJECTED_LOGO_LINK_CLASS,
-      image: {
-        width: 168,
-        height: 36,
-        alt: 'logo',
-        src: 'https://b2ccdn.coral.ru/content/new-elite-service-logo.svg',
-        loading: "eager",
-      },
-    });
+  function cleanup() {
+    if (isMediaQueryBound) {
+      desktopMediaQuery?.removeEventListener("change", handleDesktopMediaChange);
+      isMediaQueryBound = false;
+    }
 
-    desktopHost.prepend(secondaryLogo);
+    document.querySelector(SECONDARY_LOGO_SELECTOR)?.remove();
+    document.querySelector(CTA_BUTTON_SELECTOR)?.remove();
+    restoreIconsPosition();
   }
 
-  moveHeaderButton(desktopHost);
-
-  if (!isHeaderUiBound && desktopMediaQuery) {
-    desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
-    isHeaderUiBound = true;
-  }
+  return {setup, cleanup};
 }

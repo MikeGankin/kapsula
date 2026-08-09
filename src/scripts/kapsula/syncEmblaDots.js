@@ -43,18 +43,32 @@ export function syncEmblaDots(paginationNode, emblaApi, {
   updateEmblaDotsState(paginationNode, emblaApi);
 }
 
+/**
+ * @returns {() => void} отписка от событий Embla. Обязательна к вызову:
+ * без неё повторный `bindEmblaDots` (после `setCapsule`/`reInit`) копит
+ * подписки, и на каждое переключение слайда отрабатывает N обработчиков.
+ */
 export function bindEmblaDots(paginationNode, emblaApi, options = {}) {
   if (!(paginationNode instanceof HTMLElement) || !emblaApi) {
-    return;
+    return () => {};
   }
 
   syncEmblaDots(paginationNode, emblaApi, options);
 
-  emblaApi.on("select", () => {
+  const handleSelect = () => {
     updateEmblaDotsState(paginationNode, emblaApi);
-  });
+  };
 
-  emblaApi.on("reInit", () => {
+  const handleReInit = () => {
     syncEmblaDots(paginationNode, emblaApi, options);
-  });
+  };
+
+  emblaApi.on("select", handleSelect);
+  emblaApi.on("reInit", handleReInit);
+
+  return () => {
+    emblaApi.off("select", handleSelect);
+    emblaApi.off("reInit", handleReInit);
+    paginationNode.replaceChildren();
+  };
 }

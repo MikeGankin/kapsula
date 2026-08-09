@@ -4,6 +4,7 @@ import {bindScreenActions} from "./bindScreenActions.js";
 import {bindFormPopup} from "./bindFormPopup.js";
 import {buildCapsuleHref} from "./buildCapsuleHref.js";
 import {createReactiveForm} from "./createReactiveForm.js";
+import {logError, logWarning} from "./logger.js";
 import {getScreenNodes} from "./screenNodes.js";
 import {buildScreenRegistry} from "./screenRegistry.js";
 import {readCurrentScreen, readSelectedCapsule} from "./sessionState.js";
@@ -12,6 +13,9 @@ import {setupBackgroundVideo} from "./setupBackgroundVideo.js";
 import {restoreScreen} from "./screenTransition.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
+
+/** Контракт: любой выход из `setupScreenFlow` возвращает функцию-cleanup. */
+const NOOP_CLEANUP = () => {};
 
 const SCREEN_SHOW_GOALS = {
   hero: "capsule_1_screen_show",
@@ -35,15 +39,22 @@ export function setupScreenFlow(rootNode = document) {
     ? rootNode
     : rootNode?.querySelector?.(KAPSULA_ANIMATION.heroReveal.selectors.hero) ?? document.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.hero);
 
-  if (!hero || hero.dataset.transitionBound === "1") {
-    return;
+  if (!hero) {
+    logWarning("экранный флоу не запущен: корневой узел hero не найден");
+    return NOOP_CLEANUP;
+  }
+
+  if (hero.dataset.transitionBound === "1") {
+    return NOOP_CLEANUP;
   }
 
   const {initial, timeline: timelineConfig} = KAPSULA_ANIMATION.screenTransition;
   const screenNodes = getScreenNodes(hero);
 
   if (!screenNodes) {
-    return;
+    // Причину уже объяснил getScreenNodes — здесь только выходим,
+    // не выставляя transitionBound, чтобы повторный монтаж мог сработать.
+    return NOOP_CLEANUP;
   }
 
   hero.dataset.transitionBound = "1";
@@ -82,13 +93,14 @@ export function setupScreenFlow(rootNode = document) {
         initialCapsuleId: readSelectedCapsule(),
       });
     } catch (error) {
-      console.error("Kapsula form init failed", error);
+      logError("инициализация формы не удалась", error);
     }
   }
 
   bindStyleCardLinks(screenNodes.styleCardButtons);
   let stylesCarousel = null;
   let stylesGridNode = null;
+  let unbindStylesDots = NOOP_CLEANUP;
 
   try {
     stylesGridNode = hero.querySelector(".kapsula-styles__grid");
@@ -98,11 +110,11 @@ export function setupScreenFlow(rootNode = document) {
       align: "start",
       containScroll: "trimSnaps",
     });
-    bindEmblaDots(stylesPaginationNode, stylesCarousel, {
+    unbindStylesDots = bindEmblaDots(stylesPaginationNode, stylesCarousel, {
       label: "Перейти к стилю",
     });
   } catch (error) {
-    console.error("Kapsula styles carousel init failed", error);
+    logError("инициализация карусели стилей не удалась", error);
   }
 
   const refreshStylesCarousel = () => {
@@ -162,6 +174,7 @@ export function setupScreenFlow(rootNode = document) {
     unbindFormPopup?.();
     cleanupBackgroundVideo?.();
     formExperience.destroy?.();
+    unbindStylesDots();
     destroyEmblaCarousel(stylesGridNode);
     delete hero.dataset.transitionBound;
   };

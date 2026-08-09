@@ -1,19 +1,43 @@
 import {KAPSULA_ANIMATION} from "./animationConfig.js";
+import {logWarning} from "./logger.js";
 
-function hasRequiredNodes(nodes) {
-  return Boolean(
-    nodes.heroScreen &&
-      nodes.stepsScreen &&
-      nodes.stylesScreen &&
-      nodes.stepsTitle &&
-      nodes.stepsCards.length &&
-      nodes.stepsNote &&
-      nodes.stepsButton &&
-      nodes.stylesTitle &&
-      nodes.styleCards.length &&
-      nodes.styleCardButtons.length &&
-      nodes.startButton,
-  );
+/**
+ * Узлы, без которых экранный флоу не имеет смысла.
+ * Значение — ключ в `selectors`, нужен для внятной диагностики.
+ */
+const REQUIRED_NODE_SELECTOR_KEYS = {
+  heroScreen: "heroScreen",
+  stepsScreen: "stepsScreen",
+  stylesScreen: "stylesScreen",
+  stepsTitle: "stepsTitle",
+  stepsCards: "stepsCards",
+  stepsNote: "stepsNote",
+  stepsButton: "stepsButton",
+  stylesTitle: "stylesTitle",
+  styleCards: "styleCards",
+  styleCardButtons: "styleCardButtons",
+  startButton: "startButton",
+};
+
+function isNodeMissing(value) {
+  if (value instanceof NodeList) {
+    return value.length === 0;
+  }
+
+  return !value;
+}
+
+function getMissingNodes(nodes, selectors) {
+  return Object.keys(REQUIRED_NODE_SELECTOR_KEYS)
+    .filter((nodeKey) => isNodeMissing(nodes[nodeKey]))
+    .map((nodeKey) => {
+      const selectorKey = REQUIRED_NODE_SELECTOR_KEYS[nodeKey];
+      const selector = selectorKey === "startButton"
+        ? KAPSULA_ANIMATION.heroReveal.selectors.startButton
+        : selectors[selectorKey];
+
+      return `${nodeKey} (${selector})`;
+    });
 }
 
 export function getScreenNodes(hero) {
@@ -37,5 +61,15 @@ export function getScreenNodes(hero) {
     startButton: hero.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.startButton),
   };
 
-  return hasRequiredNodes(nodes) ? nodes : null;
+  const missingNodes = getMissingNodes(nodes, selectors);
+
+  if (missingNodes.length > 0) {
+    logWarning(
+      `экранный флоу не запущен, в разметке нет обязательных узлов:\n  ${missingNodes.join("\n  ")}`,
+    );
+
+    return null;
+  }
+
+  return nodes;
 }

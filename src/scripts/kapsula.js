@@ -2,7 +2,8 @@ import {defer, filter, from, merge, of, Subscription, switchMap} from "rxjs";
 import {hostReactAppReady, reactDomObserver} from "../utils/utils.js";
 import {animateHero} from "./kapsula/animateHero.js";
 import {HEADER_SELECTORS, KAPSULA_ROOT_SELECTOR, ROUTE_ATTRIBUTE} from "./kapsula/constants.js";
-import {cleanupHeaderUi, setupHeaderUi} from "./kapsula/setupHeaderUi.js";
+import {logError} from "./kapsula/logger.js";
+import {createHeaderUi} from "./kapsula/setupHeaderUi.js";
 import {setupScreenFlow} from "./kapsula/setupScreenFlow.js";
 
 const DESKTOP_HEADER_HOST_SELECTOR = HEADER_SELECTORS.desktopHost;
@@ -29,19 +30,20 @@ export default function kapsula() {
   const lifecycle = new Subscription();
   const domWatcher = reactDomObserver();
   const rootCleanups = new Map();
+  const headerUi = createHeaderUi();
   let headerSubscription = null;
   let isHeaderRouteActive = false;
 
   const disableHeaderUi = () => {
     headerSubscription?.unsubscribe();
     headerSubscription = null;
-    cleanupHeaderUi();
+    headerUi.cleanup();
     document.body?.removeAttribute(ROUTE_ATTRIBUTE);
   };
 
   const enableHeaderUi = () => {
     document.body?.setAttribute(ROUTE_ATTRIBUTE, "");
-    setupHeaderUi();
+    headerUi.setup();
 
     if (headerSubscription) {
       return;
@@ -53,8 +55,8 @@ export default function kapsula() {
     ).pipe(
       filter((event) => event.type === "initialize" || event.type === "add"),
     ).subscribe({
-      next: () => setupHeaderUi(),
-      error: (error) => console.error("Kapsula header observer failed", error),
+      next: () => headerUi.setup(),
+      error: (error) => logError("наблюдатель за хедером упал", error),
     });
   };
 
@@ -97,12 +99,12 @@ export default function kapsula() {
     ) {
       lifecycle.add(routeSubscription);
     } else if (!hasRouteBus) {
-      console.error("Kapsula header route bus is unavailable");
+      logError("шина маршрутов CoralRouteBus недоступна");
     }
 
     lifecycle.add(disableHeaderUi);
   } catch (error) {
-    console.error("Kapsula header init failed", error);
+    logError("инициализация хедера не удалась", error);
   }
 
   const rootEvents$ = createHostReady$().pipe(
@@ -131,10 +133,10 @@ export default function kapsula() {
           destroyScreenFlow?.();
         });
       } catch (error) {
-        console.error("Kapsula root init failed", error);
+        logError("инициализация корневого узла не удалась", error);
       }
     },
-    error: (error) => console.error("Kapsula root observer failed", error),
+    error: (error) => logError("наблюдатель за корневым узлом упал", error),
   }));
 
   lifecycle.add(() => {
