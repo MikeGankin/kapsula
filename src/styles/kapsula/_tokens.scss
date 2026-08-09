@@ -125,6 +125,10 @@
     --kapsula-font-size-title: 32px;
   }
 
+  @media (min-width: 1250px) {
+    --kapsula-header-height: 64px;
+  }
+
   @include media.desktop-content {
     --kapsula-font-size-popup-card-title: 16px;
     --kapsula-line-height-popup-card-title: 1.08;

@@ -4,7 +4,11 @@
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding-block: 16px !important;
+
+  @include media.mobile-only {
+    padding: 16px !important;
+  }
 }
 
 .kapsula-screen[aria-hidden="true"] {
