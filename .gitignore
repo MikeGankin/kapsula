@@ -13,6 +13,9 @@ dist
 dist-ssr
 *.local
 
+# Отчёт покрытия vitest (npm test -- --coverage)
+coverage
+
 # Playwright CLI: рабочие артефакты сессий (снапшоты, логи, скриншоты)
 .playwright-cli
 .playwright
