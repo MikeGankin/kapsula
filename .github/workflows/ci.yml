@@ -1,0 +1,37 @@
+# Проверки, которые не запускаются автоматически, деградируют за пару недель:
+# правила формально включены, а main всё равно не проходит их.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Vite 8 и concurrently 10 требуют Node >= 22.
+          node-version: 22
+          cache: npm
+
+      # `npm ci` вместо `npm install`: ставит ровно то, что записано
+      # в package-lock.json, поэтому CI не расходится с локальной машиной.
+      - run: npm ci
+
+      # Индексы блоков генерируются скриптами и не лежат в репозитории,
+      # без них падает резолв импортов в src/main.js.
+      - run: npm run gen:all
+
+      - run: npm run lint
+
+      - run: npm test
+
+      # Сборка — единственная проверка сборочных скриптов из src/lib:
+      # юнит-тестами они не покрыты, а ломаются при мажорных обновлениях vite.
+      - run: npm run build
