@@ -35,7 +35,7 @@ export function bindScreenActions(
   const {
     heroScreen,
   } = screenNodes;
-  const initial = KAPSULA_ANIMATION.screenTransition.initial;
+  const {initial} = KAPSULA_ANIMATION.screenTransition;
   let activeTimeline = null;
   let pendingCapsuleId = null;
 
@@ -150,7 +150,6 @@ export function bindScreenActions(
       
       transitionToScreen("styles", "form");
     }
-
   };
 
   hero.addEventListener("click", handleClick);

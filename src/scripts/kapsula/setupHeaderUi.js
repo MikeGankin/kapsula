@@ -113,13 +113,16 @@ export function createHeaderUi() {
   const desktopMediaQuery = getMediaQuery(DESKTOP_MEDIA_QUERY);
   let isMediaQueryBound = false;
 
-  const handleDesktopMediaChange = () => {
+  // Объявлена до `setup` через function declaration: обработчик и `setup`
+  // ссылаются друг на друга, и hoisting здесь — единственный способ обойтись
+  // без прокси-переменной.
+  function handleDesktopMediaChange() {
     if (!isTargetRouteActive()) {
       return;
     }
 
     setup();
-  };
+  }
 
   function setup() {
     if (!isTargetRouteActive()) {

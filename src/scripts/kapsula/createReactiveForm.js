@@ -62,7 +62,9 @@ function getSelectedSectionOverlayImages(section, values) {
 }
 
 function getExpandedSectionId(capsule, expandedState) {
-  return capsule.sections.find((section) => expandedState[section.id])?.id ?? capsule.sections[0]?.id ?? null;
+  const expandedSection = capsule.sections.find((section) => expandedState[section.id]);
+
+  return expandedSection?.id ?? capsule.sections[0]?.id ?? null;
 }
 
 function getFormSnapshot(capsuleMap, capsuleId, values) {
@@ -268,7 +270,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     const sectionTrigger = event.target.closest("[data-kapsula-section-trigger]");
 
     if (sectionTrigger) {
-      const sectionId = sectionTrigger.dataset.sectionId;
+      const {sectionId} = sectionTrigger.dataset;
       updateState((state) => {
         if (!sectionId || !(sectionId in state.expandedState)) {
           return state;
@@ -288,7 +290,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
           expandedState,
         };
       });
-      return;
+      
     }
   }));
 
@@ -297,7 +299,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     const choiceInput = event.target.closest("[data-kapsula-choice]");
 
     if (choiceInput) {
-      const sectionId = choiceInput.dataset.sectionId;
+      const {sectionId} = choiceInput.dataset;
       const optionValue = choiceInput.value;
       updateState((state) => {
         const capsule = getCapsule(capsuleMap, state.capsuleId);
@@ -326,7 +328,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
 
     if (!textarea) return;
 
-    const sectionId = textarea.dataset.sectionId;
+    const {sectionId} = textarea.dataset;
     updateState((state) => ({
       ...state,
       values: {...state.values, [sectionId]: textarea.value},

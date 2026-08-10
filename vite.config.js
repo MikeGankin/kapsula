@@ -5,8 +5,10 @@ function publicAssetsReloadPlugin() {
   return {
     name: "public-assets-reload",
     handleHotUpdate({file, server}) {
+      // Пустой массив — сигнал Vite «модулей для HMR нет, я всё сделал сам»;
+      // undefined же означает «обработай штатно» и оставил бы двойной reload.
       if (!file.includes("/public/")) {
-        return;
+        return undefined;
       }
 
       server.ws.send({

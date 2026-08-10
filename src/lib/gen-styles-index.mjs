@@ -22,7 +22,8 @@ function generate() {
     else if (existsFile(cssFile)) imports.push(`import './${key}.css';`);
   }
 
-  const content = imports.length ? imports.join("\n") + "\n" : "\n";
+  const content = imports.length ? `${imports.join("\n")}\n` : "\n";
+
   writeIfChanged(OUT_FILE, content, "[gen-styles] updated");
 }
 

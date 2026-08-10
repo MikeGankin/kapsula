@@ -119,9 +119,7 @@ function rewriteHtmlImages(html) {
   });
 
   // img/srcset + source/srcset
-  out = out.replace(/\bsrcset=(['"])([\s\S]*?)\1/gi, (m, q, v) => {
-    return `srcset=${q}${rewriteSrcset(v)}${q}`;
-  });
+  out = out.replace(/\bsrcset=(['"])([\s\S]*?)\1/gi, (m, q, v) => `srcset=${q}${rewriteSrcset(v)}${q}`);
 
   // video poster
   out = out.replace(/\bposter=(['"])([^'"]+)\1/gi, (m, q, v) => {
@@ -168,7 +166,8 @@ for (const file of files) {
 
   if (next !== prev) {
     fs.writeFileSync(file, next);
-    changed++;
+    changed += 1;
+
     console.log(`[rewrite-images] updated: ${path.relative(ROOT, file)}`);
   } else {
     console.log(`[rewrite-images] unchanged: ${path.relative(ROOT, file)}`);

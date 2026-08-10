@@ -75,9 +75,12 @@ export function buildInitialValues(sections, currentValues = {}) {
     }
 
     const savedValue = currentValues[section.id];
+    // Пустое значение зависит от типа секции: множественный выбор хранит массив,
+    // одиночный — строку. Сброс не того типа ломает сравнения в условиях формы.
+    const emptyValue = section.multiple ? [] : "";
 
     accumulator[section.id] = savedValue === undefined
-      ? (section.multiple ? [] : "")
+      ? emptyValue
       : keepKnownOptionValues(section, savedValue);
 
     return accumulator;

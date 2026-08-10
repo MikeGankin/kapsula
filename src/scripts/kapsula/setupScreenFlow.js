@@ -35,9 +35,10 @@ function bindStyleCardLinks(styleCardButtons) {
 }
 
 export function setupScreenFlow(rootNode = document) {
-  const hero = rootNode?.matches?.(KAPSULA_ANIMATION.heroReveal.selectors.hero)
+  const heroSelector = KAPSULA_ANIMATION.heroReveal.selectors.hero;
+  const hero = rootNode?.matches?.(heroSelector)
     ? rootNode
-    : rootNode?.querySelector?.(KAPSULA_ANIMATION.heroReveal.selectors.hero) ?? document.querySelector(KAPSULA_ANIMATION.heroReveal.selectors.hero);
+    : rootNode?.querySelector?.(heroSelector) ?? document.querySelector(heroSelector);
 
   if (!hero) {
     logWarning("экранный флоу не запущен: корневой узел hero не найден");

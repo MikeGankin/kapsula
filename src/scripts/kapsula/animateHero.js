@@ -8,7 +8,10 @@ export function animateHero(rootNode = document) {
   const hero = rootNode?.matches?.(selectors.hero)
     ? rootNode
     : rootNode?.querySelector?.(selectors.hero) ?? document.querySelector(selectors.hero);
-  if (!hero || hero.dataset.animated === "1") return;
+  // Возвращаем null, а не undefined: вызывающий код хранит таймлайн
+  // (`const heroTimeline = animateHero(...)`), и «анимации нет» должно быть
+  // явным значением, а не побочным эффектом раннего выхода.
+  if (!hero || hero.dataset.animated === "1") return null;
 
   const content = hero.querySelector(selectors.content);
   const eyebrow = hero.querySelector(selectors.eyebrow);
@@ -17,7 +20,7 @@ export function animateHero(rootNode = document) {
   const startButton = hero.querySelector(selectors.startButton);
   const backdrop = hero.querySelector(selectors.backdrop);
 
-  if (!content || !eyebrow || !title || !subtitle || !startButton || !backdrop) return;
+  if (!content || !eyebrow || !title || !subtitle || !startButton || !backdrop) return null;
 
   hero.dataset.animated = "1";
 

@@ -23,19 +23,21 @@ const OUT_DIR = r("@CMS");
 // ---------- CSS (from styles/<key>.scss|css) ----------
 
 async function bundleCssInline(absCssPath) {
-  const rel = "/" + path.relative(process.cwd(), absCssPath).replaceAll("\\", "/");
+  const rel = `/${path.relative(process.cwd(), absCssPath).replaceAll("\\", "/")}`;
 
   const V_ID = "virtual:cms-css";
-  const R_ID = "\0" + V_ID;
+  const R_ID = `\0${V_ID}`;
 
   const virtualCss = {
     name: "cms-virtual-css",
     enforce: "pre",
+    // `null` — контракт Rollup: «этот хук модуль не обслуживает, спроси следующий».
+    // Неявный undefined тот же смысл не выражает и ломает consistent-return.
     resolveId(id) {
-      if (id === V_ID) return R_ID;
+      return id === V_ID ? R_ID : null;
     },
     load(id) {
-      if (id === R_ID) return `import ${JSON.stringify(rel)};`;
+      return id === R_ID ? `import ${JSON.stringify(rel)};` : null;
     },
   };
 
@@ -45,6 +47,7 @@ async function bundleCssInline(absCssPath) {
     build: {
       write: false,
       minify: "esbuild",
+
       cssCodeSplit: true,
       rollupOptions: {input: V_ID},
     },
@@ -65,31 +68,32 @@ async function bundleCssInline(absCssPath) {
 // ---------- JS (+ CSS extracted from Vue/JS imports) ----------
 
 async function bundleJsInline(absJsPath) {
-  const rel = "/" + path.relative(process.cwd(), absJsPath).replaceAll("\\", "/");
+  const rel = `/${path.relative(process.cwd(), absJsPath).replaceAll("\\", "/")}`;
 
   const V_ID = "virtual:cms-js";
-  const R_ID = "\0" + V_ID;
+  const R_ID = `\0${V_ID}`;
 
   const virtualJs = {
     name: "cms-virtual-js",
     enforce: "pre",
     resolveId(id) {
-      if (id === V_ID) return R_ID;
+      return id === V_ID ? R_ID : null;
     },
     load(id) {
-      if (id === R_ID) {
-        // контракт: scripts/<key>.js экспортирует default init()
-        return `
+      if (id !== R_ID) return null;
+
+      // контракт: scripts/<key>.js экспортирует default init()
+      return `
 import init from ${JSON.stringify(rel)};
 try { if (typeof init === "function") init(); } catch (e) { console.warn(e); }
-        `.trim();
-      }
+      `.trim();
     },
   };
 
   const res = await build({
     logLevel: "silent",
     plugins: [vue(), virtualJs],
+
     build: {
       write: false,
       minify: "esbuild",
@@ -127,15 +131,11 @@ async function buildBlock(key) {
   const cssPathCss = path.join(STYLES_DIR, `${key}.css`);
   const jsPath = path.join(SCRIPTS_DIR, `${key}.js`);
 
-  const html = await processMarkupWithPosthtml(htmlPath);
-
   // приоритет: scss -> css
-  const cssPath = existsFile(cssPathScss)
-    ? cssPathScss
-    : existsFile(cssPathCss)
-      ? cssPathCss
-      : null;
+  const cssCandidates = [cssPathScss, cssPathCss];
+  const cssPath = cssCandidates.find(existsFile) ?? null;
 
+  const html = await processMarkupWithPosthtml(htmlPath);
   const blockCss = cssPath ? await bundleCssInline(cssPath) : "";
 
   let js = "";
@@ -155,7 +155,7 @@ async function buildBlock(key) {
 
   if (js) parts.push(`<script>\n${js}\n</script>`);
 
-  return parts.join("\n\n") + "\n";
+  return `${parts.join("\n\n")}\n`;
 }
 
 // ---------- run ----------
@@ -177,8 +177,7 @@ async function run() {
       continue;
     }
 
-    const outFile = path.join(OUT_DIR, `${key}.html`);
-    fs.writeFileSync(outFile, result);
+    fs.writeFileSync(path.join(OUT_DIR, `${key}.html`), result);
     console.log(`[CMS] wrote @CMS/${key}.html`);
   }
 

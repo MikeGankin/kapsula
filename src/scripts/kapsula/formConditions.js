@@ -19,7 +19,8 @@ function matchesFieldRule(currentValue, rule) {
 }
 
 function matchesRules(rules, values) {
-  return Object.entries(rules).every(([sectionId, rule]) => matchesFieldRule(values[sectionId], rule));
+  return Object.entries(rules)
+    .every(([sectionId, rule]) => matchesFieldRule(values[sectionId], rule));
 }
 
 export function isOptionVisible(option, values = {}) {

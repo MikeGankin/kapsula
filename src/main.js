@@ -1,11 +1,15 @@
-import "./styles"; // index.js из styles (если используешь styles watcher)
-import parts from "./markup";
-import initsMap from "./scripts";
+// Пути с явным `/index.js`: проект на нативном ESM, где расширение обязательно,
+// а безрасширочный импорт каталога чинит только резолвер сборщика.
+import "./styles/index.js"; // подхватывает styles watcher
+import parts from "./markup/index.js";
+import initsMap from "./scripts/index.js";
+
 import {setupLocalCdnAssetRewrite} from "./lib/rewriteAssetsDev.js";
 
 const CONTAINER_ID = "monkey-app";
 const FLAG = "monkeyMounted";
 const CDN_BASE = "http://localhost:3001";
+
 let teardownAssetRewrite = null;
 
 if (import.meta.env.DEV) {
@@ -50,7 +54,11 @@ function mount(container, {force = false} = {}) {
 })();
 
 if (import.meta.hot) {
-  import.meta.hot.accept(["./markup", "./scripts", "./styles"], async ([nextMarkupModule, nextScriptsModule]) => {
+  // Пути обязаны совпадать с импортами выше — иначе Vite примет обновление
+  // другого модуля, и HMR молча перестанет перерисовывать блок.
+  const hotDeps = ["./markup/index.js", "./scripts/index.js", "./styles/index.js"];
+
+  import.meta.hot.accept(hotDeps, ([nextMarkupModule, nextScriptsModule]) => {
     const container = document.getElementById(CONTAINER_ID);
 
     if (!container) {

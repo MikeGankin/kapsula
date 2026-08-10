@@ -62,6 +62,10 @@ export function readCurrentScreen() {
   return RESTORABLE_SCREENS.has(screen) ? screen : null;
 }
 
+export function readSelectedCapsule() {
+  return readUrlValue(URL_SEARCH_KEYS.capsule) ?? readSessionValue(SESSION_STORAGE_KEYS.capsule);
+}
+
 export function saveCurrentScreen(screen) {
   if (!RESTORABLE_SCREENS.has(screen)) return;
 
@@ -70,10 +74,6 @@ export function saveCurrentScreen(screen) {
     screen,
     capsuleId: readSelectedCapsule(),
   });
-}
-
-export function readSelectedCapsule() {
-  return readUrlValue(URL_SEARCH_KEYS.capsule) ?? readSessionValue(SESSION_STORAGE_KEYS.capsule);
 }
 
 export function saveSelectedCapsule(capsuleId) {

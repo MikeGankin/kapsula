@@ -24,7 +24,13 @@ export function buildScreenRegistry(nodes, timelineConfig) {
     },
   };
 
-  if (nodes.formScreen && nodes.formTitle && nodes.formSubtitle && nodes.formAside && nodes.formBody) {
+  const hasFormNodes = nodes.formScreen
+    && nodes.formTitle
+    && nodes.formSubtitle
+    && nodes.formAside
+    && nodes.formBody;
+
+  if (hasFormNodes) {
     registry.form = {
       stepName: "capsule",
       node: nodes.formScreen,

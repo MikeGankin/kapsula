@@ -39,7 +39,7 @@ function readOrder() {
 }
 
 function writeOrder(json) {
-  fs.writeFileSync(ORDER_FILE, JSON.stringify(json, null, 2) + "\n");
+  fs.writeFileSync(ORDER_FILE, `${JSON.stringify(json, null, 2)  }\n`);
 }
 
 function moveIfExists(src, dst) {

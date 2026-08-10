@@ -15,6 +15,9 @@ export default [
       "@CMS/**",
       "dist/**",
       "node_modules/**",
+      // TypeScript-парсер не подключён: .d.ts проходят только пока внутри
+      // одни triple-slash комментарии, любой реальный TS-синтаксис — parsing error.
+      "**/*.d.ts",
       // Индексы блоков генерируются скриптами из src/lib — править их руками нельзя.
       "src/markup/index.js",
       "src/scripts/index.js",
@@ -64,6 +67,26 @@ export default [
         ecmaVersion: "latest",
         sourceType: "module",
       },
+    },
+  },
+
+  {
+    /*
+     * Браузерные глобалы — только клиентскому коду. Глобалы в flat config
+     * мержатся, а не заменяются: объяви их на верхнем уровне — и `window`
+     * с `document` станут «валидными» в сборочных скриптах, где их нет,
+     * а `no-undef` промолчит.
+     */
+    name: "kapsula/browser",
+    files: [
+      "src/main.js",
+      "src/scripts/**/*.js",
+      "src/utils/**/*.js",
+      // Лежит в src/lib рядом со сборочными скриптами, но исполняется в браузере:
+      // переписывает src/srcset на dev-CDN уже в смонтированном DOM.
+      "src/lib/rewriteAssetsDev.js",
+    ],
+    languageOptions: {
       globals: {
         ...globals.browser,
         // Шина маршрутов хост-сайта: объявлена глобально самим coral.ru.
@@ -93,6 +116,12 @@ export default [
       // с его резолвером. Проект на нативном ESM, где расширение обязательно,
       // поэтому требуем обратное: всегда указывать `.js`.
       "import-x/extensions": ["error", "ignorePackages"],
+      // Airbnb включает `noUselessIndex`, и он прямо противоречит правилу выше:
+      // одно требует писать `./scripts/index.js`, другое — сократить до
+      // `./scripts`. Сокращение резолвится только сборщиком, поэтому
+      // побеждает явный путь.
+      "import-x/no-useless-path-segments": ["error", {commonjs: true, noUselessIndex: false}],
+
       // Точка входа блока обязана быть дефолтным экспортом (контракт сборщика),
       // а импортируется под своим именем — это не ошибка переименования.
       "import-x/no-rename-default": "off",
@@ -109,6 +138,12 @@ export default [
       // Консоль отключена намеренно: диагностика идёт через logger.js,
       // который молчит в проде. Прямой console.* — ошибка.
       "no-console": "error",
+
+      // Для переменных и классов правило остаётся: там обращение до объявления —
+      // это TDZ и реальная ошибка. Объявления функций же поднимаются целиком,
+      // и запрет ломает взаимную рекурсию (setup ↔ обработчик события
+      // в setupHeaderUi.js), заставляя городить прокси-переменные.
+      "no-use-before-define": ["error", {functions: false}],
 
       // Airbnb ограничивает длину строки 100 символами; в проекте принято 100
       // с послаблением для URL и длинных селекторов внутри строк.
@@ -135,6 +170,7 @@ export default [
 
   {
     // Скрипты сборки и тестовый стенд живут в Node, а не в браузере.
+    name: "kapsula/node",
     files: ["src/lib/**/*.{js,mjs}", "tests/**/*.{js,mjs}", "*.config.{js,mjs}"],
     languageOptions: {
       globals: globals.node,
@@ -142,13 +178,29 @@ export default [
     rules: {
       // Для CLI-скриптов вывод в консоль — это и есть интерфейс.
       "no-console": "off",
+      // Сборочные скрипты обрабатывают файлы строго последовательно: параллельный
+      // Promise.all по десяткам файлов упирается в лимит дескрипторов и путает
+      // порядок вывода. Здесь последовательный await — намерение, а не недосмотр.
+      "no-await-in-loop": "off",
+      // `__dirname`/`__filename` — имена из Node, а не «приватная» венгерская нотация.
+      "no-underscore-dangle": ["error", {allow: ["__dirname", "__filename"]}],
     },
   },
 
   {
-    files: ["**/*.test.{js,mjs}"],
+    /*
+     * Тесты на vitest: глобальные describe/it/expect включены через
+     * `globals: true` в конфиге vitest, поэтому линтеру их надо объявить —
+     * иначе каждый тест утонет в `no-undef`.
+     */
+    name: "kapsula/tests",
+    files: ["**/*.{test,spec}.{js,mjs}"],
     languageOptions: {
-      globals: globals.node,
+      globals: {
+        ...globals.node,
+        ...globals.vitest,
+      },
     },
   },
 ];
+

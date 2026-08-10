@@ -1,12 +1,17 @@
 export function setupLocalCdnAssetRewrite({
                                                   root, // HTMLElement
                                                   cdnBase = "https://localhost:3001",
+
                                                   enabled = true,
                                                 } = {}) {
-  if (!enabled || !root) return;
+  // Возвращаем no-op, а не undefined: вызывающий код всегда получает teardown
+  // и может звать его без проверок.
+  if (!enabled || !root) return () => {};
 
-  const isAbs = (u) =>
-    /^https?:\/\//i.test(u) || u.startsWith("data:") || u.startsWith("blob:");
+  const isAbs = (u) => /^https?:\/\//i.test(u)
+    || u.startsWith("data:")
+    || u.startsWith("blob:");
+
   const isProtocolRelative = (u) => u.startsWith("//");
   const isRootRel = (u) => u.startsWith("/") && !isProtocolRelative(u);
 
@@ -16,9 +21,7 @@ export function setupLocalCdnAssetRewrite({
     if (!cssText || typeof cssText !== "string" || !cssText.includes("url(")) {
       return cssText;
     }
-    return cssText.replace(/url\((['"]?)(\/[^'")]+)\1\)/g, (m, q, p) => {
-      return `url(${q}${toCdn(p)}${q})`;
-    });
+    return cssText.replace(/url\((['"]?)(\/[^'")]+)\1\)/g, (m, q, p) => `url(${q}${toCdn(p)}${q})`);
   };
 
   const rewriteStyleTag = (el) => {
