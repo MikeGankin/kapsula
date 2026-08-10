@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import {build} from "vite";
-import vue from "@vitejs/plugin-vue";
 
 import {
   cleanDir,
@@ -46,7 +45,9 @@ async function bundleCssInline(absCssPath) {
     plugins: [virtualCss],
     build: {
       write: false,
-      minify: "esbuild",
+      // Vite 8 собирает на rolldown и минифицирует через oxc; esbuild туда
+      // больше не входит и требует отдельной установки.
+      minify: "oxc",
 
       cssCodeSplit: true,
       rollupOptions: {input: V_ID},
@@ -65,7 +66,7 @@ async function bundleCssInline(absCssPath) {
   return cssParts.join("\n");
 }
 
-// ---------- JS (+ CSS extracted from Vue/JS imports) ----------
+// ---------- JS (+ CSS extracted from JS imports) ----------
 
 async function bundleJsInline(absJsPath) {
   const rel = `/${path.relative(process.cwd(), absJsPath).replaceAll("\\", "/")}`;
@@ -92,15 +93,18 @@ try { if (typeof init === "function") init(); } catch (e) { console.warn(e); }
 
   const res = await build({
     logLevel: "silent",
-    plugins: [vue(), virtualJs],
+    plugins: [virtualJs],
 
     build: {
       write: false,
-      minify: "esbuild",
+      minify: "oxc",
       cssCodeSplit: true,
       rollupOptions: {
         input: V_ID,
-        output: {format: "iife", inlineDynamicImports: true},
+        // Формат iife обязателен: блок вставляется в CMS одним инлайновым
+        // <script>, где ESM-синтаксис не выполнится. `inlineDynamicImports`
+        // здесь больше не нужен — при одном входе rolldown и так не делит бандл.
+        output: {format: "iife"},
       },
     },
   });

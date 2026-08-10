@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "rewrite:images": "node src/lib/rewriteAssetsBuild.mjs",
-    "cdn": "node src/lib/cdn-server.mjs",
     "gen:markup": "node src/lib/gen-markup-index.mjs",
     "gen:scripts": "node src/lib/gen-scripts-index.mjs",
     "gen:styles": "node src/lib/gen-styles-index.mjs",
@@ -13,7 +12,7 @@
     "gen:scripts:watch": "node src/lib/gen-scripts-index.mjs --watch",
     "gen:styles:watch": "node src/lib/gen-styles-index.mjs --watch",
     "gen:all": "npm run gen:markup && npm run gen:scripts && npm run gen:styles",
-    "dev": "npm run gen:all && concurrently -n MARKUP,SCRIPTS,STYLES,CDN,VITE -c auto \"npm:gen:markup:watch\" \"npm:gen:scripts:watch\" \"npm:gen:styles:watch\" \"npm:cdn\" \"vite\"",
+    "dev": "npm run gen:all && concurrently -n MARKUP,SCRIPTS,STYLES,VITE -c auto \"npm:gen:markup:watch\" \"npm:gen:scripts:watch\" \"npm:gen:styles:watch\" \"vite\"",
     "check": "node src/lib/check-assets-prefix.mjs",
     "typograf": "node src/lib/typograf-html.mjs",
     "block:add": "node src/lib/block-add.mjs",
@@ -24,32 +23,29 @@
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
     "test:watch": "vitest"
-
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "chokidar": "^5.0.0",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.4",
     "eslint": "^9.39.5",
     "eslint-config-airbnb-extended": "^3.2.0",
-    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-import-x": "^4.17.1",
     "globals": "^17.9.0",
     "posthtml": "^0.16.7",
     "posthtml-include": "^2.0.1",
-    "sass": "^1.97.3",
-    "vite": "^5.2.12",
-    "vite-plugin-monkey": "^4.0.0",
+    "sass": "^1.102.0",
+    "typograf": "^7.7.0",
+    "vite": "^8.2.1",
+    "vite-plugin-monkey": "^8.1.0",
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "^6.0.3",
     "embla-carousel": "^8.6.0",
     "express": "^5.2.1",
     "gsap": "^3.15.0",
     "rxjs": "^7.8.2",
     "selector-observer": "^2.1.6",
-    "typograf": "^7.7.0",
     "zod": "^4.4.3"
   }
 }
