@@ -8,7 +8,15 @@ import {setupLocalCdnAssetRewrite} from "./lib/rewriteAssetsDev.js";
 
 const CONTAINER_ID = "monkey-app";
 const FLAG = "monkeyMounted";
-const CDN_BASE = "http://localhost:3001";
+/*
+ * Ассеты раздаёт сам dev-сервер Vite: он отдаёт `public/` в корне и уже шлёт
+ * `Access-Control-Allow-Origin: *`, поэтому картинки грузятся на чужом домене,
+ * куда Tampermonkey инжектит блок. Отдельный express-CDN на 3001 дублировал
+ * ровно это поведение и был удалён.
+ *
+ * Порт должен совпадать с `server.port` в `vite.config.js`.
+ */
+const CDN_BASE = "http://127.0.0.1:5173";
 
 let teardownAssetRewrite = null;
 
