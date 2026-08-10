@@ -21,12 +21,36 @@
   }
 }
 
+/**
+ * `.kapsula__inner` по умолчанию `position: absolute; inset: 0` — он не тянет
+ * страницу по высоте, из-за чего длинная форма просто обрезалась. Возвращаем
+ * блок в поток, чтобы высоту задавало содержимое и появился обычный скролл
+ * окна: без него залипание было бы не к чему привязать.
+ */
 .kapsula[data-screen="form"] .kapsula__inner {
   @include media.mobile-only {
+    position: relative;
+    inset: auto;
     height: auto;
     min-height: calc(100vh - var(--site-header-mobile-height));
+    min-height: calc(100dvh - var(--site-header-mobile-height));
   }
 }
+
+/**
+ * `overflow: hidden` на `.kapsula` обрезает залипание: sticky-элемент липнет
+ * к границе этого контейнера, а не к вьюпорту, и эффект пропадает.
+ * На экране формы обрезка не нужна — фонового видео и вылезающих за край
+ * декораций тут нет, экран сплошь белый.
+ */
+.kapsula[data-screen="form"] {
+  @include media.mobile-only {
+    overflow: visible;
+    height: auto;
+  }
+}
+
+
 
 .kapsula-form-screen {
   width: 100%;
@@ -61,6 +85,11 @@
 
   @include media.mobile-only {
     height: auto;
+    // Кнопка и картинка теперь живут в одной sticky-обёртке (область `back`).
+    grid-template-areas:
+      "back"
+      "main";
+    grid-template-rows: auto auto;
   }
 
   @include media.desktop {
@@ -71,6 +100,32 @@
     grid-template-rows: auto minmax(0, 1fr);
     align-items: stretch;
     height: 100%;
+  }
+}
+
+/**
+ * На мобильном кнопка «назад» и картинка прилипают к верху, прокручивается
+ * только форма. Обёртка нужна именно как один sticky-элемент: у грид-айтема
+ * залипание ограничено его собственной строкой, поэтому по отдельности кнопка
+ * и картинка «отъезжали» бы вместе со своими ячейками.
+ *
+ * На десктопе обёртка растворяется через `display: contents`, и разметка
+ * снова раскладывается по grid-areas `back` / `media` как раньше.
+ */
+.kapsula-form-screen__sticky {
+  display: contents;
+
+  @include media.mobile-only {
+    grid-area: back;
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    // Отступ от липкой шапки сайта плюс воздух, иначе блок уезжает под неё.
+    top: calc(var(--site-header-mobile-height) + 16px);
+    z-index: var(--kapsula-z-base);
+
+    // Фон обязателен: без него форма просвечивает под залипшим блоком.
+    background: var(--kapsula-white);
   }
 }
 
@@ -108,6 +163,11 @@
   line-height: var(--kapsula-line-height-tight);
   text-align: left;
   cursor: pointer;
+
+  // Внутри sticky-обёртки именованных областей нет — раскладываем потоком.
+  @include media.mobile-only {
+    grid-area: auto;
+  }
 }
 
 .kapsula-form-screen__back-icon {
@@ -158,6 +218,10 @@
   display: grid;
   max-width: none;
   min-height: 0;
+
+  @include media.mobile-only {
+    grid-area: auto;
+  }
 
   @include media.desktop {
     max-width: 560px;

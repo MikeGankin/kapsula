@@ -181,10 +181,10 @@
 
 .kapsula-popup-card--skeleton {
   background: linear-gradient(
-    90deg,
-    var(--kapsula-dark-007) 25%,
-    var(--kapsula-dark-01) 50%,
-    var(--kapsula-dark-007) 75%
+          90deg,
+          var(--kapsula-dark-007) 25%,
+          var(--kapsula-dark-01) 50%,
+          var(--kapsula-dark-007) 75%
   );
   background-size: 200% 100%;
   animation: kapsula-popup-hotel-skeleton 1.2s ease-in-out infinite;
@@ -200,14 +200,13 @@
  * это конечное состояние карточки, а не индикатор загрузки.
  */
 .kapsula-popup-card[data-hotel-image="fallback"] {
-  background:
-    linear-gradient(
-      135deg,
-      var(--kapsula-dark-01) 0%,
-      var(--kapsula-dark-007) 50%,
-      var(--kapsula-dark-01) 100%
-    ),
-    var(--kapsula-surface-muted);
+  background: linear-gradient(
+          135deg,
+          var(--kapsula-dark-01) 0%,
+          var(--kapsula-dark-007) 50%,
+          var(--kapsula-dark-01) 100%
+  ),
+  var(--kapsula-surface-muted);
 }
 
 .kapsula-popup__hotels-error {
@@ -319,10 +318,37 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px 16px;
 
+  /**
+   * Пять способов связи в одну строку не помещаются, поэтому раскладываем их
+   * сеткой 3 + 2: первая строка — Звонок / Max / Telegram, вторая —
+   * WhatsApp / Email. Раньше здесь был flex с переносом, но точка разрыва
+   * зависела от длины подписей и WhatsApp оставался в первой строке.
+   *
+   * Колонки по `max-content`, чтобы подписи не растягивались и вся группа
+   * прижималась влево.
+   */
   @include media.desktop-content {
-    display: flex;
+    grid-template-columns: repeat(3, max-content);
     align-items: center;
-    justify-content: space-between;
+    justify-content: start;
+  }
+}
+
+/**
+ * На мобильном сетка в две колонки, а способов связи пять — последний
+ * («Email») остаётся один в строке. Растягиваем его на всю ширину: иначе он
+ * занимает только левую колонку и выглядит обрубком под четырьмя соседями.
+ *
+ * Выравнивание наследуется от базового правила (`justify-self: center`),
+ * поэтому подпись центрируется по всей строке — так же, как соседи
+ * центрируются каждый в своей колонке.
+ */
+.kapsula-popup-form__contact-method-option:last-child {
+  grid-column: 1 / -1;
+
+  // На десктопе действует раскладка 3 + 2, растягивать ничего не нужно.
+  @include media.desktop-content {
+    grid-column: auto;
   }
 }
 
@@ -492,6 +518,11 @@
   margin-top: 8px;
 }
 
+// Отступ тоже лишний, пока сообщения нет.
+.kapsula-popup-form__contact-method .kapsula-popup-form__error:empty {
+  margin-top: 0;
+}
+
 .kapsula-popup-form__error {
   min-height: 12px;
   color: var(--kapsula-error);
@@ -499,8 +530,25 @@
   line-height: var(--kapsula-line-height-tight);
 }
 
+/**
+ * Пока ошибки нет, элемент не должен занимать место: `min-height` резервировал
+ * полосу под каждым полем и раздвигал сетку формы даже в валидном состоянии.
+ * Текст выставляется через `textContent`, поэтому пустое состояние —
+ * это буквально отсутствие узлов, и `:empty` срабатывает корректно.
+ */
+.kapsula-popup-form__error:empty {
+  min-height: 0;
+}
+
+// Схлопнутый элемент всё ещё участвует в сетке, поэтому снимаем и gap —
+// иначе под полем остаются лишние 4px.
+.kapsula-popup-form__field:has(> .kapsula-popup-form__error:empty) {
+  gap: 0;
+}
+
 .kapsula-popup-form__submit {
   width: 100%;
+  margin-top: 8px;
 }
 
 .kapsula-popup-form__submit-error {

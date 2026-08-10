@@ -1,5 +1,7 @@
 {
   "submitEndpoint": "https://postman.trip-mate.ru/manager-lead-mail",
+  "mailSubject": "Капсула",
+  "mailTo": "vip@coral.ru",
   "capsules": {
     "asian": {
       "title": "Азиатский стиль",

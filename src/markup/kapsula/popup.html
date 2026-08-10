@@ -110,6 +110,12 @@
                             <span class="kapsula-popup-form__contact-method-control" aria-hidden="true"></span>
                             <span>WhatsApp</span>
                         </label>
+                        <label class="kapsula-popup-form__contact-method-option">
+                            <input class="kapsula-popup-form__contact-method-input" type="radio"
+                                   name="contactMethod" value="email" required>
+                            <span class="kapsula-popup-form__contact-method-control" aria-hidden="true"></span>
+                            <span>Email</span>
+                        </label>
                     </div>
                     <span class="kapsula-popup-form__error" data-field-error="contactMethod"
                           aria-live="polite"></span>
@@ -129,6 +135,15 @@
                         <span class="kapsula-popup-form__error" data-field-error="name" aria-live="polite"></span>
                     </label>
 
+                    <!--
+                        Поле контакта рендерится из шаблонов ниже: телефон или
+                        почта в зависимости от выбранного способа связи.
+                        В DOM всегда живёт ровно одно поле.
+                    -->
+                    <div data-kapsula-contact-field></div>
+                </div>
+
+                <template data-kapsula-phone-template>
                     <label class="kapsula-popup-form__field">
                         <span class="sr-only">Номер телефона</span>
                         <span class="kapsula-popup-form__phone">
@@ -145,7 +160,23 @@
                         </span>
                         <span class="kapsula-popup-form__error" data-field-error="phone" aria-live="polite"></span>
                     </label>
-                </div>
+                </template>
+
+                <template data-kapsula-email-template>
+                    <label class="kapsula-popup-form__field">
+                        <span class="sr-only">Электронная почта</span>
+                        <input
+                                class="kapsula-popup-form__input"
+                                type="email"
+                                name="email"
+                                placeholder="Электронная почта"
+                                inputmode="email"
+                                autocomplete="email"
+                                required
+                        >
+                        <span class="kapsula-popup-form__error" data-field-error="email" aria-live="polite"></span>
+                    </label>
+                </template>
 
                 <button class="kapsula-button kapsula-popup-form__submit" type="submit">Получить персональную
                     подборку

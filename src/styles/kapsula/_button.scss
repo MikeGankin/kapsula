@@ -36,10 +36,7 @@ body[data-kapsula-constructor-route] .kapsula-button--header {
   width: 40px;
   height: 40px;
   padding: 0;
-
-  @include media.desktop {
-    margin-left: 16px;
-  }
+  margin-left: auto;
 
   @include media.wide {
     padding-inline: 16px;

@@ -2,7 +2,7 @@ import {reachGoal} from "./analytics.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 import {createPopupHotelsLoader} from "./createPopupHotelsLoader.js";
-import {getFormSubmitEndpoint} from "./formSchema.js";
+import {getFormSubmitEndpoint, getMailSubject, getMailTo} from "./formSchema.js";
 import {logDebug, logError} from "./logger.js";
 import {sendKapsulaPopupForm} from "./sendKapsulaPopupForm.js";
 import {
@@ -10,6 +10,7 @@ import {
   formatPhoneInput,
   POPUP_FIELD_ERRORS,
   setPopupFieldError,
+  renderPopupContactField,
   setPopupSubmitError,
   setPopupSubmitPending,
   validatePopupForm,
@@ -52,6 +53,7 @@ export function bindFormPopup(formExperience, hero) {
 
   popupNode.dataset.popupBound = "1";
   setPopupState(popupNode, "form");
+  renderPopupContactField(popupFormNode);
   clearPopupFieldErrors(popupFormNode);
 
   const popupCardsCarousel = syncEmblaCarousel(popupCardsNode, {
@@ -144,6 +146,11 @@ export function bindFormPopup(formExperience, hero) {
   const handleFieldChange = (event) => {
     if (!(event.target instanceof HTMLInputElement)) return;
 
+    // Смена способа связи перерисовывает поле контакта: телефон или почта.
+    if (event.target.name === "contactMethod") {
+      renderPopupContactField(popupFormNode);
+    }
+
     if (event.target.name in POPUP_FIELD_ERRORS) {
       setPopupFieldError(popupFormNode, event.target.name);
     }
@@ -164,6 +171,8 @@ export function bindFormPopup(formExperience, hero) {
       snapshot: formExperience.getSnapshot(),
       submittedAt: new Date(),
       contact: validationResult.data,
+      subject: getMailSubject(),
+      to: getMailTo(),
     });
 
     // Тело запроса ровно в том виде, в каком уходит менеджеру на почту.

@@ -3,27 +3,50 @@ import * as z from "zod/mini";
 export const POPUP_FIELD_ERRORS = {
   name: "Введите имя",
   phone: "Введите номер телефона",
+  email: "Введите корректный email",
   contactMethod: "Выберите способ связи",
 };
 
 const PHONE_DIGITS_LENGTH = 10;
 
+/**
+ * Способ связи «Email» — единственный, для которого нужна почта вместо
+ * телефона. Значение вынесено в константу: от него зависит и валидация,
+ * и переключение полей в форме.
+ */
+export const EMAIL_CONTACT_METHOD = "email";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function isFilledPhone(value) {
+  return value.replace(/\D/g, "").length === PHONE_DIGITS_LENGTH;
+}
+
+/**
+ * Обязательным является только то поле, которое реально показано пользователю:
+ * требовать телефон, когда на экране поле почты (и наоборот), — значит
+ * блокировать отправку ошибкой, которую негде исправить.
+ */
 const popupContactSchema = z.object({
   name: z.string().check(
     z.trim(),
     z.minLength(2, POPUP_FIELD_ERRORS.name),
   ),
-  phone: z.string().check(
-    z.trim(),
-    z.refine(
-      (value) => value.replace(/\D/g, "").length === PHONE_DIGITS_LENGTH,
-      {error: POPUP_FIELD_ERRORS.phone},
-    ),
-  ),
-  contactMethod: z.enum(["call", "max", "telegram", "whatsapp"], {
+  phone: z.string().check(z.trim()),
+  email: z.string().check(z.trim()),
+  contactMethod: z.enum(["call", "max", "telegram", "whatsapp", EMAIL_CONTACT_METHOD], {
     error: POPUP_FIELD_ERRORS.contactMethod,
   }),
-});
+}).check(
+  z.refine(
+    (data) => data.contactMethod === EMAIL_CONTACT_METHOD || isFilledPhone(data.phone),
+    {error: POPUP_FIELD_ERRORS.phone, path: ["phone"]},
+  ),
+  z.refine(
+    (data) => data.contactMethod !== EMAIL_CONTACT_METHOD || EMAIL_PATTERN.test(data.email),
+    {error: POPUP_FIELD_ERRORS.email, path: ["email"]},
+  ),
+);
 
 export function formatPhoneInput(value) {
   let digits = value.replace(/\D/g, "");
@@ -51,23 +74,65 @@ function getPopupFormPayload(popupFormNode) {
   return {
     name: popupFormNode.elements.namedItem("name")?.value ?? "",
     phone: popupFormNode.elements.namedItem("phone")?.value ?? "",
+    email: popupFormNode.elements.namedItem("email")?.value ?? "",
     contactMethod: popupFormNode.elements.namedItem("contactMethod")?.value ?? "",
   };
 }
 
-function getPopupFieldWrapper(popupFormNode, fieldNode) {
+/**
+ * Рендерит поле контакта под выбранный способ связи: телефон или почту.
+ *
+ * Поле именно пересоздаётся из шаблона, а не прячется стилями — в DOM всегда
+ * живёт ровно одно поле. Значит, ненужный инпут не попадает ни в
+ * `form.elements`, ни в автозаполнение, ни в обход по Tab, и в payload не
+ * может утечь контакт, которого пользователь не вводил.
+ *
+ * Ре-рендер пропускается, если нужное поле уже отрисовано: иначе каждое
+ * событие change стирало бы уже введённый текст.
+ */
+export function renderPopupContactField(popupFormNode) {
+  const containerNode = popupFormNode.querySelector("[data-kapsula-contact-field]");
+
+  if (!(containerNode instanceof HTMLElement)) return;
+
+  const contactMethod = popupFormNode.elements.namedItem("contactMethod")?.value ?? "";
+  const fieldName = contactMethod === EMAIL_CONTACT_METHOD ? "email" : "phone";
+
+  if (containerNode.dataset.field === fieldName) return;
+
+  const templateNode = popupFormNode.querySelector(
+    fieldName === "email"
+      ? "[data-kapsula-email-template]"
+      : "[data-kapsula-phone-template]",
+  );
+
+  if (!(templateNode instanceof HTMLTemplateElement)) return;
+
+  containerNode.replaceChildren(templateNode.content.cloneNode(true));
+  containerNode.dataset.field = fieldName;
+}
+
+
+function getPopupFieldWrapper(popupFormNode, fieldName, fieldNode) {
   if (fieldNode instanceof HTMLInputElement) {
     return fieldNode.closest(".kapsula-popup-form__field");
   }
 
   // Радиогруппа возвращается как RadioNodeList, поэтому берём общий fieldset.
-  return popupFormNode.querySelector(".kapsula-popup-form__contact-method");
+  // Проверка по имени обязательна: поле контакта пересоздаётся, и для
+  // отсутствующего в DOM телефона (или почты) `namedItem` тоже вернёт null —
+  // без неё подсветка ошибки уехала бы на блок способов связи.
+  if (fieldName === "contactMethod") {
+    return popupFormNode.querySelector(".kapsula-popup-form__contact-method");
+  }
+
+  return null;
 }
 
 export function setPopupFieldError(popupFormNode, fieldName, message = "") {
   const fieldNode = popupFormNode.elements.namedItem(fieldName);
   const errorNode = popupFormNode.querySelector(`[data-field-error="${fieldName}"]`);
-  const fieldWrapper = getPopupFieldWrapper(popupFormNode, fieldNode);
+  const fieldWrapper = getPopupFieldWrapper(popupFormNode, fieldName, fieldNode);
 
   if (fieldWrapper instanceof HTMLElement) {
     if (message) {

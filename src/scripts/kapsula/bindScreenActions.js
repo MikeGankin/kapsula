@@ -9,6 +9,21 @@ const METRIKA_STYLE_MAP = {
   island: "island",
 };
 
+/**
+ * У карточки стиля валидный `href` — это полноценная ссылка на экран формы.
+ * Перехватываем только обычный левый клик: при Ctrl/Cmd/Shift/Alt и клике
+ * средней кнопкой браузер должен сам открыть ссылку в новой вкладке или окне.
+ */
+function isPlainLeftClick(event) {
+  return (
+    event.button === 0 &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
+
 export function bindScreenActions(
   {
     formExperience,
@@ -94,9 +109,13 @@ export function bindScreenActions(
     const styleButtonNode = event.target.closest(".kapsula-style-card .kapsula-button");
 
     if (styleButtonNode) {
-      event.preventDefault();
+      if (!isPlainLeftClick(event)) return;
 
+      // preventDefault только после проверки экрана: иначе на «неродном»
+      // экране мы гасим переход по ссылке, ничего не предлагая взамен.
       if (hero.dataset.screen !== "styles") return;
+
+      event.preventDefault();
 
       const capsuleId = styleButtonNode.dataset.kapsulaCapsule;
 

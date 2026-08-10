@@ -32,14 +32,17 @@ export function readCachedHotels(configuredHotels) {
       return null;
     }
 
+    // В кеше лежат только отели, найденные в ответе поиска, — их может быть
+    // меньше, чем в конфиге. Поэтому не требуем полного совпадения состава,
+    // а лишь восстанавливаем порядок из конфигурации.
     const cachedHotelsById = new Map(
       cachedHotels.map((hotel) => [String(hotel.id), hotel]),
     );
-    const orderedHotels = configuredHotels.map(
-      ({id}) => cachedHotelsById.get(String(id)),
-    );
+    const orderedHotels = configuredHotels
+      .map(({id}) => cachedHotelsById.get(String(id)))
+      .filter(Boolean);
 
-    return orderedHotels.every(Boolean) ? orderedHotels : null;
+    return orderedHotels.length > 0 ? orderedHotels : null;
   } catch (error) {
     logWarning("не удалось прочитать кеш отелей", error);
 

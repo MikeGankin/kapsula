@@ -3,11 +3,14 @@ import {fetchHotelRedirectUrl, fetchHotelsSearch} from "./hotelsApi.js";
 import {cacheHotels, readCachedHotels} from "./hotelsCache.js";
 import {normalizeHotelsResponse} from "./hotelsNormalize.js";
 
-async function resolveHotelUrls(configuredHotels, hotels, {signal} = {}) {
+/**
+ * Ссылки запрашиваем ровно для тех отелей, что остались после нормализации:
+ * отсутствующие в ответе поиска отбрасываются, поэтому сопоставление по
+ * индексу исходного конфига дало бы карточкам чужие ссылки.
+ */
+async function resolveHotelUrls(hotels, {signal} = {}) {
   const redirectResults = await Promise.allSettled(
-    configuredHotels.map(
-      (configuredHotel) => fetchHotelRedirectUrl(configuredHotel, {signal}),
-    ),
+    hotels.map((hotel) => fetchHotelRedirectUrl(hotel, {signal})),
   );
 
   return hotels.map((hotel, index) => {
@@ -43,7 +46,7 @@ export async function fetchKapsulaHotels(configuredHotels, {signal} = {}) {
   logDebug("ответ поиска отелей (сырой)", responseData);
 
   const hotels = normalizeHotelsResponse(responseData, configuredHotels);
-  const hotelsWithUrls = await resolveHotelUrls(configuredHotels, hotels, {signal});
+  const hotelsWithUrls = await resolveHotelUrls(hotels, {signal});
 
   // Именно эти объекты уходят в карточки попапа.
   logDebug("отели для карточек попапа (после маппинга и ссылок)", hotelsWithUrls);

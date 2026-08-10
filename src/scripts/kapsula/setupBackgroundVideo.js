@@ -7,23 +7,36 @@ export function setupBackgroundVideo(rootNode) {
 
   const videoSrc = videoNode.dataset.src;
 
-  const handleCanPlay = () => {
-    videoNode.dataset.ready = "true";
+  /**
+   * Единственное место, решающее, должно ли видео играть.
+   * Под формой ролик не нужен (её фон белый), на мобильном источник вообще
+   * не грузится — раньше эти условия были разнесены по обработчикам,
+   * и событие `canplay` могло запустить видео вопреки им.
+   */
+  const shouldPlay = () => (
+    isDesktopViewport() &&
+    rootNode.dataset.screen !== "form" &&
+    videoNode.dataset.ready === "true"
+  );
 
-    if (rootNode.dataset.screen !== "form") {
+  const syncPlayback = () => {
+    if (shouldPlay()) {
       videoNode.play().catch(() => {});
-    }
-  };
-
-  const handleScreenChange = (event) => {
-    if (event.detail?.screenKey === "form") {
-      videoNode.pause();
       return;
     }
 
-    if (videoNode.dataset.ready === "true") {
-      videoNode.play().catch(() => {});
-    }
+    videoNode.pause();
+  };
+
+  const handleCanPlay = () => {
+    videoNode.dataset.ready = "true";
+    syncPlayback();
+  };
+
+  const handleScreenChange = () => {
+    // `dataset.screen` уже обновлён к моменту события — решение принимает
+    // shouldPlay(), чтобы условия не расходились между обработчиками.
+    syncPlayback();
   };
 
   const syncVideo = () => {

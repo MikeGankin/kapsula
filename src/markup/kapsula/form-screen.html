@@ -1,10 +1,30 @@
 <section class="kapsula-screen kapsula-screen--form layout-container-limit center" data-kapsula-screen="form" aria-hidden="true" inert>
     <div class="kapsula-form-screen kapsula-form-screen--offset-top">
         <div class="kapsula-form-screen__layout">
-            <button class="kapsula-form-screen__back" type="button" data-kapsula-back-to-styles>
-                <span class="kapsula-form-screen__back-icon" aria-hidden="true"></span>
-                <span>Выбрать другой стиль</span>
-            </button>
+            <div class="kapsula-form-screen__sticky">
+                <button class="kapsula-form-screen__back" type="button" data-kapsula-back-to-styles>
+                    <span class="kapsula-form-screen__back-icon" aria-hidden="true"></span>
+                    <span>Выбрать другой стиль</span>
+                </button>
+
+                <aside class="kapsula-form-screen__aside">
+                    <div class="kapsula-form-screen__media">
+                        <picture class="kapsula-form-screen__picture">
+                            <source data-kapsula-desktop-source media="(min-width: 993px)" srcset="/asia-base.webp">
+                            <img
+                                    class="kapsula-form-screen__image"
+                                    data-kapsula-form-image
+                                    src="/asia-base-mob.webp"
+                                    alt="Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей"
+                                    width="792"
+                                    height="440"
+                                    loading="lazy"
+                                    decoding="async">
+                        </picture>
+                        <div class="kapsula-form-screen__overlay" data-kapsula-form-overlay-images aria-hidden="true"></div>
+                    </div>
+                </aside>
+            </div>
 
             <div class="kapsula-form-screen__main">
                 <div class="kapsula-copy kapsula-copy--form">
@@ -20,24 +40,6 @@
                     <button class="kapsula-button kapsula-form__trigger" type="button">Сформировать капсулу</button>
                 </div>
             </div>
-
-            <aside class="kapsula-form-screen__aside">
-                <div class="kapsula-form-screen__media">
-                    <picture class="kapsula-form-screen__picture">
-                        <source data-kapsula-desktop-source media="(min-width: 993px)" srcset="/asia-base.webp">
-                        <img
-                                class="kapsula-form-screen__image"
-                                data-kapsula-form-image
-                                src="/asia-base-mob.webp"
-                                alt="Девушка в светлом льняном образе идет по тропической вилле с бамбуковой крышей"
-                                width="792"
-                                height="440"
-                                loading="lazy"
-                                decoding="async">
-                    </picture>
-                    <div class="kapsula-form-screen__overlay" data-kapsula-form-overlay-images aria-hidden="true"></div>
-                </div>
-            </aside>
         </div>
     </div>
 </section>

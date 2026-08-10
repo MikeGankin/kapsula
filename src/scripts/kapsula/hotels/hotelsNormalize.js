@@ -29,8 +29,23 @@ export function getResponseHotels(responseData) {
 
 function getHotelId(product) {
   return String(
-    product?.hotel?.id ?? product?.hotelId ?? product?.id ?? "",
+    product?.hotel?.id
+    ?? product?.hotel?.location?.id
+    ?? product?.hotelId
+    ?? product?.id
+    ?? "",
   );
+}
+
+/**
+ * Идентификатор отеля — это только первый сегмент до дефиса. Всё остальное —
+ * метаданные локации: тип (`-7` — отель) и, иногда, родительское место
+ * (`-875-6`). Поэтому "13708", "13708-7" и "13708-7-875-6" — один и тот же
+ * отель, и сравнивать их нужно по этому сегменту, иначе отель из ответа
+ * не находится и карточка остаётся без фото.
+ */
+function getHotelMatchKey(id) {
+  return String(id ?? "").split("-")[0];
 }
 
 /**
@@ -76,8 +91,10 @@ function getHotelImageUrl(hotel) {
 function normalizeHotel(product, configuredHotel) {
   const hotel = product?.hotel ?? product;
 
+  // id берём из конфигурации в исходном виде ("13708-7-875-6"): по нему
+  // строится кеш сессии (hotelsCache.js) и redirect-запрос за ссылкой.
   return {
-    id: String(hotel?.id ?? product?.hotelId ?? configuredHotel.id),
+    id: String(configuredHotel.id ?? hotel?.id ?? product?.hotelId ?? ""),
     name: String(
       hotel?.name ?? hotel?.hotelName ?? configuredHotel.name ?? "",
     ),
@@ -95,21 +112,29 @@ function normalizeHotel(product, configuredHotel) {
 
 export function normalizeHotelsResponse(responseData, configuredHotels) {
   const responseHotels = getResponseHotels(responseData);
-  const responseHotelsById = new Map(
-    responseHotels.map((product) => [getHotelId(product), product]),
+  const responseHotelsByKey = new Map(
+    responseHotels.map((product) => [getHotelMatchKey(getHotelId(product)), product]),
   );
 
   // Сопоставляем строго по id: фолбэк по индексу подставлял в карточку
   // произвольный отель из ответа с чужим названием и фотографией.
-  return configuredHotels.map((configuredHotel) => {
-    const responseHotel = responseHotelsById.get(String(configuredHotel.id)) ?? null;
+  //
+  // Отели, которых нет в ответе, отбрасываем: без данных сервера у карточки
+  // остаются только название и страна из конфига, без фото и актуальной
+  // локации. Проблема с одним отелем не должна ломать выдачу целиком —
+  // остальные карточки рендерятся как обычно. Если же не осталось ни одной,
+  // попап покажет текстовую заглушку (см. createPopupHotelsLoader).
+  return configuredHotels.flatMap((configuredHotel) => {
+    const responseHotel = responseHotelsByKey.get(
+      getHotelMatchKey(configuredHotel.id),
+    ) ?? null;
 
     if (!responseHotel) {
-      logWarning(
-        `отель ${configuredHotel.id} отсутствует в ответе поиска`,
-      );
+      logWarning(`отель ${configuredHotel.id} отсутствует в ответе поиска`);
+
+      return [];
     }
 
-    return normalizeHotel(responseHotel, configuredHotel);
+    return [normalizeHotel(responseHotel, configuredHotel)];
   });
 }

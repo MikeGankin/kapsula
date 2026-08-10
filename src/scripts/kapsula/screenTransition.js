@@ -73,7 +73,10 @@ export function restoreScreen({
     });
     gsap.set(screen.elements, {
       autoAlpha: isCurrent ? 1 : 0,
-      y: isCurrent ? 0 : initial.y,
+      // Смещение скрытых экранов тоже проходит через getMotionOffset:
+      // при `prefers-reduced-motion` элементы должны стоять на месте,
+      // иначе возврат на такой экран даёт рывок по вертикали.
+      y: isCurrent ? 0 : getMotionOffset(initial.y),
     });
   });
 

@@ -59,8 +59,6 @@ export function setupScreenFlow(rootNode = document) {
 
   hero.dataset.transitionBound = "1";
 
-  const cleanupBackgroundVideo = setupBackgroundVideo(hero);
-
   setupInitialScreenState(screenNodes, initial);
   hero.dataset.screen = "hero";
 
@@ -163,6 +161,11 @@ export function setupScreenFlow(rootNode = document) {
   if (!didRestoreScreen) {
     trackScreenShow("hero");
   }
+
+  // Видео поднимаем только после восстановления экрана: до этого момента
+  // `hero.dataset.screen` ещё равен "hero", и при заходе по `?screen=form`
+  // ролик успевал заиграть под формой, прежде чем его ставили на паузу.
+  const cleanupBackgroundVideo = setupBackgroundVideo(hero);
 
   const unbindFormPopup = canInitForm
     ? bindFormPopup(formExperience, hero)
