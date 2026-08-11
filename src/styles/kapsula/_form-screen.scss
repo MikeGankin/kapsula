@@ -8,7 +8,6 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   align-items: stretch;
-
 }
 
 .kapsula[data-screen="form"] .kapsula-screen--form {
@@ -120,8 +119,14 @@
     display: grid;
     gap: 16px;
     position: sticky;
-    // Отступ от липкой шапки сайта плюс воздух, иначе блок уезжает под неё.
-    top: calc(var(--site-header-mobile-height) + 16px);
+    /*
+     * Липнем вплотную к шапке сайта, а воздух даём внутренним padding-ом.
+     * Раньше `top` включал этот отступ (`высота шапки + 16px`), и между
+     * шапкой и залипшим блоком оставалась прозрачная полоса в 16px —
+     * прокручиваемые секции формы проезжали прямо в ней.
+     */
+    top: var(--site-header-mobile-height);
+    padding-top: 16px;
     z-index: var(--kapsula-z-base);
 
     // Фон обязателен: без него форма просвечивает под залипшим блоком.
