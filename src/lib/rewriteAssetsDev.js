@@ -1,10 +1,9 @@
+// Дефолт для cdnBase — dev-сервер Vite, он же раздаёт public/.
 export function setupLocalCdnAssetRewrite({
-                                                  root, // HTMLElement
-                                                  // Дефолт — dev-сервер Vite, он же раздаёт public/.
-                                                  cdnBase = "http://127.0.0.1:5173",
-
-                                                  enabled = true,
-                                                } = {}) {
+  root, // HTMLElement
+  cdnBase = "http://127.0.0.1:5173",
+  enabled = true,
+} = {}) {
   // Возвращаем no-op, а не undefined: вызывающий код всегда получает teardown
   // и может звать его без проверок.
   if (!enabled || !root) return () => {};
