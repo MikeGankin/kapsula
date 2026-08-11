@@ -1,18 +1,27 @@
 import {getVisibleOptions} from "./formConditions.js";
+import {sanitizeRichText} from "./sanitizeRichText.js";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
+/**
+ * `text` подставляется как есть через `textContent` — это безопасный путь
+ * по умолчанию. `richText` предназначен для строк из `formConfig.json`,
+ * где разрешены `<br>` и HTML-сущности: их разбирает `sanitizeRichText`,
+ * возвращая готовые узлы. `innerHTML` не используется нигде.
+ */
 function createNode(tagName, {
   attributes = {},
   children = [],
   className = "",
   dataset = {},
+  richText,
   text,
 } = {}) {
   const node = document.createElement(tagName);
 
   if (className) node.className = className;
   if (text !== undefined) node.textContent = String(text);
+  if (richText !== undefined) node.append(...sanitizeRichText(richText));
 
   Object.entries(attributes).forEach(([name, value]) => {
     if (value !== null && value !== undefined && value !== false) {
@@ -89,10 +98,12 @@ function createOptionNode(section, option, selected) {
 function createSectionSubtitle(section) {
   if (!section.subtitle) return null;
 
+  // Единственное поле конфига, где контент-менеджеру нужны переносы
+  // и неразрывные пробелы, — остальные тексты идут обычным `text`.
   return createNode("p", {
     className: "kapsula-form-section__subtitle",
     attributes: {id: `kapsula-section-subtitle-${section.id}`},
-    text: section.subtitle,
+    richText: section.subtitle,
   });
 }
 
