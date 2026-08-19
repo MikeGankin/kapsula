@@ -237,7 +237,7 @@
           "type": "textarea",
           "required": false,
           "expanded": false,
-          "placeholder": "Напишите ваши пожелания"
+          "placeholder": "Здесь вы можете указать примерные даты путешествия и рассказать о своих пожеланиях"
         }
       ]
     },
@@ -482,7 +482,7 @@
           "type": "textarea",
           "required": false,
           "expanded": false,
-          "placeholder": "Напишите ваши пожелания"
+          "placeholder": "Здесь вы можете указать примерные даты путешествия и рассказать о своих пожеланиях"
         }
       ]
     },
@@ -777,7 +777,7 @@
           "type": "textarea",
           "required": false,
           "expanded": false,
-          "placeholder": "Напишите ваши пожелания"
+          "placeholder": "Здесь вы можете указать примерные даты путешествия и рассказать о своих пожеланиях"
         }
       ]
     }
