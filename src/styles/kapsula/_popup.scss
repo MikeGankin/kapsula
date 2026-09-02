@@ -369,6 +369,14 @@
   }
 }
 
+[data-kapsula-popup-field][hidden] {
+  display: none;
+}
+
+[data-kapsula-popup-hotels][hidden] {
+  display: none;
+}
+
 .kapsula-popup-form__contact-method-input {
   position: absolute;
   width: 1px;

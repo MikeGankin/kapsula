@@ -1,14 +1,38 @@
 import {getVisibleOptions} from "./formConditions.js";
 import {sanitizeRichText} from "./sanitizeRichText.js";
+import {createCalendarContent} from "./createCalendarContent.js";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
-/**
- * `text` подставляется как есть через `textContent` — это безопасный путь
- * по умолчанию. `richText` предназначен для строк из `formConfig.json`,
- * где разрешены `<br>` и HTML-сущности: их разбирает `sanitizeRichText`,
- * возвращая готовые узлы. `innerHTML` не используется нигде.
- */
+function formatCalendarDate(date) {
+  if (!date) return "";
+
+  const [year, month, day] = date.split("-");
+
+  return `${day}.${month}.${year}`;
+}
+
+function createTextInputContent(section, value = '') {
+  const input = document.createElement('input');
+
+  input.type = 'text';
+  input.value = value || '';
+  input.placeholder = section.placeholder || '';
+
+  input.dataset.field = section.id;
+
+  return input;
+}
+
+
+const SECTION_RENDERERS = {
+  cards: createOptionsContent,
+  textarea: createTextareaContent,
+  text: createTextInputContent,
+  calendar: createCalendarContent,
+};
+
+
 function createNode(tagName, {
   attributes = {},
   children = [],
@@ -119,6 +143,18 @@ function getSelectedOptionLabels(section, currentValue, values) {
 
 function getSectionSummary(section, currentValue, values) {
   if (section.type === "textarea") return "";
+
+  if (section.type === "calendar") {
+    if (!currentValue?.from) {
+      return "";
+    }
+
+    if (!currentValue?.to || currentValue.from === currentValue.to) {
+      return currentValue.from;
+    }
+
+    return `${formatCalendarDate(currentValue.from)} — ${formatCalendarDate(currentValue.to)}`;
+  }
 
   const selectedLabels = getSelectedOptionLabels(section, currentValue, values);
 
@@ -255,7 +291,12 @@ function createOptionsContent(section, currentValue, values) {
   });
 }
 
-function createSectionNode(section, currentValue, values, isExpanded, index) {
+function createSectionNode(section,
+                           currentValue,
+                           values,
+                           isExpanded,
+                           index,
+                           updateState) {
   const triggerId = `kapsula-section-trigger-${section.id}`;
   const panelId = `kapsula-section-panel-${section.id}`;
   const summaryValue = getSectionSummary(section, currentValue, values);
@@ -305,9 +346,19 @@ function createSectionNode(section, currentValue, values, isExpanded, index) {
     ],
   });
 
-  const contentNode = section.type === "textarea"
-    ? createTextareaContent(section, currentValue)
-    : createOptionsContent(section, currentValue, values);
+  const renderer = SECTION_RENDERERS[section.type];
+
+  if (!renderer) {
+    console.warn(`Unknown form type: ${section.type}`);
+    return;
+  }
+
+  const contentNode = renderer(
+    section,
+    currentValue,
+    values,
+    updateState
+  );
 
   const panelNode = createNode("div", {
     className: "kapsula-form-section__panel",
@@ -429,11 +480,20 @@ function syncSectionNode(sectionNode, section, currentValue, values, isExpanded)
     return;
   }
 
+  if (section.type === "calendar") {
+    return;
+  }
+
+
   const optionsNode = sectionNode.querySelector("[data-kapsula-form-options]");
   if (optionsNode) syncOptionsNode(optionsNode, section, currentValue, values);
 }
 
-function renderFormShell(formNode, schema, values, expandedState) {
+function renderFormShell(formNode,
+                         schema,
+                         values,
+                         expandedState,
+                         updateState) {
   const sectionsNode = createNode("div", {
     className: "kapsula-form__sections",
     dataset: {kapsulaFormSections: ""},
@@ -447,6 +507,7 @@ function renderFormShell(formNode, schema, values, expandedState) {
       values,
       Boolean(expandedState[section.id]),
       index,
+      updateState
     ));
   });
 
@@ -454,11 +515,24 @@ function renderFormShell(formNode, schema, values, expandedState) {
   formNode.replaceChildren(sectionsNode);
 }
 
-export function renderForm(formNode, schema, values, expandedState, {forceFull = false} = {}) {
+export function renderForm(formNode,
+                           schema,
+                           values,
+                           expandedState,
+                           {
+                             forceFull = false,
+                             updateState
+                           } = {}) {
   const sectionsNode = formNode.querySelector("[data-kapsula-form-sections]");
 
   if (forceFull || !sectionsNode) {
-    renderFormShell(formNode, schema, values, expandedState);
+    renderFormShell(
+      formNode,
+      schema,
+      values,
+      expandedState,
+      updateState
+    );
     return;
   }
 

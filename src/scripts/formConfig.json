@@ -2,6 +2,23 @@
   "submitEndpoint": "https://postman.trip-mate.ru/manager-lead-mail",
   "mailSubject": "Капсула",
   "mailTo": "vip@coral.ru",
+  "popupFields": {
+    "contactMethod": {
+      "render": true
+    },
+    "name": {
+      "render": true
+    },
+    "phone": {
+      "render": true
+    },
+    "email": {
+      "render": false
+    }
+  },
+  "hotels": {
+    "render": false
+  },
   "capsules": {
     "asian": {
       "title": "Азиатский стиль",
@@ -13,6 +30,7 @@
       "sections": [
         {
           "id": "countries",
+          "render": true,
           "title": "Страны",
           "type": "cards",
           "required": true,
@@ -43,6 +61,7 @@
         },
         {
           "id": "hotel-style",
+          "render": true,
           "title": "Стиль отеля",
           "type": "cards",
           "required": true,
@@ -72,6 +91,7 @@
         },
         {
           "id": "room-type",
+          "render": true,
           "title": "Тип номера",
           "type": "cards",
           "required": true,
@@ -100,7 +120,20 @@
           ]
         },
         {
+          "id": "travelDate",
+          "title": "Желаемые даты поездки",
+          "type": "calendar",
+          "render": true,
+          "required": true,
+          "options": [],
+          "calendar": {
+            "mode": "range",
+            "minDate": "today"
+          }
+        },
+        {
           "id": "flight-class",
+          "render": true,
           "title": "Класс перелета",
           "type": "cards",
           "required": false,
@@ -133,6 +166,7 @@
         },
         {
           "id": "transfer",
+          "render": true,
           "title": "Трансфер",
           "type": "cards",
           "required": false,
@@ -155,6 +189,7 @@
         },
         {
           "id": "gastronomy",
+          "render": true,
           "title": "Гастрономия",
           "type": "cards",
           "required": false,
@@ -197,6 +232,7 @@
         },
         {
           "id": "impressions",
+          "render": true,
           "title": "Впечатления",
           "type": "cards",
           "required": false,
@@ -232,6 +268,7 @@
         },
         {
           "id": "special",
+          "render": true,
           "title": "Особые пожелания",
           "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев,<br> если желаете дополнить её&nbsp;тем, что имеет особое значение для вас.",
           "type": "textarea",
@@ -251,6 +288,7 @@
       "sections": [
         {
           "id": "countries",
+          "render": true,
           "title": "Страны",
           "type": "cards",
           "required": true,
@@ -276,6 +314,7 @@
         },
         {
           "id": "hotel-style",
+          "render": true,
           "title": "Стиль отеля",
           "type": "cards",
           "required": true,
@@ -305,6 +344,37 @@
         },
         {
           "id": "room-type",
+          "render": true,
+          "title": "Желаемые даты вылета",
+          "type": "cards",
+          "required": true,
+          "multiple": true,
+          "overlayPreviewOnEnter": true,
+          "expanded": false,
+          "options": [
+            {
+              "value": "Сьют",
+              "label": "Сьют",
+              "description": "Номер повышенной комфортности",
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/suite.webp"
+            },
+            {
+              "value": "Семейный номер",
+              "label": "Семейный номер",
+              "description": "Просторный вариант для семей с детьми",
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/family.webp"
+            },
+            {
+              "value": "Вилла",
+              "label": "Вилла",
+              "description": "Пространство для уединённого отдыха",
+              "overlayImageSrc": "https://b2ccdn.coral.ru/content/landing-pages/kapsula/oriental-desktop/villa.webp"
+            }
+          ]
+        },
+        {
+          "id": "room-type",
+          "render": true,
           "title": "Тип номера",
           "type": "cards",
           "required": true,
@@ -334,6 +404,7 @@
         },
         {
           "id": "flight-class",
+          "render": true,
           "title": "Класс перелета",
           "type": "cards",
           "required": false,
@@ -366,6 +437,7 @@
         },
         {
           "id": "transfer",
+          "render": true,
           "title": "Трансфер",
           "type": "cards",
           "required": false,
@@ -400,6 +472,7 @@
         },
         {
           "id": "gastronomy",
+          "render": true,
           "title": "Гастрономия",
           "type": "cards",
           "required": false,
@@ -442,6 +515,7 @@
         },
         {
           "id": "impressions",
+          "render": true,
           "title": "Впечатления",
           "type": "cards",
           "required": false,
@@ -477,6 +551,7 @@
         },
         {
           "id": "special",
+          "render": true,
           "title": "Особые пожелания",
           "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
           "type": "textarea",
@@ -496,6 +571,7 @@
       "sections": [
         {
           "id": "countries",
+          "render": true,
           "title": "Страны",
           "type": "cards",
           "required": true,
@@ -521,6 +597,7 @@
         },
         {
           "id": "hotel-style",
+          "render": true,
           "title": "Стиль отеля",
           "type": "cards",
           "required": true,
@@ -550,6 +627,7 @@
         },
         {
           "id": "room-type",
+          "render": true,
           "title": "Тип номера",
           "type": "cards",
           "required": true,
@@ -579,6 +657,7 @@
         },
         {
           "id": "flight-class",
+          "render": true,
           "title": "Класс перелета",
           "type": "cards",
           "required": false,
@@ -611,6 +690,7 @@
         },
         {
           "id": "transfer",
+          "render": true,
           "title": "Трансфер",
           "type": "cards",
           "required": false,
@@ -695,6 +775,7 @@
         },
         {
           "id": "gastronomy",
+          "render": true,
           "title": "Гастрономия",
           "type": "cards",
           "required": false,
@@ -737,6 +818,7 @@
         },
         {
           "id": "impressions",
+          "render": true,
           "title": "Впечатления",
           "type": "cards",
           "required": false,
@@ -772,6 +854,7 @@
         },
         {
           "id": "special",
+          "render": true,
           "title": "Особые пожелания",
           "subtitle": "Ваша стильная капсула отдыха почти готова. Воспользуйтесь формой для комментариев, если желаете дополнить её тем, что имеет особое значение для вас.",
           "type": "textarea",

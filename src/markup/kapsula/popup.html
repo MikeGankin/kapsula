@@ -83,7 +83,7 @@
 
             <form class="kapsula-popup-form" data-kapsula-popup-form aria-describedby="kapsula-popup-submit-error"
                   novalidate>
-                <fieldset class="kapsula-popup-form__contact-method">
+                <fieldset class="kapsula-popup-form__contact-method" data-kapsula-popup-field="contactMethod">
                     <legend class="kapsula-popup-form__contact-method-title">Выберите удобный способ для связи:</legend>
                     <div class="kapsula-popup-form__contact-method-options">
                         <label class="kapsula-popup-form__contact-method-option">
@@ -110,7 +110,8 @@
                             <span class="kapsula-popup-form__contact-method-control" aria-hidden="true"></span>
                             <span>WhatsApp</span>
                         </label>
-                        <label class="kapsula-popup-form__contact-method-option">
+                        <label class="kapsula-popup-form__contact-method-option"
+                               data-kapsula-popup-field="email">
                             <input class="kapsula-popup-form__contact-method-input" type="radio"
                                    name="contactMethod" value="email" required>
                             <span class="kapsula-popup-form__contact-method-control" aria-hidden="true"></span>
@@ -122,7 +123,7 @@
                 </fieldset>
 
                 <div class="kapsula-popup-form__fields">
-                    <label class="kapsula-popup-form__field">
+                    <label class="kapsula-popup-form__field" data-kapsula-popup-field="name">
                         <span class="sr-only">Как к вам обращаться</span>
                         <input
                                 class="kapsula-popup-form__input"
@@ -140,7 +141,7 @@
                         почта в зависимости от выбранного способа связи.
                         В DOM всегда живёт ровно одно поле.
                     -->
-                    <div data-kapsula-contact-field></div>
+                    <div data-kapsula-contact-field data-kapsula-popup-field="contact"></div>
                 </div>
 
                 <template data-kapsula-phone-template>
@@ -186,7 +187,8 @@
             </form>
         </div>
 
-        <aside class="kapsula-popup__aside" aria-labelledby="kapsula-popup-hotels-title">
+        <aside class="kapsula-popup__aside" data-kapsula-popup-hotels
+               aria-labelledby="kapsula-popup-hotels-title">
             <h3 class="kapsula-popup__aside-title" id="kapsula-popup-hotels-title">Отели, которые близки к вашему
                 стилю:</h3>
             <div class="kapsula-popup__cards" aria-live="polite" aria-busy="false"></div>

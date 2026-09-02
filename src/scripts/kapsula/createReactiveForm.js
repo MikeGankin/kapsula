@@ -11,17 +11,8 @@ import {validateSchema} from "./formValidation.js";
 import {renderForm, renderFormValidationErrors} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay, destroyFormImageOverlay} from "./animateFormImageOverlay.js";
-import {
-  getResponsiveImageSources,
-  preloadResponsiveImage,
-  syncResponsivePicture,
-} from "./formResponsiveImages.js";
-import {
-  readSavedActiveSection,
-  readSavedFormValues,
-  saveActiveSection,
-  saveFormValues,
-} from "./sessionState.js";
+import {getResponsiveImageSources, preloadResponsiveImage, syncResponsivePicture,} from "./formResponsiveImages.js";
+import {readSavedActiveSection, readSavedFormValues, saveActiveSection, saveFormValues,} from "./sessionState.js";
 
 function getPersistedOptionValues(capsule, values = {}) {
   return capsule.sections.reduce((accumulator, section) => {
@@ -198,7 +189,16 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     distinctUntilChanged(sameRenderState),
   ).subscribe(({capsuleId, capsule, values, expandedState}) => {
     const forceFullRender = previousCapsuleId !== capsuleId;
-    renderForm(formNode, capsule, values, expandedState, {forceFull: forceFullRender});
+    renderForm(
+      formNode,
+      capsule,
+      values,
+      expandedState,
+      {
+        forceFull: forceFullRender,
+        updateState,
+      }
+    );
     animateFormSections(
       formNode,
       expandedState,
@@ -290,7 +290,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
           expandedState,
         };
       });
-      
+
     }
   }));
 
@@ -343,10 +343,21 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   return {
     getSnapshot() {
       const {capsuleId, values} = state$.value;
-      return getFormSnapshot(capsuleMap, capsuleId, values);
+
+      const snapshot = getFormSnapshot(
+        capsuleMap,
+        capsuleId,
+        values,
+      );
+
+      console.log('[REQUEST SNAPSHOT]', snapshot);
+
+      return snapshot;
     },
     validate() {
       const {capsuleId, values} = state$.value;
+
+      console.log('[state]', structuredClone(values));
       const snapshot = getFormSnapshot(capsuleMap, capsuleId, values);
 
       return validateSchema(snapshot.capsule, snapshot.values);

@@ -2,7 +2,13 @@ import {reachGoal} from "./analytics.js";
 import {destroyEmblaCarousel, syncEmblaCarousel} from "./syncEmblaCarousel.js";
 import {bindEmblaDots} from "./syncEmblaDots.js";
 import {createPopupHotelsLoader} from "./createPopupHotelsLoader.js";
-import {getFormSubmitEndpoint, getMailSubject, getMailTo} from "./formSchema.js";
+import {
+  getFormSubmitEndpoint,
+  getHotelsSettings,
+  getMailSubject,
+  getMailTo,
+  isFieldRendered,
+} from "./formSchema.js";
 import {logDebug, logError} from "./logger.js";
 import {sendKapsulaPopupForm} from "./sendKapsulaPopupForm.js";
 import {
@@ -11,6 +17,7 @@ import {
   POPUP_FIELD_ERRORS,
   setPopupFieldError,
   renderPopupContactField,
+  syncPopupFieldRendering,
   setPopupSubmitError,
   setPopupSubmitPending,
   validatePopupForm,
@@ -50,28 +57,41 @@ export function bindFormPopup(formExperience, hero) {
   const popupPaginationNode = popupNode.querySelector("[data-kapsula-popup-pagination]");
   const hotelCardTemplateNode = popupNode.querySelector("[data-kapsula-hotel-card-template]");
   const hotelsErrorNode = popupNode.querySelector("[data-kapsula-hotels-error]");
+  const hotelsAsideNode = popupNode.querySelector("[data-kapsula-popup-hotels]");
+  const shouldRenderHotels = isFieldRendered(getHotelsSettings());
+
+  if (hotelsAsideNode instanceof HTMLElement) {
+    hotelsAsideNode.hidden = !shouldRenderHotels;
+  }
 
   popupNode.dataset.popupBound = "1";
   setPopupState(popupNode, "form");
+  syncPopupFieldRendering(popupFormNode);
   renderPopupContactField(popupFormNode);
   clearPopupFieldErrors(popupFormNode);
 
-  const popupCardsCarousel = syncEmblaCarousel(popupCardsNode, {
-    align: "start",
-    containScroll: "trimSnaps",
-  });
-  const unbindPopupDots = bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
-    label: "Перейти к карточке",
-  });
+  const popupCardsCarousel = shouldRenderHotels
+    ? syncEmblaCarousel(popupCardsNode, {
+      align: "start",
+      containScroll: "trimSnaps",
+    })
+    : null;
+  const unbindPopupDots = shouldRenderHotels
+    ? bindEmblaDots(popupPaginationNode, popupCardsCarousel, {
+      label: "Перейти к карточке",
+    })
+    : () => {};
 
-  const popupHotelsLoader = createPopupHotelsLoader({
-    cardsNode: popupCardsNode,
-    errorNode: hotelsErrorNode,
-    templateNode: hotelCardTemplateNode,
-    onUpdate() {
-      popupCardsCarousel?.reInit();
-    },
-  });
+  const popupHotelsLoader = shouldRenderHotels
+    ? createPopupHotelsLoader({
+      cardsNode: popupCardsNode,
+      errorNode: hotelsErrorNode,
+      templateNode: hotelCardTemplateNode,
+      onUpdate() {
+        popupCardsCarousel?.reInit();
+      },
+    })
+    : null;
 
   let isSubmitting = false;
   let isFormValidationVisible = false;
@@ -92,7 +112,7 @@ export function bindFormPopup(formExperience, hero) {
 
     const snapshot = formExperience.getSnapshot();
 
-    popupHotelsLoader.load(snapshot.values.countries);
+    popupHotelsLoader?.load(snapshot.values.countries);
     setPopupState(popupNode, "form");
     setPopupSubmitError(popupFormNode);
     popupNode.show?.();
@@ -214,7 +234,7 @@ export function bindFormPopup(formExperience, hero) {
     homeButtonNode?.removeEventListener("click", handleHome);
     hero?.removeEventListener("click", handleHeroClick);
     hero?.removeEventListener("change", handleHeroChange);
-    popupHotelsLoader.destroy();
+    popupHotelsLoader?.destroy();
     unbindPopupDots();
     destroyEmblaCarousel(popupCardsNode);
     delete popupNode.dataset.popupBound;

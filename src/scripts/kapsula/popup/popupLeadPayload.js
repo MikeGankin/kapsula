@@ -1,4 +1,5 @@
 import {EMAIL_CONTACT_METHOD} from "./popupContactForm.js";
+import {filterRenderedFields, getPopupFields} from "../formSchema.js";
 
 function formatSubmittedAt(date) {
   const day = String(date.getDate()).padStart(2, "0");
@@ -16,8 +17,16 @@ function formatSubmittedAt(date) {
  * дефолты — из-за этого смена темы письма или адреса получателя раньше
  * требовала правок на бэке.
  */
-export function buildManagerLeadPayload({snapshot, submittedAt, contact, subject, to}) {
-  const isEmailMethod = contact.contactMethod === EMAIL_CONTACT_METHOD;
+export function buildManagerLeadPayload({
+  snapshot,
+  submittedAt,
+  contact,
+  subject,
+  to,
+  popupFields = getPopupFields(),
+}) {
+  const renderedContact = filterRenderedFields(contact, popupFields);
+  const isEmailMethod = renderedContact.contactMethod === EMAIL_CONTACT_METHOD;
 
   return {
     subject,
@@ -28,13 +37,18 @@ export function buildManagerLeadPayload({snapshot, submittedAt, contact, subject
       capsule: snapshot.capsuleId,
       segment: "Elite",
       submittedAt: formatSubmittedAt(submittedAt),
-      name: contact.name,
+      ...(renderedContact.name === undefined ? {} : {name: renderedContact.name}),
       // Менеджеру нужен ровно тот контакт, который оставил пользователь:
       // при выборе «Email» телефона нет, и наоборот.
-      ...(isEmailMethod
-        ? {email: contact.email}
-        : {phone: `+7 ${contact.phone}`}),
-      contactMethod: contact.contactMethod,
+      ...(isEmailMethod && renderedContact.email !== undefined
+        ? {email: renderedContact.email}
+        : {}),
+      ...(!isEmailMethod && renderedContact.phone !== undefinedы
+        ? {phone: `+7 ${renderedContact.phone}`}
+        : {}),
+      ...(renderedContact.contactMethod === undefined
+        ? {}
+        : {contactMethod: renderedContact.contactMethod}),
       ...snapshot.values,
     },
   };

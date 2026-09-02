@@ -1,4 +1,5 @@
 import * as z from "zod/mini";
+import {getPopupFields, isFieldRendered} from "../formSchema.js";
 
 export const POPUP_FIELD_ERRORS = {
   name: "Введите имя",
@@ -79,6 +80,27 @@ function getPopupFormPayload(popupFormNode) {
   };
 }
 
+export function syncPopupFieldRendering(popupFormNode, fields = getPopupFields()) {
+  popupFormNode.querySelectorAll("[data-kapsula-popup-field]").forEach((fieldNode) => {
+    const {kapsulaPopupField: fieldName} = fieldNode.dataset;
+
+    if (fieldName === "contact") return;
+
+    const shouldRender = isFieldRendered(fields[fieldName]);
+    fieldNode.hidden = !shouldRender;
+    fieldNode.querySelectorAll("input, textarea, select, button").forEach((controlNode) => {
+      controlNode.disabled = !shouldRender;
+    });
+  });
+
+  const selectedMethod = popupFormNode.querySelector('input[name="contactMethod"]:checked');
+
+  if (selectedMethod?.disabled) {
+    const fallbackMethod = popupFormNode.querySelector('input[name="contactMethod"]:not(:disabled)');
+    if (fallbackMethod) fallbackMethod.checked = true;
+  }
+}
+
 /**
  * Рендерит поле контакта под выбранный способ связи: телефон или почту.
  *
@@ -97,6 +119,15 @@ export function renderPopupContactField(popupFormNode) {
 
   const contactMethod = popupFormNode.elements.namedItem("contactMethod")?.value ?? "";
   const fieldName = contactMethod === EMAIL_CONTACT_METHOD ? "email" : "phone";
+
+  if (!isFieldRendered(getPopupFields()[fieldName])) {
+    containerNode.replaceChildren();
+    containerNode.dataset.field = fieldName;
+    containerNode.hidden = true;
+    return;
+  }
+
+  containerNode.hidden = false;
 
   if (containerNode.dataset.field === fieldName) return;
 
@@ -160,7 +191,14 @@ export function clearPopupFieldErrors(popupFormNode) {
 export function validatePopupForm(popupFormNode) {
   clearPopupFieldErrors(popupFormNode);
 
-  const result = popupContactSchema.safeParse(getPopupFormPayload(popupFormNode));
+  const fields = getPopupFields();
+  const payload = getPopupFormPayload(popupFormNode);
+
+  if (!isFieldRendered(fields.name)) payload.name = "скрыто";
+  if (!isFieldRendered(fields.phone)) payload.phone = "0000000000";
+  if (!isFieldRendered(fields.email)) payload.email = "hidden@example.com";
+
+  const result = popupContactSchema.safeParse(payload);
 
   if (result.success) {
     return {success: true, data: result.data};

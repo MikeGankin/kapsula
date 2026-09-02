@@ -13,13 +13,21 @@ const snapshot = {
 
 const submittedAt = new Date(2026, 0, 5, 9, 7);
 
-function buildPayload(contact) {
+const allPopupFieldsRendered = {
+  contactMethod: {render: true},
+  name: {render: true},
+  phone: {render: true},
+  email: {render: true},
+};
+
+function buildPayload(contact, popupFields = allPopupFieldsRendered) {
   return buildManagerLeadPayload({
     snapshot,
     submittedAt,
     contact,
     subject: "Заявка КАПСУЛА",
     to: "manager@coral.ru",
+    popupFields,
   });
 }
 
@@ -68,5 +76,20 @@ describe("buildManagerLeadPayload", () => {
     expect(payload.lead.capsule).toBe("island");
     expect(payload.lead.style).toBe("boho");
     expect(payload.lead.trip).toBe("rest");
+  });
+
+  it("не включает в лид поля с render: false", () => {
+    const payload = buildPayload(
+      {
+        name: "Иван",
+        phone: "999 123-45-67",
+        email: "ivan@example.com",
+        contactMethod: "call",
+      },
+      {...allPopupFieldsRendered, email: {render: false}},
+    );
+
+    expect(payload.lead.email).toBeUndefined();
+    expect(payload.lead.phone).toBe("+7 999 123-45-67");
   });
 });

@@ -21,6 +21,11 @@ export function normalizeFormValues(sections, values) {
   return sections.reduce((accumulator, section) => {
     const currentValue = values[section.id];
 
+    if (section.type === "calendar") {
+      accumulator[section.id] = currentValue ?? null;
+      return accumulator;
+    }
+
     if (section.type === "textarea") {
       accumulator[section.id] = currentValue ?? "";
       return accumulator;

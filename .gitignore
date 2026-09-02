@@ -31,3 +31,24 @@ test-results
 *.njsproj
 *.sln
 *.sw?
+# Dependencies
+node_modules/
+# Generated builder output and local deploy state
+@CMS/
+.b2c/
+dist/
+dist-ssr/
+build/
+# Local environment files
+.env
+.env.*
+!.env.example
+# Logs, caches, and temporary files
+.cache/
+.vite/
+coverage/
+*.tmp
+*.temp
+# Operating system and editor files
+Thumbs.db
+.idea/

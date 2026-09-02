@@ -13,3 +13,9 @@
 @use "./kapsula/form";
 @use "./kapsula/popup";
 @use "./kapsula/accessibility";
+@import "flatpickr/dist/flatpickr.css";
+@import './kapsula/calendar';
+
+#jCallbackButton {
+  display: none;
+}

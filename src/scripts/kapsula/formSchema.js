@@ -5,7 +5,12 @@ export function getFormConfig() {
 }
 
 export function buildCapsuleMap(config = formConfig) {
-  return new Map(Object.entries(config.capsules ?? {}));
+  return new Map(
+    Object.entries(config.capsules ?? {}).map(([capsuleId, capsule]) => [
+      capsuleId,
+      {...capsule, sections: getRenderedSections(capsule.sections)},
+    ]),
+  );
 }
 
 export function getFormSubmitEndpoint(config = formConfig) {
@@ -24,6 +29,32 @@ export function getMailSubject(config = formConfig) {
 
 export function getMailTo(config = formConfig) {
   return config.mailTo ?? "";
+}
+
+export function getPopupFields(config = formConfig) {
+  return config.popupFields ?? {};
+}
+
+export function getHotelsSettings(config = formConfig) {
+  return config.hotels ?? {};
+}
+
+export function isFieldRendered(field) {
+  return field?.render === true;
+}
+
+export function getRenderedSections(sections = []) {
+  return sections.filter(isFieldRendered);
+}
+
+export function filterRenderedFields(values, fields = getPopupFields()) {
+  return Object.entries(fields).reduce((result, [fieldName, field]) => {
+    if (isFieldRendered(field) && fieldName in values) {
+      result[fieldName] = values[fieldName];
+    }
+
+    return result;
+  }, {});
 }
 
 export function getDefaultCapsuleId(config = formConfig) {
@@ -68,9 +99,18 @@ function keepKnownOptionValues(section, savedValue) {
 }
 
 export function buildInitialValues(sections, currentValues = {}) {
-  return sections.reduce((accumulator, section) => {
+  return getRenderedSections(sections).reduce((accumulator, section) => {
     if (section.type === "textarea") {
       accumulator[section.id] = currentValues[section.id] ?? "";
+      return accumulator;
+    }
+
+    if (section.type === "calendar") {
+      accumulator[section.id] = currentValues[section.id] ?? {
+        from: "",
+        to: "",
+      };
+
       return accumulator;
     }
 
@@ -88,7 +128,7 @@ export function buildInitialValues(sections, currentValues = {}) {
 }
 
 export function buildExpandedState(sections, currentExpanded = {}) {
-  return sections.reduce((accumulator, section, index) => {
+  return getRenderedSections(sections).reduce((accumulator, section, index) => {
     const fallbackExpanded = section.expanded ?? index === 0;
     accumulator[section.id] = currentExpanded[section.id] ?? fallbackExpanded;
     return accumulator;

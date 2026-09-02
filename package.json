@@ -22,7 +22,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy": "b2c-landing-vite deploy",
+    "deploy:section": "b2c-landing-vite deploy --section",
+    "deploy:assets": "b2c-landing-vite deploy assets"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -45,6 +48,7 @@
   "dependencies": {
     "embla-carousel": "^8.6.0",
     "express": "^5.2.1",
+    "flatpickr": "^4.6.13",
     "gsap": "^3.15.0",
     "rxjs": "^7.8.2",
     "selector-observer": "^2.1.6",

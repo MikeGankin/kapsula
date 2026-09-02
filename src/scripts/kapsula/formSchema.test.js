@@ -1,4 +1,11 @@
-import {buildExpandedState, buildInitialValues, getInitialCapsuleId} from "./formSchema.js";
+import {
+  buildCapsuleMap,
+  buildExpandedState,
+  buildInitialValues,
+  getHotelsSettings,
+  getInitialCapsuleId,
+  isFieldRendered,
+} from "./formSchema.js";
 
 /**
  * Начальное состояние формы собирается из схемы и значений, переживших
@@ -9,17 +16,19 @@ import {buildExpandedState, buildInitialValues, getInitialCapsuleId} from "./for
 const sections = [
   {
     id: "style",
+    render: true,
     type: "choice",
     multiple: false,
     options: [{value: "boho"}, {value: "minimal"}],
   },
   {
     id: "extras",
+    render: true,
     type: "choice",
     multiple: true,
     options: [{value: "spa"}, {value: "transfer"}],
   },
-  {id: "wishes", type: "textarea"},
+  {id: "wishes", type: "textarea", render: true},
 ];
 
 describe("buildInitialValues", () => {
@@ -57,6 +66,26 @@ describe("buildInitialValues", () => {
 
     expect(values).not.toHaveProperty("legacySection");
   });
+
+  it("не создаёт значение для секции с render: false", () => {
+    const hiddenSection = {id: "hidden", type: "textarea", render: false};
+
+    expect(buildInitialValues([...sections, hiddenSection], {hidden: "secret"}))
+      .not.toHaveProperty("hidden");
+  });
+});
+
+describe("buildCapsuleMap", () => {
+  it("исключает секции с render: false из рабочей схемы", () => {
+    const config = {
+      capsules: {
+        asian: {sections: [...sections, {id: "hidden", type: "textarea", render: false}]},
+      },
+    };
+
+    expect(buildCapsuleMap(config).get("asian").sections.map(({id}) => id))
+      .toEqual(["style", "extras", "wishes"]);
+  });
 });
 
 describe("buildExpandedState", () => {
@@ -85,5 +114,12 @@ describe("getInitialCapsuleId", () => {
 
   it("откатывается на дефолтную, когда капсула не указана", () => {
     expect(getInitialCapsuleId(capsuleMap, null, {defaultCapsule: "island"})).toBe("island");
+  });
+});
+
+describe("hotels render config", () => {
+  it("отключает блок отелей единым флагом", () => {
+    expect(isFieldRendered(getHotelsSettings({hotels: {render: false}}))).toBe(false);
+    expect(isFieldRendered(getHotelsSettings({hotels: {render: true}}))).toBe(true);
   });
 });
