@@ -37,7 +37,8 @@ Next.js-приложение** (`coral.ru`). Отсюда почти все ар
 npm install
 
 npm run dev         # realtime-верстка на боевом сайте через Tampermonkey
-npm run test:serve  # локальный стенд: http://localhost:4321/elite-service/constructor/
+npm test            # разовый прогон Vitest
+npm run test:watch  # Vitest в watch-режиме
 npm run build       # сборка блока в @CMS/
 ```
 
@@ -193,17 +194,14 @@ hero → steps → styles → form → попап с контактами → п
 ## Как проверять
 
 ```bash
-npm run test:serve   # http://localhost:4321/elite-service/constructor/
+npm test
+npm run test:watch
 ```
 
-Стенд ([`tests/serve.mjs`](tests/serve.mjs) + [`tests/host.html`](tests/host.html))
-собирает блок, отдаёт его по боевому пути и подкладывает заглушку `CoralRouteBus` —
-без неё точка входа не активируется. Для браузерных проверок используйте скилл
-`playwright-cli`, правила — в [`.clinerules/playwright.md`](.clinerules/playwright.md).
-
-Автотестов в проекте нет. Чистые модули (`formConditions`, `formValues`,
-`formValidation`, `overlay/overlayGeometry`, `hotels/hotelsNormalize`) написаны так,
-что их можно покрыть без DOM — это первый кандидат, если решите заводить Vitest.
+Юнит-тесты находятся в `tests/unit/`, интеграционные characterization-тесты формы —
+в `tests/integration/`, общие данные и helpers — в `tests/fixtures/` и `tests/helpers/`.
+После каждого спринта запустите `npm run dev` и визуально проверьте изменения на
+боевом сайте через Tampermonkey.
 
 ### Известный шум в консоли
 
@@ -223,8 +221,6 @@ npm run test:serve   # http://localhost:4321/elite-service/constructor/
   к границе контейнера, а не к вьюпорту. На экране формы обрезка снята намеренно.
 - **`position: absolute` у `.kapsula__inner`** не даёт странице расти по содержимому,
   из-за чего нет прокрутки окна. На мобильном экран формы возвращён в поток.
-- **`String.replace` со строкой замены** трактует `$&`, `` $` ``, `$'` как спецпоследовательности
-  и портит минифицированный бандл. В `tests/serve.mjs` замена делается только функцией.
 - **Кеш отелей** живёт 15 минут в sessionStorage. При проверках открывайте приватное окно,
   иначе увидите прошлый ответ.
 - **`hidden` в `createNode`** принимается только внутри `attributes`; на верхнем уровне
@@ -238,10 +234,5 @@ npm run test:serve   # http://localhost:4321/elite-service/constructor/
 «толстых» модулей, жизненный цикл, рендер формы. Подробности — в истории git
 (коммиты `fix(kapsula):` и `refactor(kapsula):`).
 
-Все известные дефекты из аудита закрыты. Из технического долга остаётся
-инфраструктура: **нет линтера, автотестов и типов**.
-
-Если браться, разумный порядок такой: ESLint + Prettier, затем Vitest на чистых
-модулях (`formConditions`, `formValues`, `formValidation`, `overlay/overlayGeometry`,
-`hotels/hotelsNormalize` — они не требуют DOM), затем `.d.ts` с доменными моделями
-и точечный `// @ts-check` там, где типы реально ловят ошибки.
+Все известные дефекты из аудита закрыты. ESLint и Vitest настроены; следующим
+инфраструктурным этапом остаётся поэтапное введение TypeScript.

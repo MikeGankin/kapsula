@@ -19,13 +19,13 @@ export default defineConfig({
      */
     environment: "node",
 
-    include: ["src/**/*.{test,spec}.js", "tests/**/*.{test,spec}.js"],
+    include: ["tests/**/*.{test,spec}.{js,ts}"],
 
     coverage: {
       provider: "v8",
       // Покрываем только код блока: сборочные скрипты проверяются самим
       // фактом успешной сборки, а не юнит-тестами.
-      include: ["src/scripts/**/*.js"],
+      include: ["src/scripts/**/*.{js,ts}", "src/modules/**/*.ts"],
       reporter: ["text", "html"],
     },
   },

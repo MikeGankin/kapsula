@@ -1,29 +1,22 @@
-import {BehaviorSubject, debounceTime, distinctUntilChanged, fromEvent, map, Subscription} from "rxjs";
+import {BehaviorSubject, distinctUntilChanged, map, Subscription} from "rxjs";
 import {
   buildCapsuleMap,
-  buildExpandedState,
   buildInitialValues,
   getCapsule,
   getInitialCapsuleId,
 } from "./formSchema.js";
-import {normalizeFormValuesUntilStable, toggleOptionValue} from "./formValues.js";
+import {normalizeFormValuesUntilStable} from "./formValues.js";
+import {
+  createFormState as createCoreFormState,
+} from "../../modules/form-configurator/core/state.ts";
 import {validateSchema} from "./formValidation.js";
-import {renderForm, renderFormValidationErrors} from "./renderForm.js";
+import {bindFormEvents} from "../../modules/form-configurator/runtime/bindFormEvents.ts";
+import {bindFormPersistence} from "../../modules/form-configurator/runtime/bindFormPersistence.ts";
+import {destroyRenderedForm, renderForm, renderFormValidationErrors} from "./renderForm.js";
 import {animateFormSections} from "./animateFormSections.js";
 import {animateFormImageOverlay, destroyFormImageOverlay} from "./animateFormImageOverlay.js";
 import {getResponsiveImageSources, preloadResponsiveImage, syncResponsivePicture,} from "./formResponsiveImages.js";
 import {readSavedActiveSection, readSavedFormValues, saveActiveSection, saveFormValues,} from "./sessionState.js";
-
-function getPersistedOptionValues(capsule, values = {}) {
-  return capsule.sections.reduce((accumulator, section) => {
-    if (section.type === "textarea") {
-      return accumulator;
-    }
-
-    accumulator[section.id] = values[section.id] ?? (section.multiple ? [] : "");
-    return accumulator;
-  }, {});
-}
 
 function getSectionOverlaySources(section) {
   return Array.from(new Set(
@@ -50,12 +43,6 @@ function getSelectedSectionOverlayImages(section, values) {
       return selectedOption?.overlayImageSrc ? [selectedOption.overlayImageSrc] : [];
     }),
   ));
-}
-
-function getExpandedSectionId(capsule, expandedState) {
-  const expandedSection = capsule.sections.find((section) => expandedState[section.id]);
-
-  return expandedSection?.id ?? capsule.sections[0]?.id ?? null;
 }
 
 function getFormSnapshot(capsuleMap, capsuleId, values) {
@@ -99,30 +86,13 @@ function getOverlayLayers(capsule, values, activeSectionId = null) {
   ];
 }
 
-function createFormState(capsuleMap, capsuleId, savedValues = null) {
+function createRuntimeFormState(capsuleMap, capsuleId, savedValues = null) {
   const capsule = getCapsule(capsuleMap, capsuleId);
-  const values = normalizeFormValuesUntilStable(
-    capsule.sections,
-    buildInitialValues(capsule.sections, savedValues ?? {}),
-  );
   const savedActiveSectionId = readSavedActiveSection(capsuleId);
-  const hasSavedActiveSection = capsule.sections.some(
-    (section) => section.id === savedActiveSectionId,
-  );
-  const savedExpandedState = hasSavedActiveSection
-    ? Object.fromEntries(
-      capsule.sections.map((section) => [section.id, section.id === savedActiveSectionId]),
-    )
-    : {};
-  const expandedState = buildExpandedState(capsule.sections, savedExpandedState);
-
-  return {
-    capsuleId,
-    values,
-    expandedState,
-    activeSectionId: getExpandedSectionId(capsule, expandedState),
-    touchedSections: {},
-  };
+  return createCoreFormState(capsuleId, capsule, {
+    savedValues: savedValues ?? {},
+    savedActiveSectionId,
+  });
 }
 
 function sameRenderState(previous, current) {
@@ -147,12 +117,13 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
   const initialResolvedCapsuleId = getInitialCapsuleId(capsuleMap, initialCapsuleId);
   const initialSavedValues = readSavedFormValues(initialResolvedCapsuleId);
   const state$ = new BehaviorSubject(
-    createFormState(capsuleMap, initialResolvedCapsuleId, initialSavedValues),
+    createRuntimeFormState(capsuleMap, initialResolvedCapsuleId, initialSavedValues),
   );
   const subscriptions = new Subscription();
   let previousExpandedState = {};
   let previousValues = {};
   let previousCapsuleId = null;
+  let destroyed = false;
 
   const updateState = (updater) => {
     const currentState = state$.value;
@@ -228,116 +199,15 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
     });
   }));
 
-  const persistFormValues = () => {
-    const {capsuleId, values} = state$.value;
-    const capsule = getCapsule(capsuleMap, capsuleId);
-
-    saveFormValues(capsuleId, getPersistedOptionValues(capsule, values));
-  };
-
-  subscriptions.add(state$.pipe(
-    map((state) => ({capsuleId: state.capsuleId, values: state.values})),
-    distinctUntilChanged((previous, current) => (
-      previous.capsuleId === current.capsuleId && previous.values === current.values
-    )),
-    debounceTime(150),
-  ).subscribe(persistFormValues));
-
-  // Debounce в 150 мс теряет последние правки, если пользователь уходит
-  // со страницы сразу после изменения. Дописываем актуальное состояние
-  // синхронно: pagehide покрывает закрытие и переход, visibilitychange —
-  // сворачивание вкладки на мобильных, где pagehide может не сработать.
-  const handlePageHide = () => {
-    persistFormValues();
-  };
-
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === "hidden") {
-      persistFormValues();
-    }
-  };
-
-  window.addEventListener("pagehide", handlePageHide);
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  subscriptions.add(() => {
-    window.removeEventListener("pagehide", handlePageHide);
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
-  });
-
-  subscriptions.add(fromEvent(formNode, "click").subscribe((event) => {
-    if (!(event.target instanceof Element)) return;
-    const sectionTrigger = event.target.closest("[data-kapsula-section-trigger]");
-
-    if (sectionTrigger) {
-      const {sectionId} = sectionTrigger.dataset;
-      updateState((state) => {
-        if (!sectionId || !(sectionId in state.expandedState)) {
-          return state;
-        }
-
-        const isOpening = !state.expandedState[sectionId];
-        const expandedState = Object.fromEntries(
-          Object.keys(state.expandedState)
-            .map((id) => [id, isOpening && id === sectionId]),
-        );
-
-        saveActiveSection(state.capsuleId, sectionId);
-
-        return {
-          ...state,
-          activeSectionId: sectionId,
-          expandedState,
-        };
-      });
-
-    }
+  subscriptions.add(bindFormPersistence(state$, {
+    getSnapshot: () => state$.value,
+    getCapsule: (state) => getCapsule(capsuleMap, state.capsuleId),
+    saveFormValues,
   }));
-
-  subscriptions.add(fromEvent(formNode, "change").subscribe((event) => {
-    if (!(event.target instanceof Element)) return;
-    const choiceInput = event.target.closest("[data-kapsula-choice]");
-
-    if (choiceInput) {
-      const {sectionId} = choiceInput.dataset;
-      const optionValue = choiceInput.value;
-      updateState((state) => {
-        const capsule = getCapsule(capsuleMap, state.capsuleId);
-        const section = capsule.sections.find((item) => item.id === sectionId);
-
-        if (!section) return state;
-
-        const values = normalizeFormValuesUntilStable(capsule.sections, {
-          ...state.values,
-          [section.id]: toggleOptionValue(section, state.values[section.id], optionValue),
-        });
-
-        return {
-          ...state,
-          activeSectionId: sectionId,
-          values,
-          touchedSections: {...state.touchedSections, [section.id]: true},
-        };
-      });
-    }
-  }));
-
-  subscriptions.add(fromEvent(formNode, "input").subscribe((event) => {
-    if (!(event.target instanceof Element)) return;
-    const textarea = event.target.closest("[data-kapsula-textarea]");
-
-    if (!textarea) return;
-
-    const {sectionId} = textarea.dataset;
-    updateState((state) => ({
-      ...state,
-      values: {...state.values, [sectionId]: textarea.value},
-      touchedSections: {...state.touchedSections, [sectionId]: true},
-    }));
-  }));
-
-  subscriptions.add(fromEvent(formNode, "submit").subscribe((event) => {
-    event.preventDefault();
+  subscriptions.add(bindFormEvents(formNode, {
+    getCapsule: (state) => getCapsule(capsuleMap, state.capsuleId),
+    updateState,
+    saveActiveSection,
   }));
 
   return {
@@ -350,14 +220,11 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
         values,
       );
 
-      console.log('[REQUEST SNAPSHOT]', snapshot);
-
       return snapshot;
     },
     validate() {
       const {capsuleId, values} = state$.value;
 
-      console.log('[state]', structuredClone(values));
       const snapshot = getFormSnapshot(capsuleMap, capsuleId, values);
 
       return validateSchema(snapshot.capsule, snapshot.values);
@@ -380,7 +247,7 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
       const savedValues = readSavedFormValues(capsuleId);
       previousExpandedState = {};
       previousValues = {};
-      state$.next(createFormState(capsuleMap, capsuleId, savedValues));
+      state$.next(createRuntimeFormState(capsuleMap, capsuleId, savedValues));
       return true;
     },
     prepareCapsule(capsuleId) {
@@ -395,7 +262,10 @@ export function createReactiveForm(rootNode, {initialCapsuleId} = {}) {
       ).then(() => true);
     },
     destroy() {
+      if (destroyed) return;
+      destroyed = true;
       subscriptions.unsubscribe();
+      destroyRenderedForm(formNode);
       state$.complete();
       destroyFormImageOverlay(overlayImageNode);
     },

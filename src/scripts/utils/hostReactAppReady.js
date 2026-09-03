@@ -1,6 +1,6 @@
 export async function hostReactAppReady(
   selector = "#__next > div",
-  timeout = 200,
+  timeout = 300,
 ) {
   return new Promise((resolve) => {
     const checkReady = () => {

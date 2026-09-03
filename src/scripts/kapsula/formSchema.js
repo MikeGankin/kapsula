@@ -1,4 +1,8 @@
-import formConfig from "../formConfig.json";
+import formConfig from "./kapsulaFormConfig.ts";
+import {
+  buildExpandedState as buildCoreExpandedState,
+  buildInitialValues as buildCoreInitialValues,
+} from "../../modules/form-configurator/core/values.ts";
 
 export function getFormConfig() {
   return formConfig;
@@ -86,51 +90,10 @@ export function getCapsule(capsuleMap, capsuleId) {
  * раньше проходили как есть: сохранённая в сессии опция, удалённая из
  * `formConfig.json`, оставалась в состоянии и попадала в summary и в лид.
  */
-function keepKnownOptionValues(section, savedValue) {
-  const knownValues = new Set((section.options ?? []).map((option) => option.value));
-
-  if (section.multiple) {
-    return Array.isArray(savedValue)
-      ? savedValue.filter((value) => knownValues.has(value))
-      : [];
-  }
-
-  return knownValues.has(savedValue) ? savedValue : "";
-}
-
 export function buildInitialValues(sections, currentValues = {}) {
-  return getRenderedSections(sections).reduce((accumulator, section) => {
-    if (section.type === "textarea") {
-      accumulator[section.id] = currentValues[section.id] ?? "";
-      return accumulator;
-    }
-
-    if (section.type === "calendar") {
-      accumulator[section.id] = currentValues[section.id] ?? {
-        from: "",
-        to: "",
-      };
-
-      return accumulator;
-    }
-
-    const savedValue = currentValues[section.id];
-    // Пустое значение зависит от типа секции: множественный выбор хранит массив,
-    // одиночный — строку. Сброс не того типа ломает сравнения в условиях формы.
-    const emptyValue = section.multiple ? [] : "";
-
-    accumulator[section.id] = savedValue === undefined
-      ? emptyValue
-      : keepKnownOptionValues(section, savedValue);
-
-    return accumulator;
-  }, {});
+  return buildCoreInitialValues(sections, currentValues);
 }
 
 export function buildExpandedState(sections, currentExpanded = {}) {
-  return getRenderedSections(sections).reduce((accumulator, section, index) => {
-    const fallbackExpanded = section.expanded ?? index === 0;
-    accumulator[section.id] = currentExpanded[section.id] ?? fallbackExpanded;
-    return accumulator;
-  }, {});
+  return buildCoreExpandedState(sections, currentExpanded);
 }

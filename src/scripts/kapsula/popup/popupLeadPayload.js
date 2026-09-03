@@ -43,7 +43,7 @@ export function buildManagerLeadPayload({
       ...(isEmailMethod && renderedContact.email !== undefined
         ? {email: renderedContact.email}
         : {}),
-      ...(!isEmailMethod && renderedContact.phone !== undefinedы
+      ...(!isEmailMethod && renderedContact.phone !== undefined
         ? {phone: `+7 ${renderedContact.phone}`}
         : {}),
       ...(renderedContact.contactMethod === undefined

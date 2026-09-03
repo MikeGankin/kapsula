@@ -1,5 +1,7 @@
 import flatpickr from "flatpickr";
 import {Russian} from "flatpickr/dist/l10n/ru.js";
+import {logWarning} from "./logger.js";
+import {setFieldValue} from "../../modules/form-configurator/core/state.ts";
 
 function normalizeCalendarValue(value) {
   if (!value) {
@@ -20,7 +22,7 @@ function normalizeCalendarValue(value) {
 
 export function createCalendarContent(
   section,
-  value = '',
+  value,
   values,
   updateState
 ) {
@@ -29,7 +31,7 @@ export function createCalendarContent(
   wrapper.className = 'calendar-field';
 
   if (typeof updateState !== 'function') {
-    console.warn('[calendar] updateState is missing');
+    logWarning("Calendar updateState is missing");
     return wrapper;
   }
 
@@ -70,21 +72,7 @@ export function createCalendarContent(
         to: formatDate(selectedDates[1]),
       };
 
-
-      console.log('[calendar value]', calendarValue);
-
-
-      updateState((state) => ({
-        ...state,
-        values: {
-          ...state.values,
-          [section.id]: calendarValue,
-        },
-        touchedSections: {
-          ...state.touchedSections,
-          [section.id]: true,
-        },
-      }));
+      updateState((state) => setFieldValue(state, section.id, calendarValue));
     },
 
 
@@ -106,4 +94,49 @@ export function createCalendarContent(
 
 
   return wrapper;
+}
+
+export function createCalendarContentHandle(section, value, values, updateState) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'calendar-field';
+
+  if (typeof updateState !== 'function') {
+    logWarning("Calendar updateState is missing");
+    return {node: wrapper, sync() {}, destroy() {}};
+  }
+
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.style.display = 'none';
+  input.dataset.field = section.id;
+  wrapper.appendChild(input);
+
+  const formatDate = (date) => date ? date.toISOString().split('T')[0] : '';
+  const instance = flatpickr(input, {
+    inline: true,
+    mode: section.calendar?.mode || 'single',
+    locale: Russian,
+    minDate: section.calendar?.minDate,
+    defaultDate: normalizeCalendarValue(value),
+    onChange(selectedDates) {
+      updateState((state) => setFieldValue(state, section.id, {
+        from: formatDate(selectedDates[0]),
+        to: formatDate(selectedDates[1]),
+      }));
+    },
+    onDayCreate(_, __, ___, dayElem) {
+      if (dayElem.dateObj?.getDate() === 12) dayElem.classList.add('is-flexible');
+    },
+  });
+  let destroyed = false;
+
+  return {
+    node: wrapper,
+    sync() {},
+    destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      instance.destroy();
+    },
+  };
 }

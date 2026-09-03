@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import {configs, plugins} from "eslint-config-airbnb-extended";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 /**
  * Airbnb-стиль на ESLint 9 (flat config).
@@ -15,9 +16,6 @@ export default [
       "@CMS/**",
       "dist/**",
       "node_modules/**",
-      // TypeScript-парсер не подключён: .d.ts проходят только пока внутри
-      // одни triple-slash комментарии, любой реальный TS-синтаксис — parsing error.
-      "**/*.d.ts",
       // Индексы блоков генерируются скриптами из src/lib — править их руками нельзя.
       "src/markup/index.js",
       "src/scripts/index.js",
@@ -37,6 +35,8 @@ export default [
   plugins.node,
 
   ...configs.base.recommended,
+
+  ...tseslint.configs.recommended,
 
   {
     /**
@@ -80,7 +80,7 @@ export default [
     name: "kapsula/browser",
     files: [
       "src/main.js",
-      "src/scripts/**/*.js",
+      "src/scripts/**/*.{js,ts}",
       "src/utils/**/*.js",
       // Лежит в src/lib рядом со сборочными скриптами, но исполняется в браузере:
       // переписывает src/srcset на dev-CDN уже в смонтированном DOM.
@@ -92,6 +92,16 @@ export default [
         // Шина маршрутов хост-сайта: объявлена глобально самим coral.ru.
         CoralRouteBus: "readonly",
       },
+    },
+  },
+
+  {
+    name: "kapsula/typescript",
+    files: ["**/*.ts"],
+    rules: {
+      "no-undef": "off",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "error",
     },
   },
 
@@ -169,9 +179,9 @@ export default [
   },
 
   {
-    // Скрипты сборки и тестовый стенд живут в Node, а не в браузере.
+    // Скрипты сборки и тесты живут в Node, а не в браузере.
     name: "kapsula/node",
-    files: ["src/lib/**/*.{js,mjs}", "tests/**/*.{js,mjs}", "*.config.{js,mjs}"],
+    files: ["src/lib/**/*.{js,mjs}", "tests/**/*.{js,mjs,ts}", "*.config.{js,mjs}"],
     languageOptions: {
       globals: globals.node,
     },
@@ -194,7 +204,7 @@ export default [
      * иначе каждый тест утонет в `no-undef`.
      */
     name: "kapsula/tests",
-    files: ["**/*.{test,spec}.{js,mjs}"],
+    files: ["**/*.{test,spec}.{js,mjs,ts}"],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -203,4 +213,3 @@ export default [
     },
   },
 ];
-
