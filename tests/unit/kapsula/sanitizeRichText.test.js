@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /* global document, window */
 
-import {sanitizeRichText} from "../../../src/scripts/kapsula/sanitizeRichText.js";
+import {sanitizeRichText} from "../../../src/scripts/kapsula/features/form/sanitizeRichText.js";
 
 /**
  * Санитайзер — граница доверия: тексты приходят из formConfig.json, который

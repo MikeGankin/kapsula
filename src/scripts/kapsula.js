@@ -1,10 +1,10 @@
 import {defer, filter, from, merge, of, Subscription, switchMap} from "rxjs";
 import {hostReactAppReady, reactDomObserver} from "../utils/utils.js";
-import {animateHero} from "./kapsula/animateHero.js";
-import {HEADER_SELECTORS, KAPSULA_ROOT_SELECTOR, ROUTE_ATTRIBUTE} from "./kapsula/constants.js";
-import {logError} from "./kapsula/logger.js";
-import {createHeaderUi} from "./kapsula/setupHeaderUi.js";
-import {setupScreenFlow} from "./kapsula/setupScreenFlow.js";
+import {animateHero} from "./kapsula/features/hero/animateHero.js";
+import {HEADER_SELECTORS, KAPSULA_ROOT_SELECTOR, ROUTE_ATTRIBUTE} from "./kapsula/shared/constants.js";
+import {logError} from "./kapsula/shared/logger.js";
+import {createHeaderUi} from "./kapsula/features/header/setupHeaderUi.js";
+import {setupScreenFlow} from "./kapsula/app/setupScreenFlow.js";
 
 const DESKTOP_HEADER_HOST_SELECTOR = HEADER_SELECTORS.desktopHost;
 const MOBILE_HEADER_HOST_SELECTOR = HEADER_SELECTORS.mobileHost;

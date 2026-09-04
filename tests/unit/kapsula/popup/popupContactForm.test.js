@@ -6,7 +6,7 @@ import {
   renderPopupContactField,
   syncPopupFieldRendering,
   validatePopupForm,
-} from "../../../../src/scripts/kapsula/popup/popupContactForm.js";
+} from "../../../../src/scripts/kapsula/features/popup/contact/popupContactForm.js";
 
 /**
  * Маска телефона работает на каждое нажатие клавиши, поэтому её поведение

@@ -1,5 +1,5 @@
 import {parseFormConfig} from "../../src/modules/form-configurator/index.ts";
-import kapsulaFormConfig from "../../src/scripts/kapsula/kapsulaFormConfig.ts";
+import kapsulaFormConfig from "../../src/scripts/kapsula/features/form/kapsulaFormConfig.ts";
 
 const capsuleBase = {
   title: "Капсула",

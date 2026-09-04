@@ -1,4 +1,4 @@
-import {validateSchema} from "../../../src/scripts/kapsula/formValidation.js";
+import {validateSchema} from "../../../src/scripts/kapsula/features/form/schema/formValidation.js";
 
 /**
  * Валидация решает, уйдёт ли лид менеджеру. Слишком строгая — блокирует

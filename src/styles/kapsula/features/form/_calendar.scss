@@ -1,0 +1,225 @@
+.calendar-field {
+  --calendar-day-size: 40px;
+  --calendar-font-size: 16px;
+
+  max-width: 360px;
+
+  @media (max-width: 768px) {
+    --calendar-day-size: 30px;
+    --calendar-font-size: 14px;
+    max-width: 100%;
+  }
+
+
+  .flatpickr-calendar {
+    width: 100%;
+
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+
+    font-family: inherit;
+  }
+
+
+  .flatpickr-days,
+  .dayContainer,
+  .flatpickr-rContainer {
+    width: 100%;
+    max-width: unset;
+  }
+
+
+  // Header: месяц + навигация
+  .flatpickr-months {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+  }
+
+
+  .flatpickr-month {
+    background: transparent;
+
+    color: #171717;
+
+    height: auto;
+  }
+
+
+  .flatpickr-current-month {
+    position: static;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding: 0;
+
+    font-family: inherit;
+    font-size: var(--calendar-font-size);
+    font-weight: 500;
+  }
+
+
+  .flatpickr-monthDropdown-months {
+    appearance: none;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: var(--calendar-font-size);
+    font-weight: inherit;
+  }
+
+
+  .numInputWrapper {
+    pointer-events: none;
+
+    input {
+      font-family: inherit;
+      font-weight: inherit;
+    }
+  }
+
+
+  // Стрелки
+  .flatpickr-prev-month,
+  .flatpickr-next-month {
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #8f7241;
+
+
+    svg {
+      width: 14px;
+      height: 14px;
+
+      fill: currentColor;
+    }
+
+
+    &:hover {
+
+      svg {
+        fill: #8f7241;
+      }
+    }
+  }
+
+
+  // Дни недели
+  .flatpickr-weekdays {
+    margin-bottom: 12px;
+  }
+
+
+  .flatpickr-weekday {
+    width: var(--calendar-day-size);
+    height: var(--calendar-day-size);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #999;
+
+    font-size: var(--calendar-font-size);
+    font-weight: 400;
+  }
+
+
+  .flatpickr-weekdaycontainer {
+    display: grid;
+
+    grid-template-columns: repeat(7, var(--calendar-day-size));
+
+    justify-content: space-between;
+  }
+
+
+  // Сетка дней
+  .dayContainer {
+    display: grid;
+
+    grid-template-columns: repeat(7, var(--calendar-day-size));
+
+    justify-content: space-between;
+  }
+
+
+  // День
+  .flatpickr-day {
+    position: relative;
+
+    width: var(--calendar-day-size);
+    height: var(--calendar-day-size);
+
+    max-width: unset;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    color: #222;
+
+    font-size: var(--calendar-font-size);
+  }
+
+
+  // Сегодня
+  .flatpickr-day.today {
+    border-color: transparent;
+  }
+
+
+  // Дни соседних месяцев
+  .prevMonthDay,
+  .nextMonthDay {
+    color: #ccc;
+    pointer-events: none;
+  }
+}
+
+
+.flatpickr-day:hover {
+  background: var(--kapsula-black-015) !important;
+  color: #000000 !important;
+}
+
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+  background: var(--kapsula-gold) !important;
+  color: #ffffff !important;
+}
+
+.flatpickr-day.inRange {
+  background: #f6eedb !important;
+  color: #000 !important;
+  border-radius: 0;
+  box-shadow: -15px 0 0 #f6eedb, 15px 0 0 #f6eedb;
+
+  @media (max-width: 768px) {
+    box-shadow: -30px 0 0 #f6eedb, 30px 0 0 #f6eedb;
+  }
+}
+
+.flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n+1)), .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n+1)), .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n+1)) {
+  box-shadow: -15px 0 0 var(--kapsula-gold);
+}

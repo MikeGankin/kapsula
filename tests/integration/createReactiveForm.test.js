@@ -1,12 +1,18 @@
 // @vitest-environment jsdom
 /* global document, window, HTMLFormElement */
 
-import {SESSION_STORAGE_KEYS} from "../../src/scripts/kapsula/constants.js";
-import {createReactiveForm} from "../../src/scripts/kapsula/createReactiveForm.js";
+import {SESSION_STORAGE_KEYS} from "../../src/scripts/kapsula/shared/constants.js";
+import {createReactiveForm} from "../../src/scripts/kapsula/features/form/createReactiveForm.js";
+import {
+  createConfiguredForm,
+  createKapsulaForm,
+  kapsulaFormEffects,
+  kapsulaFormRenderer,
+  kapsulaFormSessionAdapter,
+} from "../../src/scripts/kapsula/features/form/createKapsulaForm.ts";
 import {createMinimalFormConfig} from "../fixtures/formConfigurator.js";
 import {createFormRoot} from "../helpers/createFormRoot.js";
 
-const formSchemaMock = vi.hoisted(() => ({config: null}));
 const effectMocks = vi.hoisted(() => ({
   animateFormSections: vi.fn(),
   animateFormImageOverlay: vi.fn(),
@@ -19,30 +25,19 @@ const effectMocks = vi.hoisted(() => ({
   destroyRenderedForm: vi.fn(),
 }));
 
-vi.mock("../../src/scripts/kapsula/formSchema.js", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    buildCapsuleMap: () => actual.buildCapsuleMap(formSchemaMock.config),
-    getInitialCapsuleId: (capsuleMap, initialCapsuleId) => (
-      actual.getInitialCapsuleId(capsuleMap, initialCapsuleId, formSchemaMock.config)
-    ),
-  };
-});
-
-vi.mock("../../src/scripts/kapsula/animateFormSections.js", () => ({
+vi.mock("../../src/scripts/kapsula/features/form/effects/animateFormSections.js", () => ({
   animateFormSections: effectMocks.animateFormSections,
 }));
-vi.mock("../../src/scripts/kapsula/animateFormImageOverlay.js", () => ({
+vi.mock("../../src/scripts/kapsula/features/form/effects/animateFormImageOverlay.js", () => ({
   animateFormImageOverlay: effectMocks.animateFormImageOverlay,
   destroyFormImageOverlay: effectMocks.destroyFormImageOverlay,
 }));
-vi.mock("../../src/scripts/kapsula/formResponsiveImages.js", () => ({
+vi.mock("../../src/scripts/kapsula/features/form/effects/formResponsiveImages.js", () => ({
   getResponsiveImageSources: effectMocks.getResponsiveImageSources,
   preloadResponsiveImage: effectMocks.preloadResponsiveImage,
   syncResponsivePicture: effectMocks.syncResponsivePicture,
 }));
-vi.mock("../../src/scripts/kapsula/renderForm.js", async (importOriginal) => {
+vi.mock("../../src/scripts/kapsula/features/form/renderForm.ts", async (importOriginal) => {
   const actual = await importOriginal();
   effectMocks.renderForm.mockImplementation(actual.renderForm);
   effectMocks.renderFormValidationErrors.mockImplementation(actual.renderFormValidationErrors);
@@ -56,10 +51,16 @@ vi.mock("../../src/scripts/kapsula/renderForm.js", async (importOriginal) => {
 
 const valuesKey = (capsuleId) => `${SESSION_STORAGE_KEYS.formValuesPrefix}.${capsuleId}`;
 const activeKey = (capsuleId) => `${SESSION_STORAGE_KEYS.activeSectionPrefix}.${capsuleId}`;
+let formConfig;
 
 function createForm(options) {
   const root = createFormRoot();
-  const handle = createReactiveForm(root, options);
+  const handle = createConfiguredForm(root, {
+    config: formConfig,
+    storage: kapsulaFormSessionAdapter,
+    renderer: kapsulaFormRenderer,
+    effects: kapsulaFormEffects,
+  }, options);
   return {root, form: root.querySelector("[data-kapsula-form]"), handle};
 }
 
@@ -72,7 +73,7 @@ function dispatchChoice(form, sectionId, value) {
 }
 
 beforeEach(() => {
-  formSchemaMock.config = createMinimalFormConfig();
+  formConfig = createMinimalFormConfig();
   window.sessionStorage.clear();
   document.body.replaceChildren();
   vi.useFakeTimers();
@@ -90,6 +91,10 @@ afterEach(() => {
 });
 
 describe("createReactiveForm lifecycle", () => {
+  it("сохраняет legacy facade как точный alias primary composition root", () => {
+    expect(createReactiveForm).toBe(createKapsulaForm);
+  });
+
   it.each([
     "data-kapsula-form-title",
     "data-kapsula-form-subtitle",
@@ -97,7 +102,12 @@ describe("createReactiveForm lifecycle", () => {
     "data-kapsula-form",
   ])("явно отклоняет root без обязательного узла %s", (omit) => {
     const root = createFormRoot({omit});
-    expect(() => createReactiveForm(root))
+    expect(() => createConfiguredForm(root, {
+      config: formConfig,
+      storage: kapsulaFormSessionAdapter,
+      renderer: kapsulaFormRenderer,
+      effects: kapsulaFormEffects,
+    }))
       .toThrow("Kapsula form screen is missing required nodes");
   });
 
@@ -154,7 +164,7 @@ describe("createReactiveForm lifecycle", () => {
   });
 
   it("обслуживает несколько config-driven text fields без специальной orchestration", () => {
-    formSchemaMock.config.capsules.first.sections.splice(2, 0,
+    formConfig.capsules.first.sections.splice(2, 0,
       {id: "guestName", type: "text", title: "Имя", render: true, required: true},
       {id: "promoCode", type: "text", title: "Промокод", render: true},
     );

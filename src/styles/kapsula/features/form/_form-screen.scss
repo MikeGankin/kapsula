@@ -1,0 +1,307 @@
+@use "../../settings/media";
+
+.kapsula-screen--form {
+  position: absolute;
+  inset: 0;
+  z-index: var(--kapsula-z-form);
+  background: var(--kapsula-white);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.kapsula[data-screen="form"] .kapsula-screen--form {
+  @include media.mobile-only {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 100%;
+    grid-template-rows: auto auto;
+  }
+}
+
+/**
+ * `.kapsula__inner` по умолчанию `position: absolute; inset: 0` — он не тянет
+ * страницу по высоте, из-за чего длинная форма просто обрезалась. Возвращаем
+ * блок в поток, чтобы высоту задавало содержимое и появился обычный скролл
+ * окна: без него залипание было бы не к чему привязать.
+ */
+.kapsula[data-screen="form"] .kapsula__inner {
+  @include media.mobile-only {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: calc(100vh - var(--site-header-mobile-height));
+    min-height: calc(100dvh - var(--site-header-mobile-height));
+  }
+}
+
+/**
+ * `overflow: hidden` на `.kapsula` обрезает залипание: sticky-элемент липнет
+ * к границе этого контейнера, а не к вьюпорту, и эффект пропадает.
+ * На экране формы обрезка не нужна — фонового видео и вылезающих за край
+ * декораций тут нет, экран сплошь белый.
+ */
+.kapsula[data-screen="form"] {
+  @include media.mobile-only {
+    overflow: visible;
+    height: auto;
+  }
+}
+
+
+
+.kapsula-form-screen {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  @include media.mobile-only {
+    height: auto;
+  }
+
+  @include media.desktop {
+    height: 100%;
+    align-content: stretch;
+  }
+}
+
+.kapsula-form-screen--offset-top {
+  padding-top: 0;
+}
+
+.kapsula-form-screen__layout {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  height: 100%;
+  grid-template-areas:
+    "back"
+    "media"
+    "main";
+  grid-template-rows: repeat(3, auto);
+  align-items: stretch;
+
+  @include media.mobile-only {
+    height: auto;
+    // Кнопка и картинка теперь живут в одной sticky-обёртке (область `back`).
+    grid-template-areas:
+      "back"
+      "main";
+    grid-template-rows: auto auto;
+  }
+
+  @include media.desktop {
+    grid-template-columns: minmax(50%, 1fr) minmax(0, 560px);
+    grid-template-areas:
+      "back media"
+      "main media";
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    height: 100%;
+  }
+}
+
+/**
+ * На мобильном кнопка «назад» и картинка прилипают к верху, прокручивается
+ * только форма. Обёртка нужна именно как один sticky-элемент: у грид-айтема
+ * залипание ограничено его собственной строкой, поэтому по отдельности кнопка
+ * и картинка «отъезжали» бы вместе со своими ячейками.
+ *
+ * На десктопе обёртка растворяется через `display: contents`, и разметка
+ * снова раскладывается по grid-areas `back` / `media` как раньше.
+ */
+.kapsula-form-screen__sticky {
+  display: contents;
+
+  @include media.mobile-only {
+    grid-area: back;
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    /*
+     * Липнем вплотную к шапке сайта, а воздух даём внутренним padding-ом.
+     * Раньше `top` включал этот отступ (`высота шапки + 16px`), и между
+     * шапкой и залипшим блоком оставалась прозрачная полоса в 16px —
+     * прокручиваемые секции формы проезжали прямо в ней.
+     */
+    top: var(--site-header-mobile-height);
+    padding-top: 16px;
+    z-index: var(--kapsula-z-base);
+
+    // Фон обязателен: без него форма просвечивает под залипшим блоком.
+    background: var(--kapsula-white);
+  }
+}
+
+.kapsula-form-screen__main {
+  grid-area: main;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: stretch;
+
+  @include media.mobile-only {
+    grid-template-rows: repeat(3, auto);
+  }
+
+  @include media.desktop {
+    gap: 24px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}
+
+.kapsula-form-screen__back {
+  grid-area: back;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  padding: 8px 0;
+  color: var(--kapsula-text-dark);
+  font: inherit;
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-tight);
+  text-align: left;
+  cursor: pointer;
+
+  // Внутри sticky-обёртки именованных областей нет — раскладываем потоком.
+  @include media.mobile-only {
+    grid-area: auto;
+  }
+}
+
+.kapsula-form-screen__back-icon {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.kapsula-copy--form {
+  width: 100%;
+  margin: 0;
+  justify-self: stretch;
+  justify-items: start;
+  gap: 8px;
+
+  @include media.desktop {
+    justify-items: start;
+  }
+}
+
+.kapsula-screen--form .kapsula-copy__title {
+  color: var(--kapsula-text-dark);
+  font-size: var(--kapsula-font-size-form-title);
+  text-shadow: var(--kapsula-shadow-none);
+  text-align: left;
+
+  @include media.desktop {
+    text-align: left;
+  }
+}
+
+.kapsula-form-screen__subtitle {
+  margin: 0;
+  color: var(--kapsula-text-dark);
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-body);
+
+  @include media.desktop {
+    text-align: left;
+  }
+}
+
+.kapsula-form-screen__aside {
+  grid-area: media;
+  display: grid;
+  max-width: none;
+  min-height: 0;
+
+  @include media.mobile-only {
+    grid-area: auto;
+  }
+
+  @include media.desktop {
+    max-width: 560px;
+  }
+}
+
+.kapsula-form-screen__media {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  height: 200px;
+  min-height: 0;
+  overflow: clip;
+
+  @include media.tablet {
+    height: auto;
+    aspect-ratio: 792 / 440;
+  }
+
+  @include media.desktop {
+    max-width: 560px;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+}
+
+.kapsula-form-screen__picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.kapsula-form-screen__image {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: block;
+  object-fit: cover;
+}
+
+.kapsula-form-screen__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.kapsula-form-screen__overlay-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.kapsula-form-screen__overlay-segment {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+}
+
+.kapsula-form-screen__overlay-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.kapsula-form-screen__overlay-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}

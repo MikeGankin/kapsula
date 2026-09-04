@@ -2,7 +2,7 @@ import {
   normalizeFormValues,
   normalizeFormValuesUntilStable,
   toggleOptionValue,
-} from "../../../src/scripts/kapsula/formValues.js";
+} from "../../../src/scripts/kapsula/features/form/schema/formValues.js";
 
 /**
  * Нормализация значений — самая хрупкая часть формы: она чинит состояние

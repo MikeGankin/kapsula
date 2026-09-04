@@ -1,0 +1,138 @@
+@use "../../settings/media";
+
+.kapsula-screen {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding-block: 16px !important;
+
+  @include media.mobile-only {
+    padding: 16px !important;
+  }
+}
+
+.kapsula-screen[aria-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.kapsula-screen[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.kapsula-screen--steps {
+  position: absolute;
+  inset: 0;
+  z-index: var(--kapsula-z-steps);
+  display: flex;
+  align-items: center;
+}
+
+.kapsula[data-screen="steps"] .kapsula-screen--steps {
+  @include media.mobile-only {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 100%;
+  }
+}
+
+.kapsula[data-screen="steps"] .kapsula__inner {
+  @include media.mobile-only {
+    height: auto;
+    min-height: calc(100vh - var(--site-header-mobile-height));
+  }
+}
+
+.kapsula-button--steps {
+  align-self: end;
+
+  @include media.desktop {
+    width: fit-content;
+    justify-self: center;
+  }
+}
+
+.kapsula-steps {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-rows: repeat(4, auto);
+  align-content: center;
+
+  @include media.mobile-only {
+    margin-block: auto;
+  }
+
+  @include media.desktop {
+    gap: 32px;
+  }
+}
+
+.kapsula-copy--steps .kapsula-copy__title {
+  text-align: center;
+}
+
+.kapsula-steps__cards {
+  min-height: 0;
+  gap: var(--kapsula-card-grid-gap-steps);
+  margin: 0;
+  padding: 0 8px 0 0;
+  list-style: none;
+  overflow-y: visible;
+
+  @include media.desktop {
+    height: fit-content;
+    overflow-y: auto;
+  }
+}
+
+.kapsula-step-card {
+  border: 1px solid var(--kapsula-white);
+  border-radius: var(--kapsula-radius-md);
+  background: var(--kapsula-white-001);
+  backdrop-filter: blur(10px);
+  padding: 26px 24px 22px;
+
+  @include media.desktop {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 24px;
+    min-height: 200px;
+  }
+}
+
+.kapsula-step-card__number {
+  color: var(--kapsula-white-072);
+  font-family: var(--kapsula-heading-font), serif;
+  font-size: var(--kapsula-font-size-2xl);
+  line-height: var(--kapsula-line-height-tight);
+  margin-bottom: 16px;
+
+  @include media.desktop {
+    font-size: var(--kapsula-font-size-5xl);
+    margin-bottom: 0;
+  }
+}
+
+.kapsula-step-card__text {
+  margin: 0;
+  align-self: end;
+  color: var(--kapsula-white);
+  font-size: var(--kapsula-font-size-step);
+  line-height: var(--kapsula-line-height-card);
+}
+
+.kapsula-steps__note {
+  margin: 0;
+  color: var(--kapsula-white-09);
+  font-size: 16px;
+  line-height: var(--kapsula-line-height-body);
+  text-align: center;
+  align-self: end;
+}

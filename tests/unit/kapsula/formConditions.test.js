@@ -1,4 +1,4 @@
-import {getVisibleOptions, isOptionVisible} from "../../../src/scripts/kapsula/formConditions.js";
+import {getVisibleOptions, isOptionVisible} from "../../../src/scripts/kapsula/features/form/schema/formConditions.js";
 
 /**
  * Условная видимость опций: правила `visibleWhen`/`excludes` задаются

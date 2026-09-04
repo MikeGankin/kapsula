@@ -2,7 +2,15 @@
 
 ## Текущий статус
 
-Основная программа дошла до Спринта 6. Production-реализация и независимые автоматические проверки Спринта 6 завершены успешно, но пользователь ещё не подтвердил ручную визуальную приёмку через `npm run dev`.
+Спринт 6 полностью завершён и принят пользователем после ручной визуальной проверки.
+После отдельного явного разрешения Graphify обновлён: 1217 nodes / 2067 edges /
+79 communities. Спринт 7 полностью завершён и принят после ручной desktop/mobile проверки.
+После отдельного разрешения Graphify обновлён до 1276 nodes / 2151 edges / 90 communities.
+Спринт 8 полностью завершён и принят после ручной desktop/mobile проверки. После отдельного
+разрешения Graphify обновлён до 1316 nodes / 2227 edges / 97 communities. Спринт 9 и вся
+программа рефакторинга завершены: automation matrix прошла, финальный ручной desktop/mobile
+smoke подтверждён пользователем, итоговый Graphify обновлён до 1336 nodes / 2247 edges /
+96 communities.
 
 Последняя отдельная задача — read-only аудит артефактов старого сборщика. Пользователь решил оставить его только как отчёт и пока не выполнять миграцию/удаление.
 
@@ -73,7 +81,7 @@
 - Итог: 19 suites / 124 tests PASS, typecheck/ESLint/diff-check PASS.
 - Визуально принят; Graphify обновлён до 1133 nodes / 1919 edges / 77 communities.
 
-## Спринт 6 — реализован, ожидает ручную приёмку
+## Спринт 6 — завершён и принят
 
 Impact analysis: раздел `20. Спринт 6 — impact analysis` в `agent-reports/architecture.md`.
 
@@ -92,7 +100,80 @@ Feedback loop:
 - Повторная проверка: 22 suites / 131 tests PASS, typecheck PASS, ESLint 0 errors/0 warnings, `git diff --check` PASS.
 - Функциональных blockers нет.
 
-Следующий обязательный шаг: пользователь запускает `npm run dev` и проверяет sections, conditional cards, textarea, несколько text inputs, calendar range, capsule switch, submit validation и persistence после reload. Только после явного подтверждения закрыть Спринт 6. Graphify после production-изменений Спринта 6 ещё не обновлялся.
+Ручная визуальная приёмка подтверждена пользователем 2026-09-04. После отдельного
+разрешения выполнен `graphify update .`; Graphify обновлён до 1217 nodes / 2067 edges /
+79 communities. Известное предупреждение парсера для многострочного ESM re-export в
+`src/scripts/kapsula/formValidation.js` сохранилось; production-код ради него не менялся.
+
+## Спринт 7 — завершён и принят
+
+Impact analysis: раздел `21. Спринт 7 — impact analysis` в
+`agent-reports/architecture.md`.
+
+Выполнено:
+
+- добавлены typed `createConfiguredForm` dependency seam и `createKapsulaForm` project root;
+- Kapsula responsive images, animations и overlay подключены через project effects;
+- form persistence делегирована существующему session adapter с сохранением v2 keys и legacy
+  migration;
+- `setupScreenFlow` переведён на новый root, `createReactiveForm` оставлен thin alias facade;
+- popup, lead payload и hotels остались вне generic runtime;
+- сохранены public handle и три отдельных RxJS pipeline с прежним timing.
+
+Независимые gates: 23 suites / 133 tests PASS, typecheck PASS, lint PASS,
+`git diff --check` PASS, consumer/import audit PASS. Build не запускался согласно известному
+template contract. Blockers нет.
+
+Ручная desktop/mobile приёмка подтверждена пользователем 2026-09-04. После отдельного
+разрешения выполнен `graphify update .`; Graphify обновлён до 1276 nodes / 2151 edges /
+90 communities. Известное предупреждение парсера `formValidation.js` сохранилось;
+production-код ради него не менялся.
+
+## Спринт 8 — завершён и принят
+
+Impact analysis: раздел `22. Спринт 8 — impact analysis` в
+`agent-reports/architecture.md`.
+
+Выполнено:
+
+- добавлены canonical public runtime contracts snapshot/commands/lifecycle;
+- обязательные DOM nodes проверяются constructor guards, optional nodes сохранили tolerant
+  behavior;
+- `renderForm` и `createCalendarContent` атомарно мигрированы из JS в TypeScript;
+- legacy effect boundaries получили точные узкие типы без `any`, suppressions и casts;
+- compatibility facade, public runtime behavior и Flatpickr lifecycle сохранены;
+- generated `src/scripts/index.js` остался byte-identical после `npm run gen:scripts`.
+
+Независимые gates: targeted 6 suites / 29 tests PASS, полный suite 23 suites / 135 tests
+PASS, typecheck PASS, lint PASS, generator no-diff PASS, `git diff --check` PASS. Build не
+запускался согласно template contract. Blockers нет.
+
+Ручная desktop/mobile приёмка подтверждена пользователем 2026-09-04. После отдельного
+разрешения выполнен `graphify update .`; Graphify обновлён до 1316 nodes / 2227 edges /
+97 communities. Известное предупреждение парсера `formValidation.js` сохранилось;
+production-код ради него не менялся.
+
+## Спринт 9 — завершён и принят
+
+Impact analysis: раздел `23. Спринт 9 — финальный impact analysis и документация` в
+`agent-reports/architecture.md`.
+
+Выполнено:
+
+- consumer audit подтвердил, что production-фасады имеют реальные consumers или сохраняют
+  согласованную compatibility boundary; удаления не выполнялись;
+- актуализирован только `PROJECT.md` по фактическим TypeScript/runtime boundaries, config,
+  lifecycle, persistence, extension contract и командам проверки;
+- production source, tests, README, builder/template, Graphify и пользовательский
+  `_calendar.scss` в Спринте 9 не менялись;
+- финальная matrix: 23 suites / 135 tests PASS, typecheck PASS, lint PASS, generator no-diff
+  PASS, `git diff --check` PASS, consumer/path/type/documentation audits PASS;
+- build и preview отмечены N/A согласно действующему template contract.
+
+Финальный desktop/mobile smoke через `npm run dev` подтверждён пользователем 2026-09-04.
+Blockers нет. После отдельного разрешения выполнен финальный `graphify update .`; итоговый
+Graphify содержит 1336 nodes / 2247 edges / 96 communities. Спринт 9 и программа
+рефакторинга закрыты.
 
 ## Отложенный cleanup-аудит нового шаблона
 
@@ -116,7 +197,7 @@ Feedback loop:
 - Изменения Спринтов 3–6 находятся в незакоммиченном working tree вместе с ранее существовавшими пользовательскими изменениями.
 - Не выполнять массовый reset/copy/delete.
 - Перед каждым новым изменением проверять точечный diff релевантных файлов.
-- `graphify-out/` содержит разрешённые обновления после принятых Спринтов 3–5; после реализации Спринта 6 не обновлялся.
+- `graphify-out/` содержит разрешённое финальное обновление после принятого Спринта 9.
 - Graphify предупреждает о неполном разборе многострочного ESM re-export в `src/scripts/kapsula/formValidation.js`. Node/Vite/ESLint/tests код принимают; не менять production только ради Graphify parser.
 
 ## Ключевые архитектурные решения
@@ -131,16 +212,16 @@ Feedback loop:
 
 ## Релевантные отчёты
 
-- `agent-reports/architecture.md` — roadmap и impact analyses Спринтов 3–6.
+- `agent-reports/architecture.md` — roadmap и impact analyses Спринтов 3–9.
 - `agent-reports/development.md` — изменения и implementation decisions.
-- `agent-reports/testing.md` — финальная независимая проверка Спринта 6.
+- `agent-reports/testing.md` — независимые проверки, включая финальную matrix Спринта 9.
 - `agent-reports/template-cleanup-audit.md` — отложенный аудит builder и Git policy.
 
 ## Как продолжить в новом чате
 
 1. Прочитать `AGENTS.md`.
 2. Прочитать этот `agent-reports/handoff.md`.
-3. Для текущего шага прочитать только `agent-reports/testing.md` и при необходимости раздел 20 `architecture.md`.
-4. Запросить результат визуальной проверки Спринта 6, если пользователь ещё не сообщил его.
-5. После принятия Спринта 6 предложить отдельное обновление Graphify.
+3. Для новой задачи читать только относящиеся к ней отчёты и актуальный Graphify.
+4. Программа завершена; не начинать новые production-изменения без новой задачи пользователя.
+5. Финальный Graphify update после Спринта 9 уже выполнен.
 6. Не начинать cleanup старого builder: он явно отложен.

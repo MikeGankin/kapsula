@@ -46,7 +46,7 @@ JS отработал полностью: форма рендерится скр
 
 ## Проблема 1. Заголовок секции выходит за пределы кнопки
 
-**Где:** `src/scripts/kapsula/animateFormSections.js` — `scale: 1.08` для
+**Где:** `src/scripts/kapsula/features/form/effects/animateFormSections.js` — `scale: 1.08` для
 `.kapsula-form-section__heading` у развёрнутой секции.
 
 **Суть.** Заголовок увеличивается трансформом, но `transform` не влияет на раскладку: браузер
@@ -89,7 +89,7 @@ overflow родителя: visible
 
 ## Проблема 2. Неравные колонки сетки на 1024px
 
-**Где:** `src/styles/kapsula/_card-grid.scss:38` — `grid-template-columns: repeat(3, 1fr)`.
+**Где:** `src/styles/kapsula/shared/_card-grid.scss:38` — `grid-template-columns: repeat(3, 1fr)`.
 
 **Суть.** `1fr` эквивалентен `minmax(auto, 1fr)`, а `auto` не даёт колонке сжаться меньше
 минимального размера содержимого. Длинные подписи вроде «Почувствовать ритм города» распирают
@@ -121,7 +121,7 @@ overflow родителя: visible
 
 ## Проблема 3. `100vh` без `dvh`-фолбэка (гипотеза)
 
-**Где:** `src/styles/kapsula/_steps.scss:42` и `src/styles/kapsula/_form-screen.scss:27`.
+**Где:** `src/styles/kapsula/features/navigation/_steps.scss:42` и `src/styles/kapsula/features/form/_form-screen.scss:27`.
 
 ```scss
 min-height: calc(100vh - var(--site-header-mobile-height));

@@ -1,7 +1,7 @@
 import {
   getResponseHotels,
   normalizeHotelsResponse,
-} from "../../../../src/scripts/kapsula/hotels/hotelsNormalize.js";
+} from "../../../../src/scripts/kapsula/features/popup/hotels/hotelsNormalize.js";
 
 /**
  * Ответ поиска отелей приходит в нескольких исторических форматах, а id отеля

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {createCalendarContentHandle} from "../../../src/scripts/kapsula/createCalendarContent.js";
+import {createCalendarContentHandle} from "../../../src/scripts/kapsula/features/form/createCalendarContent.ts";
 
 const calendar = vi.hoisted(() => ({destroy: vi.fn(), options: null}));
 

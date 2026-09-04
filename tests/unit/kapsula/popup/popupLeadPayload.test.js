@@ -1,6 +1,6 @@
 import {
   buildManagerLeadPayload,
-} from "../../../../src/scripts/kapsula/popup/popupLeadPayload.js";
+} from "../../../../src/scripts/kapsula/features/popup/contact/popupLeadPayload.js";
 
 /**
  * Payload уходит менеджеру письмом. Ошибка здесь не видна ни в интерфейсе,

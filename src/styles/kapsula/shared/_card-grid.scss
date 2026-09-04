@@ -1,0 +1,60 @@
+@use "../settings/media";
+
+.kapsula-card-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--kapsula-card-grid-gap, 24px);
+
+  @include media.desktop {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.kapsula-embla__viewport {
+  width: 100%;
+  overflow: hidden;
+
+  @include media.desktop {
+    overflow: visible;
+  }
+}
+
+.kapsula-form-options {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--kapsula-card-grid-gap, 24px);
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  @include media.desktop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: visible;
+    scroll-snap-type: none;
+    scroll-padding-inline: 0;
+  }
+}
+
+.kapsula-form-options::-webkit-scrollbar {
+  display: none;
+}
+
+.kapsula-form-options > * {
+  flex: 0 0 60%;
+  scroll-snap-align: start;
+
+  @include media.tablet {
+    flex: 0 0 25%;
+  }
+
+  @include media.desktop {
+    flex: 1;
+  }
+}

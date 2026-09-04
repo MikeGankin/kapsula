@@ -172,7 +172,7 @@ export default [
      * logger.js — единственная точка, которой консоль разрешена: весь остальной
      * код обязан ходить через неё, чтобы диагностика молчала в проде.
      */
-    files: ["src/scripts/kapsula/logger.js"],
+    files: ["src/scripts/kapsula/shared/logger.js"],
     rules: {
       "no-console": "off",
     },

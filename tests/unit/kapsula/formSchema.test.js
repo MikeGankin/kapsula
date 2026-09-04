@@ -5,7 +5,7 @@ import {
   getHotelsSettings,
   getInitialCapsuleId,
   isFieldRendered,
-} from "../../../src/scripts/kapsula/formSchema.js";
+} from "../../../src/scripts/kapsula/features/form/schema/formSchema.js";
 
 /**
  * Начальное состояние формы собирается из схемы и значений, переживших

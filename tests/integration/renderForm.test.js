@@ -5,7 +5,7 @@ import {
   destroyRenderedForm,
   renderForm,
   renderFormValidationErrors,
-} from "../../src/scripts/kapsula/renderForm.js";
+} from "../../src/scripts/kapsula/features/form/renderForm.ts";
 import {createAllRendererForm} from "../fixtures/formConfigurator.js";
 
 const calendarMocks = vi.hoisted(() => ({
@@ -26,7 +26,7 @@ calendarMocks.createCalendarContentHandle = vi.fn((...args) => ({
   destroy: calendarMocks.destroy,
 }));
 
-vi.mock("../../src/scripts/kapsula/createCalendarContent.js", () => calendarMocks);
+vi.mock("../../src/scripts/kapsula/features/form/createCalendarContent.ts", () => calendarMocks);
 
 function render(schema, values, expandedState, options = {}) {
   const form = document.createElement("form");

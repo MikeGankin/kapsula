@@ -1,0 +1,164 @@
+import {KAPSULA_ANIMATION} from "../../shared/animationConfig.js";
+import {reachGoal} from "../../shared/analytics.js";
+import {saveSelectedCapsule} from "../../shared/sessionState.js";
+import {transitionBetweenScreens} from "./screenTransition.js";
+
+const METRIKA_STYLE_MAP = {
+  asian: "asia",
+  oriental: "east",
+  island: "island",
+};
+
+/**
+ * У карточки стиля валидный `href` — это полноценная ссылка на экран формы.
+ * Перехватываем только обычный левый клик: при Ctrl/Cmd/Shift/Alt и клике
+ * средней кнопкой браузер должен сам открыть ссылку в новой вкладке или окне.
+ */
+function isPlainLeftClick(event) {
+  return (
+    event.button === 0 &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
+
+export function bindScreenActions(
+  {
+    formExperience,
+    hero,
+    screenRegistry,
+    screenNodes,
+    timelineConfig,
+  }) {
+  const {
+    heroScreen,
+  } = screenNodes;
+  const {initial} = KAPSULA_ANIMATION.screenTransition;
+  let activeTimeline = null;
+  let pendingCapsuleId = null;
+
+  const transitionToScreen = (fromKey, toKey) => {
+    if (activeTimeline) {
+      return null;
+    }
+
+    const timeline = transitionBetweenScreens({
+      fromKey,
+      hero,
+      heroScreen,
+      initial,
+      screenRegistry,
+      timelineConfig,
+      toKey,
+    });
+
+    if (timeline) {
+      activeTimeline = timeline;
+
+      // Таймлайн может не доиграть до конца (kill из cleanup, прерывание),
+      // тогда onComplete не вызовется и навигация залипнет навсегда.
+      const releaseTimeline = () => {
+        if (activeTimeline === timeline) {
+          activeTimeline = null;
+        }
+      };
+
+      timeline.eventCallback("onComplete", releaseTimeline);
+      timeline.eventCallback("onInterrupt", releaseTimeline);
+    }
+
+    return timeline;
+  };
+
+  const handleClick = async (event) => {
+    if (!(event.target instanceof Element)) return;
+    const backToStylesButtonNode = event.target.closest("[data-kapsula-back-to-styles]");
+
+    if (backToStylesButtonNode) {
+      if (hero.dataset.screen !== "form") return;
+
+      transitionToScreen("form", "styles");
+      return;
+    }
+
+    const startButtonNode = event.target.closest(".kapsula-button--hero");
+
+    if (startButtonNode) {
+      if (hero.dataset.screen === "steps") return;
+
+      reachGoal("capsule_1_screen_button_go");
+
+      transitionToScreen("hero", "steps");
+
+      return;
+    }
+
+    const stepsButtonNode = event.target.closest(".kapsula-button--steps");
+
+    if (stepsButtonNode) {
+      if (hero.dataset.screen === "styles") return;
+
+      reachGoal("capsule_2_screen_button_assemble");
+
+      transitionToScreen("steps", "styles");
+      return;
+    }
+
+    const styleButtonNode = event.target.closest(".kapsula-style-card .kapsula-button");
+
+    if (styleButtonNode) {
+      if (!isPlainLeftClick(event)) return;
+
+      // preventDefault только после проверки экрана: иначе на «неродном»
+      // экране мы гасим переход по ссылке, ничего не предлагая взамен.
+      if (hero.dataset.screen !== "styles") return;
+
+      event.preventDefault();
+
+      const capsuleId = styleButtonNode.dataset.kapsulaCapsule;
+
+      if (!capsuleId) {
+        return;
+      }
+
+      pendingCapsuleId = capsuleId;
+      const isPrepared = await formExperience.prepareCapsule?.(capsuleId) ?? true;
+
+      if (
+        !isPrepared ||
+        pendingCapsuleId !== capsuleId ||
+        hero.dataset.screen !== "styles"
+      ) {
+        return;
+      }
+
+      pendingCapsuleId = null;
+
+      if (!formExperience.setCapsule(capsuleId)) return;
+
+      saveSelectedCapsule(capsuleId);
+
+      const metrikaStyle = METRIKA_STYLE_MAP[capsuleId];
+
+      if (metrikaStyle) {
+        reachGoal("capsule_3_screen_button_select_and_assemble", {
+          style: metrikaStyle,
+        });
+      }
+      
+      transitionToScreen("styles", "form");
+    }
+  };
+
+  hero.addEventListener("click", handleClick);
+
+  return () => {
+    pendingCapsuleId = null;
+    hero.removeEventListener("click", handleClick);
+    const timelineToKill = activeTimeline;
+    activeTimeline = null;
+    timelineToKill?.kill();
+  };
+}

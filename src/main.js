@@ -21,7 +21,7 @@ const CDN_BASE = "http://127.0.0.1:5173";
 let teardownAssetRewrite = null;
 
 if (import.meta.env.DEV) {
-  await import("./scripts/kapsula/hotelsConfig.dev.js");
+  await import("./scripts/kapsula/features/popup/hotels/hotelsConfig.dev.js");
 }
 
 function mount(container, {force = false} = {}) {

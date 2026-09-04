@@ -31,6 +31,7 @@ export interface CardsFieldConfig extends BaseFieldConfig {
   type: "cards";
   options: FieldOption[];
   multiple?: boolean;
+  overlayAnimation?: "segments" | "single";
 }
 
 export interface TextareaFieldConfig extends BaseFieldConfig {
@@ -42,7 +43,7 @@ export interface TextFieldConfig extends BaseFieldConfig {
 }
 
 export interface CalendarSettings {
-  mode?: string;
+  mode?: "single" | "multiple" | "range" | "time";
   minDate?: string;
   maxDate?: string;
   dateFormat?: string;

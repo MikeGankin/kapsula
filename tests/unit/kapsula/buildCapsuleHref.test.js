@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /* global window */
 
-import {buildCapsuleHref} from "../../../src/scripts/kapsula/buildCapsuleHref.js";
+import {buildCapsuleHref} from "../../../src/scripts/kapsula/features/navigation/buildCapsuleHref.js";
 
 /**
  * Ссылка на карточке стиля должна открывать форму нужной капсулы и при этом

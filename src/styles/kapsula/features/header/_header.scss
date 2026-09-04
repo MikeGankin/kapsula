@@ -1,0 +1,133 @@
+@use "../../settings/media";
+
+body[data-kapsula-constructor-route] {
+#quick-search-tab-area,
+#breadcrumb-widget,
+div[class*="HeaderMenuNonProductSearch_nonProductSearchContainer__"] {
+  display: none;
+}
+
+div[class*="HeaderWidget_headerClientSideDesktop___"] {
+  background: var(--kapsula-night);
+}
+
+.basic-menu-item {
+  color: var(--kapsula-white);
+
+  .menu-item-label span {
+    color: inherit;
+  }
+}
+
+div[class*="HeaderTopBar_iconContainer__"] > * {
+  color: var(--kapsula-white) !important;
+}
+
+div[class*="HeaderTopBar_iconContainer__"] > * button,
+div[class*="HeaderTopBar_iconContainer__"] > * a {
+  color: var(--kapsula-white) !important;
+}
+
+div[class*="DepartureContact_departureContactPhone__"] {
+  color: var(--kapsula-white) !important;
+}
+
+.header-mobile {
+  height: var(--site-header-mobile-height);
+  background: #262626;
+}
+
+[class*="LoginButton_loginButton__"] {
+  svg {
+    circle, path {
+      stroke: #ffffff;
+    }
+  }
+}
+
+[class*="HeaderHamburgerMenu_menuButton__"] {
+  svg {
+    path {
+      fill: #ffffff;
+    }
+  }
+}
+
+[class*="HeaderHamburgerMenu_menuContainer__"] {
+  top: 60px !important;
+}
+
+div[class*="HeaderTopBar_iconContainer__"] svg path,
+div[class*="HeaderTopBar_iconContainer__"] svg circle,
+div[class*="HeaderTopBar_iconContainer__"] svg ellipse {
+  stroke: var(--kapsula-white) !important;
+}
+
+.kapsula-header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.kapsula-header-logo__link {
+  margin-right: 6px;
+}
+
+.kapsula-header-logo__link,
+.kapsula-header-logo__image {
+  display: block;
+}
+
+.kapsula-header-logo__image {
+  display: block;
+  width: 100%;
+  object-fit: contain;
+  height: 100%;
+}
+
+.submenu .custom-link {
+  color: var(--kapsula-black);
+}
+
+[data-testid="header-logo"] {
+  width: 113px;
+  height: 40px;
+  background: url("https://b2ccdn.coral.ru/content/elite-service-logo.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  img {
+    display: none;
+  }
+
+}
+
+div[class*="HeaderLogo_container__"]:not(.kapsula-header-logo) {
+  @include media.desktop {
+    display: none;
+  }
+}
+
+.user-profile-dropdown-button {
+  background: transparent;
+  border: 1px solid #a88546;
+}
+
+[class*="LoginButton_avatar__"] {
+  background: #a88546;
+  color: #fff;
+
+  .ant-avatar-string {
+    font-weight: 300;
+  }
+}
+
+sup[class*="Badge_badge__FLhh1"] {
+  z-index: unset;
+}
+
+.ant-avatar {
+  color: #ffffff;
+  background: #a88546;
+}
+}

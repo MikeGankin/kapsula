@@ -1,0 +1,87 @@
+@use "../settings/media";
+
+.kapsula-option-card {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 12px;
+  border: 1px solid var(--kapsula-dark-028);
+  border-radius: var(--kapsula-radius-md);
+  background: var(--kapsula-white);
+  padding: 8px;
+  color: var(--kapsula-text-dark);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  @include media.desktop {
+    padding: 16px;
+  }
+}
+
+.kapsula-form-option {
+  @include media.desktop {
+    padding: 16px;
+  }
+}
+
+.kapsula-form-option__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.kapsula-option-card__marker {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--kapsula-dark-024);
+  border-radius: var(--kapsula-radius-sm);
+  display: block;
+}
+
+.kapsula-option-card__content {
+  display: grid;
+  gap: 8px;
+}
+
+.kapsula-option-card__title {
+  font-size: var(--kapsula-font-size-md);
+  line-height: var(--kapsula-line-height-title);
+}
+
+.kapsula-option-card__text {
+  color: var(--kapsula-dark-062);
+  font-size: var(--kapsula-font-size-sm);
+  line-height: var(--kapsula-line-height-card);
+}
+
+.kapsula-option-card.is-selected {
+  border-color: var(--kapsula-gold);
+  border-width: 1px;
+}
+
+.kapsula-option-card.is-selected .kapsula-option-card__marker {
+  border: 0;
+  background: var(--kapsula-gold);
+}
+
+.kapsula-option-card.is-selected .kapsula-option-card__marker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2.97855 8.31344C3.17382 8.11818 3.4904 8.11818 3.68566 8.31344L5.99877 10.6266L12.3119 4.31344C12.5071 4.11818 12.8237 4.11818 13.019 4.31344C13.2143 4.5087 13.2143 4.82528 13.019 5.02055L6.35233 11.6872C6.15706 11.8825 5.84048 11.8825 5.64522 11.6872L2.97855 9.02055C2.78329 8.82528 2.78329 8.5087 2.97855 8.31344Z' fill='white'/%3E%3C/svg%3E");
+  transform: translate(-50%, -50%);
+}

@@ -1,13 +1,13 @@
 // @vitest-environment jsdom
 /* global window */
 
-import {SESSION_STORAGE_KEYS} from "../../src/scripts/kapsula/constants.js";
+import {SESSION_STORAGE_KEYS} from "../../src/scripts/kapsula/shared/constants.js";
 import {
   readSavedActiveSection,
   readSavedFormValues,
   saveActiveSection,
   saveFormValues,
-} from "../../src/scripts/kapsula/sessionState.js";
+} from "../../src/scripts/kapsula/shared/sessionState.js";
 
 const valuesKey = (capsuleId) => `${SESSION_STORAGE_KEYS.formValuesPrefix}.${capsuleId}`;
 const activeKey = (capsuleId) => `${SESSION_STORAGE_KEYS.activeSectionPrefix}.${capsuleId}`;

@@ -1,0 +1,90 @@
+@use "../../settings/media";
+
+.kapsula-screen--styles {
+  position: absolute;
+  inset: 0;
+  z-index: var(--kapsula-z-styles);
+}
+
+.kapsula-styles {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 30px;
+
+  @include media.desktop {
+    align-content: center;
+  }
+}
+
+.kapsula-styles__grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--kapsula-card-grid-gap-styles);
+  box-sizing: border-box;
+
+  @include media.desktop {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.kapsula-styles__grid > * {
+  flex: 0 0 100%;
+
+  @include media.tablet {
+    flex-basis: calc((100% - var(--kapsula-card-grid-gap-styles)) / 2);
+  }
+
+  @include media.desktop {
+    flex: initial;
+  }
+}
+
+.kapsula-style-card__media {
+  height: 250px;
+
+  @include media.desktop {
+    height: auto;
+  }
+}
+
+.kapsula-styles__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  @include media.desktop {
+    display: none;
+  }
+}
+
+.kapsula-styles__pagination[hidden] {
+  display: none;
+}
+
+.kapsula-screen--styles .kapsula-styles__pagination .embla__dot {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--kapsula-white-056) !important;
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.kapsula-screen--styles .kapsula-styles__pagination .embla__dot--selected {
+  width: 60px;
+  background-color: var(--kapsula-white) !important;
+}
+
+.kapsula-screen--steps nav {
+  padding: 0 !important;
+}
