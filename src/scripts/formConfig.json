@@ -1,6 +1,6 @@
 {
   "submitEndpoint": "https://postman.trip-mate.ru/manager-lead-mail",
-  "mailSubject": "Капсула",
+  "mailSubject": "КАПСУЛА",
   "mailTo": "vip@coral.ru",
   "popupFields": {
     "contactMethod": {

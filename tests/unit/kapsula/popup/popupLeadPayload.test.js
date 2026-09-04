@@ -10,7 +10,11 @@ import {
 
 const snapshot = {
   capsuleId: "island",
-  values: {style: "boho", trip: "rest"},
+  values: {
+    style: "boho",
+    trip: "rest",
+    travelDate: {from: "2026-09-04", to: "2026-09-12"},
+  },
 };
 
 const submittedAt = new Date(2026, 0, 5, 9, 7);
@@ -78,6 +82,12 @@ describe("buildManagerLeadPayload", () => {
     expect(payload.lead.capsule).toBe("island");
     expect(payload.lead.style).toBe("boho");
     expect(payload.lead.trip).toBe("rest");
+  });
+
+  it("форматирует диапазон дат поездки для HTML-письма", () => {
+    const payload = buildPayload({name: "Иван", phone: "999 123-45-67", contactMethod: "call"});
+
+    expect(payload.lead.travelDate).toBe("04.09.2026 — 12.09.2026");
   });
 
   it("не включает в лид поля с render: false", () => {

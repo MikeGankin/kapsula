@@ -9,15 +9,10 @@ export const REDUCED_MOTION_MEDIA_QUERY = "(prefers-reduced-motion: reduce)";
 
 export const METRIKA_COUNTER_ID = 96674199;
 
-export const HEADER_SELECTORS = {
-  desktopHost: 'div[class*="HeaderMenuBar_container"] > div',
-  mobileHost: 'div[class*="HeaderMobile_rightGroup__"]',
-  icons: 'div[class*="HeaderTopBar_iconContainer__"]',
-  jivoToggle: 'jdiv[class*="iconWrap__"]',
-};
+export const HEADER_CONTACT_SELECTOR = "[data-kapsula-header-contact]";
+export const JIVO_WIDGET_TOGGLE_SELECTOR = 'jdiv[class*="iconWrap__"]';
 
 export const KAPSULA_ROOT_SELECTOR = "[data-kapsula-hero]";
-export const ROUTE_ATTRIBUTE = "data-kapsula-constructor-route";
 
 /**
  * Версия схемы сохранённого состояния.

@@ -11,6 +11,22 @@ function formatSubmittedAt(date) {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
+function formatTravelDate(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value) || !value.from) {
+    return value;
+  }
+
+  const formatDate = (date) => {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+    return match ? `${match[3]}.${match[2]}.${match[1]}` : date;
+  };
+  const from = formatDate(value.from);
+
+  if (!value.to || value.to === value.from) return from;
+
+  return `${from} — ${formatDate(value.to)}`;
+}
+
 /**
  * `subject` и `to` берём из конфига и отправляем явно. Ручка
  * `manager-lead-mail` умеет их принимать, но при отсутствии подставляет свои
@@ -50,6 +66,9 @@ export function buildManagerLeadPayload({
         ? {}
         : {contactMethod: renderedContact.contactMethod}),
       ...snapshot.values,
+      ...(snapshot.values.travelDate === undefined
+        ? {}
+        : {travelDate: formatTravelDate(snapshot.values.travelDate)}),
     },
   };
 }

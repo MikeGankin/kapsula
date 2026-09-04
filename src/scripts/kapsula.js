@@ -1,19 +1,12 @@
-import {defer, filter, from, merge, of, Subscription, switchMap} from "rxjs";
+import {defer, from, of, Subscription, switchMap} from "rxjs";
 import {hostReactAppReady, reactDomObserver} from "../utils/utils.js";
 import {animateHero} from "./kapsula/features/hero/animateHero.js";
-import {HEADER_SELECTORS, KAPSULA_ROOT_SELECTOR, ROUTE_ATTRIBUTE} from "./kapsula/shared/constants.js";
+import {KAPSULA_ROOT_SELECTOR} from "./kapsula/shared/constants.js";
 import {logError} from "./kapsula/shared/logger.js";
-import {createHeaderUi} from "./kapsula/features/header/setupHeaderUi.js";
+import {bindHeaderUi} from "./kapsula/features/header/setupHeaderUi.js";
 import {setupScreenFlow} from "./kapsula/app/setupScreenFlow.js";
 
-const DESKTOP_HEADER_HOST_SELECTOR = HEADER_SELECTORS.desktopHost;
-const MOBILE_HEADER_HOST_SELECTOR = HEADER_SELECTORS.mobileHost;
 const ROOT_SELECTOR = KAPSULA_ROOT_SELECTOR;
-const TARGET_ROUTES = [
-  "/elite-service/constructor/",
-  "/monkey/",
-  "preview"
-];
 let appSubscription = null;
 
 function createHostReady$() {
@@ -30,82 +23,11 @@ export default function kapsula() {
   const lifecycle = new Subscription();
   const domWatcher = reactDomObserver();
   const rootCleanups = new Map();
-  const headerUi = createHeaderUi();
-  let headerSubscription = null;
-  let isHeaderRouteActive = false;
-
-  const disableHeaderUi = () => {
-    headerSubscription?.unsubscribe();
-    headerSubscription = null;
-    headerUi.cleanup();
-    document.body?.removeAttribute(ROUTE_ATTRIBUTE);
-  };
-
-  const enableHeaderUi = () => {
-    document.body?.setAttribute(ROUTE_ATTRIBUTE, "");
-    headerUi.setup();
-
-    if (headerSubscription) {
-      return;
-    }
-
-    headerSubscription = merge(
-      domWatcher.observeSelector$(DESKTOP_HEADER_HOST_SELECTOR),
-      domWatcher.observeSelector$(MOBILE_HEADER_HOST_SELECTOR),
-    ).pipe(
-      filter((event) => event.type === "initialize" || event.type === "add"),
-    ).subscribe({
-      next: () => headerUi.setup(),
-      error: (error) => logError("наблюдатель за хедером упал", error),
-    });
-  };
-
-  const handleRouteChange = ({path = ""} = {}) => {
-    const shouldActivateHeader = TARGET_ROUTES.some((route) => path.includes(route));
-
-    if (shouldActivateHeader === isHeaderRouteActive) {
-      return;
-    }
-
-    isHeaderRouteActive = shouldActivateHeader;
-
-    if (shouldActivateHeader) {
-      enableHeaderUi();
-      return;
-    }
-
-    disableHeaderUi();
-  };
 
   const destroyRoot = (rootNode) => {
     rootCleanups.get(rootNode)?.();
     rootCleanups.delete(rootNode);
   };
-
-  try {
-    handleRouteChange({path: window.location.pathname});
-
-    const hasRouteBus = (
-      typeof CoralRouteBus !== "undefined" &&
-      typeof CoralRouteBus.subscribe === "function"
-    );
-    const routeSubscription = hasRouteBus
-      ? CoralRouteBus.subscribe(handleRouteChange)
-      : null;
-
-    if (
-      typeof routeSubscription === "function" ||
-      typeof routeSubscription?.unsubscribe === "function"
-    ) {
-      lifecycle.add(routeSubscription);
-    } else if (!hasRouteBus) {
-      logError("шина маршрутов CoralRouteBus недоступна");
-    }
-
-    lifecycle.add(disableHeaderUi);
-  } catch (error) {
-    logError("инициализация хедера не удалась", error);
-  }
 
   const rootEvents$ = createHostReady$().pipe(
     switchMap(() => domWatcher.observeSelector$(ROOT_SELECTOR)),
@@ -126,10 +48,12 @@ export default function kapsula() {
 
       try {
         const heroTimeline = animateHero(rootNode);
+        const unbindHeaderUi = bindHeaderUi(rootNode);
         const destroyScreenFlow = setupScreenFlow(rootNode);
 
         rootCleanups.set(rootNode, () => {
           heroTimeline?.kill();
+          unbindHeaderUi();
           destroyScreenFlow?.();
         });
       } catch (error) {

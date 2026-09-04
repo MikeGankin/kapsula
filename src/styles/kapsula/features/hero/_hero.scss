@@ -2,17 +2,13 @@
 
 .kapsula {
   position: relative;
-  min-height: calc(100vh - var(--site-header-mobile-height));
-  min-height: calc(100dvh - var(--site-header-mobile-height));
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   color: var(--kapsula-white);
   background: var(--kapsula-night);
   isolation: isolate;
 
-  @include media.desktop {
-    min-height: calc(100vh - var(--kapsula-header-height));
-    min-height: calc(100dvh - var(--kapsula-header-height));
-  }
 }
 
 .kapsula[data-screen="form"] {
@@ -31,20 +27,17 @@
 .kapsula__video-shade {
   background: var(--kapsula-hero-backdrop-gradient);
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 400ms ease;
+  transition: opacity 800ms ease-in-out;
 }
 
 .kapsula__background-video[data-ready="true"] + .kapsula__video-shade {
   @include media.desktop {
     opacity: 1;
-    visibility: visible;
   }
 }
 
 .kapsula[data-screen="form"] .kapsula__video-shade {
   opacity: 0;
-  visibility: hidden;
 }
 
 .kapsula__background-video {
@@ -53,8 +46,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 400ms ease;
+  transition: opacity 800ms ease-in-out;
 
   @include media.desktop {
     display: block;
@@ -63,12 +55,10 @@
 
 .kapsula__background-video[data-ready="true"] {
   opacity: 1;
-  visibility: visible;
 }
 
 .kapsula[data-screen="form"] .kapsula__background-video {
   opacity: 0;
-  visibility: hidden;
 }
 
 .kapsula__backdrop {
@@ -94,11 +84,6 @@
 
 .kapsula[data-screen="form"] .kapsula__veil {
   background: transparent;
-}
-
-.kapsula[data-screen="steps"] .kapsula__veil,
-.kapsula[data-screen="styles"] .kapsula__veil {
-  background: var(--kapsula-section-veil-gradient);
 }
 
 .kapsula__inner {
@@ -136,8 +121,17 @@
   }
 }
 
+.kapsula-screen--hero .kapsula-copy {
+  justify-items: center;
+
+  @include media.desktop {
+    justify-items: start;
+  }
+}
+
 .kapsula-screen--hero .kapsula-copy__title {
   margin-bottom: 16px;
+  text-align: center;
 
   @include media.desktop {
     text-align: left;
@@ -148,9 +142,15 @@
   font-family: inherit;
   font-size: var(--kapsula-font-size-md);
   font-weight: var(--kapsula-font-weight-regular);
+  line-height: var(--kapsula-line-height-body);
+  max-width: 35ch;
+  text-align: center;
+
   @include media.desktop {
+    max-width: none;
     text-align: left;
   }
+
   margin: 0;
 }
 

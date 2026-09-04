@@ -52,7 +52,6 @@ export function bindFormPopup(formExperience, hero) {
     return () => {};
   }
 
-  const homeButtonNode = popupNode.querySelector("[data-kapsula-popup-home]");
   const popupCardsNode = popupNode.querySelector(".kapsula-popup__cards");
   const popupPaginationNode = popupNode.querySelector("[data-kapsula-popup-pagination]");
   const hotelCardTemplateNode = popupNode.querySelector("[data-kapsula-hotel-card-template]");
@@ -216,14 +215,9 @@ export function bindFormPopup(formExperience, hero) {
     }
   };
 
-  const handleHome = () => {
-    window.location.assign(window.location.pathname);
-  };
-
   popupFormNode.addEventListener("input", handleInput);
   popupFormNode.addEventListener("change", handleFieldChange);
   popupFormNode.addEventListener("submit", handleSubmit);
-  homeButtonNode?.addEventListener("click", handleHome);
   hero?.addEventListener("click", handleHeroClick);
   hero?.addEventListener("change", handleHeroChange);
 
@@ -231,7 +225,6 @@ export function bindFormPopup(formExperience, hero) {
     popupFormNode.removeEventListener("input", handleInput);
     popupFormNode.removeEventListener("change", handleFieldChange);
     popupFormNode.removeEventListener("submit", handleSubmit);
-    homeButtonNode?.removeEventListener("click", handleHome);
     hero?.removeEventListener("click", handleHeroClick);
     hero?.removeEventListener("change", handleHeroChange);
     popupHotelsLoader?.destroy();

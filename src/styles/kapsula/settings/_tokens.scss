@@ -105,7 +105,7 @@
   --kapsula-style-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(6, 7, 10, 0.18) 100%);
   --kapsula-popup-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 31.12%, rgba(0, 0, 0, 0.54) 100%);
 
-  --kapsula-header-height: 56px;
+  --kapsula-header-height: 70px;
   --kapsula-card-grid-gap: 24px;
   --kapsula-card-grid-gap-steps: 22px;
   --kapsula-card-grid-gap-styles: 14px;
@@ -114,19 +114,14 @@
   --kapsula-z-steps: 2;
   --kapsula-z-styles: 3;
   --kapsula-z-form: 4;
-  --site-header-mobile-height: 60px;
+  --site-header-mobile-height: 57px;
 
   @include media.desktop {
-    --kapsula-header-height: 56px;
     --kapsula-font-size-form-title: 32px;
     --kapsula-font-size-form-section-index: 24px;
     --kapsula-font-size-form-section-title: 20px;
     --kapsula-font-size-form-section-summary: 18px;
     --kapsula-font-size-title: 32px;
-  }
-
-  @media (min-width: 1250px) {
-    --kapsula-header-height: 64px;
   }
 
   @include media.desktop-content {

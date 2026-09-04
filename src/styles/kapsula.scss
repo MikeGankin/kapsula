@@ -13,9 +13,17 @@
 @use "./kapsula/features/form/form";
 @use "./kapsula/features/popup/popup";
 @use "./kapsula/shared/accessibility";
-@import "flatpickr/dist/flatpickr.css";
-@import './kapsula/features/form/calendar';
+@use "flatpickr/dist/flatpickr.css";
+@use './kapsula/features/form/calendar';
 
 #jCallbackButton {
+  display: none;
+}
+
+div[class*="HeaderWidget"], #breadcrumb-widget, #quick-search-tab-area {
+  display: none;
+}
+
+.row-outer-container:has(.ant-row .ant-col:empty) {
   display: none;
 }

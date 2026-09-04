@@ -202,7 +202,7 @@ domain definition (initial/normalize/validate/serialize/summarize), DOM renderer
 | [`mediaQuery.js`](src/scripts/kapsula/shared/mediaQuery.js) | Единый `matchMedia` с подпиской |
 | [`motionPreferences.js`](src/scripts/kapsula/shared/motionPreferences.js) | `prefers-reduced-motion` |
 | [`imagePreloader.js`](src/scripts/kapsula/shared/imagePreloader.js) | Общий кеш прелоада |
-| [`setupHeaderUi.js`](src/scripts/kapsula/features/header/setupHeaderUi.js) | Логотип и кнопка в хедере хоста |
+| [`setupHeaderUi.js`](src/scripts/kapsula/features/header/setupHeaderUi.js) | Обработчик кнопки связи в HTML-хедере |
 | [`syncEmblaCarousel.js`](src/scripts/kapsula/shared/carousel/syncEmblaCarousel.js) · [`syncEmblaDots.js`](src/scripts/kapsula/shared/carousel/syncEmblaDots.js) | Карусели на мобильном |
 
 ### Стили
